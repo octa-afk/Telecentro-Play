@@ -1,0 +1,54 @@
+Esto es una simulacion en html que servirá a los asesores (telefonicos) de soporte técnico que atiendan a clientes que tienen contratado el servicio de television de telecentro.
+El objetivo es poder darle al asesor una guia visual con la que poder estar viendo al mismo tiempo lo que el cliente ve en su meú.
+
+El menu tiene opciones que se extienden de manera horizontal hacia la derecha, al posicionarse sobre cada opcion debajo se extiende un menu con las mismas caractericas pero con distintas opciones.
+
+MENÚ PRINCIPAL
+├── BUSCAR
+|
+|
+├── HOME
+|
+|
+├── TV
+|
+|
+├── KIDS
+|
+|
+├── GUIA
+|
+|
+├── MI CONTENIDO
+|
+|
+├── APPS
+|
+|
+├── AJUSTES
+|
+|
+├── ADULTOS
+
+
+
+
+Al ingresar al menú principal del decodificador vemos las siguientes opciones:
+BUSCAR - HOME - TV - KIDS - GUIA - MI CONTENIDO - APP - AJUSTES - ADULTOS
+
+SUBMENUES:
+
+BUSCAR: aun no se sabe que hay en ese apartado
+
+HOME: recomendaciones de peliculas y series
+
+TV: una miniatura con la foto del programa que se esta viendo (con su horario de inicio y finalizacion
+ sobre la misma foto) y su titulo
+
+KIDS: es igual que HOME pero version infantil
+
+GUIA: un boton pequeño que con la leyenda "PRESIONE OK PARA ABRIR LA GUÍA"
+
+MI CONTENIDO: GRABACIONES
+
+AJUSTES: AJUSTES DE USUARIO - VIDEO - VISITA GUIADA POR VOZ - GRABACIONES - SISTEMA

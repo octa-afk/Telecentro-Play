@@ -1,0 +1,17 @@
+{
+  "name": "tplay",
+  "version": "1.0.0",
+  "description": "Interfaz HTML/CSS/JS que emula un decodificador en resolución fija 1280×720.   Archivo único: `deco_v1_standalone.html` (CSS y JS inlineados, sin dependencias locales).",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "playwright": "^1.64.1",
+    "playwright-core": "^1.64.0"
+  }
+}

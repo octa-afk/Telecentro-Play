@@ -1,0 +1,19 @@
+{
+  "s1": {
+    "classes": "decoder",
+    "activeSub": null,
+    "subScroll": 151,
+    "firstItemCenterRel": -4,
+    "visibleSubText": "Ajustes usuario | Video"
+  },
+  "s2": {
+    "classes": "decoder settings-mode settings-usuario-active settings-usuario-entered general-option-active",
+    "sistemaScroll": 0
+  },
+  "s3": {
+    "classes": "decoder settings-mode settings-usuario-active",
+    "activeSub": "Ajustes usuario",
+    "subScroll": 157,
+    "firstCenterRel": 0
+  }
+}

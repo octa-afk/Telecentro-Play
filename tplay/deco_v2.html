@@ -1,0 +1,2347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TPlay — Simulador</title>
+<style>
+  /* Iconos inline (antes CDN de Tabler): el tamaño lo hereda vía font-size */
+  .ti {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: -0.15em;
+    flex: 0 0 auto;
+  }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+}
+
+body {
+  background: #07151c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.simulator-viewport {
+  width: 1280px;
+  height: 720px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  --sim-scale: min(1, calc(100vw / 1280), calc(100vh / 720));
+  transform: scale(var(--sim-scale));
+}
+
+.tv-shell,
+.decoder {
+  width: 1280px;
+  height: 720px;
+}
+
+.tv-shell {
+  background: #061c25;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.decoder {
+  --cyan: #16b9f7;
+  --line: rgba(18, 177, 235, 0.58);
+  --text: rgba(245, 250, 255, 0.92);
+  --muted: rgba(221, 232, 240, 0.64);
+  background:
+    linear-gradient(rgba(2, 30, 40, 0.82), rgba(1, 25, 35, 0.86)),
+    radial-gradient(circle at 12% -10%, rgba(9, 74, 92, 0.55) 0 12%, transparent 12.5%),
+    radial-gradient(circle at 36% 0%, rgba(8, 65, 84, 0.5) 0 11%, transparent 11.5%),
+    radial-gradient(circle at 59% -3%, rgba(8, 65, 84, 0.5) 0 12%, transparent 12.5%),
+    radial-gradient(circle at 78% -6%, rgba(8, 65, 84, 0.45) 0 13%, transparent 13.5%),
+    #063343;
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.decoder::before {
+  content: "";
+  position: absolute;
+  inset: 48px 42px 0;
+  background:
+    linear-gradient(rgba(5, 42, 55, 0.68), rgba(5, 42, 55, 0.68)),
+    linear-gradient(90deg, transparent 0 30%, rgba(255,255,255,0.09) 30% 30.3%, transparent 30.3% 68%, rgba(255,255,255,0.09) 68% 68.3%, transparent 68.3%),
+    linear-gradient(180deg, transparent 0 49%, rgba(255,255,255,0.09) 49% 49.5%, transparent 49.5%),
+    radial-gradient(circle at 17% 68%, rgba(245,245,245,0.24), transparent 11%),
+    radial-gradient(circle at 50% 46%, rgba(230,230,230,0.23), transparent 17%),
+    radial-gradient(circle at 83% 66%, rgba(238,238,238,0.23), transparent 12%),
+    linear-gradient(135deg, rgba(90, 122, 134, 0.34), transparent 24%),
+    linear-gradient(45deg, transparent 62%, rgba(94, 114, 126, 0.34));
+  border: 6px solid rgba(95, 145, 159, 0.14);
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.decoder::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(1, 29, 39, 0.53);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.top-bar,
+.nav-bar,
+.content-area {
+  position: relative;
+  z-index: 3;
+}
+
+.top-bar {
+  height: 104px;
+  display: grid;
+  grid-template-columns: 280px 1fr 300px;
+  align-items: center;
+  padding: 24px 64px 0;
+}
+
+.logo img {
+  width: 150px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.36));
+}
+
+.top-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 17px;
+  color: var(--muted);
+}
+
+.top-center-dots {
+  display: flex;
+  gap: 5px;
+  position: relative;
+  padding-bottom: 17px;
+}
+
+.top-center-dots::after {
+  content: "telefe";
+  position: absolute;
+  top: 23px;
+  left: 5px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.16);
+}
+
+.dot-r { background: #099ee5; }
+.dot-g { background: #1ce66a; }
+.dot-b { background: #ee255f; }
+
+.top-center > div:last-child {
+  border-left: 3px solid rgba(229, 239, 247, 0.88) !important;
+  padding-left: 13px !important;
+}
+
+.now-playing {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.1;
+}
+
+.now-title {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 19px;
+  line-height: 1.35;
+  font-weight: 300;
+}
+
+.top-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 28px;
+  color: var(--muted);
+}
+
+.top-right > div:first-child {
+  display: grid;
+  grid-template-columns: 54px auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.top-right > div:first-child > div:first-child {
+  color: rgba(232, 240, 247, 0.72) !important;
+  font-size: 17px !important;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.clock {
+  color: rgba(238, 245, 251, 0.82);
+  font-size: 45px;
+  font-weight: 200;
+  line-height: 0.9;
+}
+
+.internet-status {
+  display: block;
+  flex-shrink: 0;
+}
+
+.nav-bar,
+.subnav-bar {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+
+.nav-bar::-webkit-scrollbar,
+.subnav-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-bar {
+  height: 58px;
+  gap: 45px;
+  padding: 0 50%;
+  border-bottom: 2px solid var(--line);
+}
+
+.nav-item,
+.subnav-item {
+  flex: 0 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: rgba(246, 250, 255, 0.92);
+  text-transform: uppercase;
+  position: relative;
+  transition: color 0.15s, opacity 0.15s;
+}
+
+.nav-item {
+  padding: 0;
+  font-size: 33px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.nav-item.active,
+.subnav-item.active {
+  color: var(--cyan);
+}
+
+.nav-item.active::after,
+.subnav-item.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 3px;
+  background: var(--cyan);
+}
+
+.nav-item.kids {
+  font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
+  font-style: italic;
+  text-transform: none;
+}
+
+.kids-label {
+  display: inline-block;
+  transform: rotate(-7deg);
+  transform-origin: center;
+}
+
+.nav-item.kids.active {
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.content-area {
+  height: calc(720px - 162px);
+  overflow: hidden;
+  padding: 0;
+}
+
+.decoder.settings-mode .nav-bar {
+  display: none;
+}
+
+.decoder.settings-mode .content-area {
+  height: calc(720px - 104px);
+}
+
+.section,
+.settings-section {
+  display: none;
+}
+
+.section.visible,
+.settings-section.visible {
+  display: block;
+}
+
+.section {
+  height: 100%;
+  padding: 24px 86px 42px;
+}
+
+.section-label,
+.grabaciones-label {
+  color: rgba(230, 240, 247, 0.65);
+  font-size: 34px;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0 0 34px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  opacity: 0.45;
+}
+
+.content-card,
+.tv-card,
+.app-card {
+  background: rgba(10, 49, 65, 0.54);
+  border: 1px solid rgba(111, 158, 172, 0.14);
+  border-radius: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.content-card:hover,
+.tv-card:hover,
+.app-card:hover {
+  outline: 2px solid rgba(22, 185, 247, 0.65);
+}
+
+.card-thumb,
+.tv-thumb {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background:
+    linear-gradient(rgba(6, 45, 58, 0.56), rgba(6, 45, 58, 0.56)),
+    radial-gradient(circle at 45% 32%, rgba(240, 245, 246, 0.32), transparent 16%),
+    linear-gradient(135deg, rgba(80, 114, 132, 0.45), rgba(10, 39, 56, 0.55));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(180, 214, 226, 0.28);
+  font-size: 46px;
+}
+
+.card-info {
+  padding: 11px 13px;
+}
+
+.card-title,
+.tv-title {
+  color: rgba(236, 244, 249, 0.8);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.card-sub,
+.tv-time-bar {
+  color: rgba(211, 226, 235, 0.58);
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+.buscar-placeholder,
+.adultos-placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: rgba(230, 240, 247, 0.62);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.buscar-placeholder .ti,
+.adultos-placeholder .ti {
+  font-size: 58px;
+  color: rgba(96, 156, 176, 0.42);
+}
+
+.tv-card {
+  width: 430px;
+  opacity: 0.48;
+}
+
+.tv-time-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(3, 28, 39, 0.72);
+}
+
+.tv-thumb {
+  position: relative;
+}
+
+.tv-title {
+  padding: 14px;
+}
+
+.guia-btn-wrap {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.guia-btn {
+  color: var(--cyan);
+  background: transparent;
+  border: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+}
+
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+  opacity: 0.52;
+}
+
+.app-card {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.app-netflix { background: rgba(0, 0, 0, 0.78); color: #e50914; }
+.app-star { background: #38238f; }
+.app-disney { background: #153f93; }
+.app-prime { background: #008fbe; }
+.app-youtube { background: #c41616; }
+
+#sec-ajustes {
+  padding: 0;
+}
+
+.subnav-bar {
+  height: 70px;
+  gap: 55px;
+  padding: 0 50%;
+}
+
+.subnav-item {
+  padding: 0;
+  color: rgba(230, 240, 247, 0.62);
+  font-size: 31px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.decoder.settings-mode .subnav-bar {
+  height: 58px;
+  gap: 45px;
+  border-bottom: 2px solid var(--line);
+}
+
+.decoder.settings-mode .subnav-item {
+  color: rgba(246, 250, 255, 0.92);
+  font-size: 33px;
+}
+
+.decoder.settings-mode .subnav-item.active {
+  color: var(--cyan);
+}
+
+.decoder:not(.settings-mode) .subnav-item.active {
+  color: rgba(230, 240, 247, 0.62);
+}
+
+/* esta funcion oculta la línea activa del menú de ajustes cuando no se está en modo ajustes */
+.decoder:not(.settings-mode) .subnav-item.active::after {
+  display: none;
+}
+
+.settings-section {
+  height: 326px;
+  margin: 152px 88px 0;
+  border-top: 0;
+  opacity: 0.8;
+}
+
+.decoder.settings-mode .settings-section {
+  height: auto;
+  margin: 0;
+  border-top: 0;
+  opacity: 1;
+}
+
+.settings-options {
+  display: none;
+}
+
+/* CASO 1: preview — posicionado sobre Ajustes usuario pero sin entrar.
+   La barra de opciones aparece debajo de la barra de ajustes, sin ítem resaltado. */
+.decoder.settings-mode.settings-usuario-active .settings-options {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+  height: 58px;
+  gap: 45px;
+  padding: 0 50%;
+}
+
+.decoder.settings-mode.settings-usuario-active .settings-options::-webkit-scrollbar {
+  display: none;
+}
+
+/* esta funcion oculta la subnav cuando se entra a conexion */
+.decoder.settings-mode.settings-sistema-active.conexion-entered .subnav-bar {
+    display: none;
+}
+
+.decoder.settings-sistema-entered .subnav-bar {
+  display: none;
+}
+
+.decoder.settings-usuario-entered .settings-options {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+  height: 58px;
+  gap: 45px;
+  padding: 0 50%;
+  border-bottom: 1px solid var(--line);
+}
+
+.decoder.settings-usuario-entered .settings-options::-webkit-scrollbar {
+  display: none;
+}
+
+/* esta funcion oculta la subnav cuando se entra a ajustes de usuario*/
+.user-subnav-bar {
+  display: none;
+}
+.decoder.settings-mode.settings-usuario-active .user-subnav-bar {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  height: 58px;
+}
+/* esta funcion oculta la subnav cuando se entra a ajustes de usuario*/
+.decoder.settings-usuario-entered .subnav-bar {
+    display: none;
+}
+
+.settings-option {
+  flex: 0 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 33px;
+  font-weight: 800;
+  line-height: 1;
+  position: relative;
+  transition: color 0.15s;
+}
+
+/* En preview los ítems se ven apagados, sin ninguno resaltado */
+.decoder.settings-mode.settings-usuario-active:not(.settings-usuario-entered) .settings-option {
+  color: rgba(230, 240, 247, 0.62);
+}
+
+/* En entered los ítems tienen color normal y el activo se resalta */
+.decoder.settings-usuario-entered .settings-option {
+  color: rgba(246, 250, 255, 0.92);
+}
+
+.decoder.settings-usuario-entered .settings-option.active {
+  color: var(--cyan);
+}
+
+.decoder.settings-usuario-entered .settings-option.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 3px;
+  background: var(--cyan);
+}
+
+/* ── general-options-bar ─────────────────────────────────── */
+.general-options-bar {
+  display: none;
+}
+
+/* Preview: visible cuando General está activo pero no se entró */
+.decoder.settings-usuario-entered .settings-option[data-useroption="general"].active ~ .general-options-bar,
+/* El separador lo dibuja la barra padre (settings-options) sobre la que cae
+   este preview: la barra hija nunca lleva borde propio. */
+.decoder.settings-usuario-entered.general-option-active .general-options-bar {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+  height: 58px;
+  gap: 45px;
+  padding: 0 50%;
+}
+
+.decoder.settings-usuario-entered.general-option-active .general-options-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.general-option {
+  flex: 0 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 33px;
+  font-weight: 800;
+  line-height: 1;
+  position: relative;
+  color: rgba(230, 240, 247, 0.62);
+  transition: color 0.15s;
+}
+
+.decoder.settings-usuario-entered.general-entered .general-option {
+  color: rgba(246, 250, 255, 0.92);
+}
+
+.decoder.settings-usuario-entered.general-entered .settings-options {
+  display: none;
+}
+
+.decoder.settings-usuario-entered.general-entered .general-options-bar {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+  height: 58px;
+  gap: 45px;
+  padding: 0 50%;
+  border-bottom: 1px solid var(--line);
+}
+
+.decoder.settings-usuario-entered.general-entered .general-options-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.decoder.settings-usuario-entered.general-entered .general-option.active {
+  color: var(--cyan);
+}
+
+.decoder.settings-usuario-entered.general-entered .general-option.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 3px;
+  background: var(--cyan);
+}
+
+/* ── sistema-options-bar ─────────────────────────────────── */
+.sistema-options-bar {
+  display: none;
+}
+
+.decoder.settings-mode.settings-sistema-active .sistema-options-bar {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+  height: 58px;
+  gap: 45px;
+  padding: 0 50%;
+}
+
+.decoder.settings-mode.settings-sistema-active .sistema-options-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Separador: aparece SOLO cuando hay preview de Conexión debajo, y lo dibuja
+   la barra de sistema (la barra hija nunca lleva borde propio). */
+.decoder.settings-sistema-active.conexion-option-active .sistema-options-bar {
+  border-bottom: 1px solid var(--line);
+}
+
+/* Separador de estado entered: igual que el de las demás barras activas
+   (settings-options, general-options-bar y conexion-options-bar ya lo traían). */
+.decoder.settings-sistema-entered .sistema-options-bar {
+  border-bottom: 1px solid var(--line);
+}
+
+/* ── diagnostico-options-bar ─────────────────────────────── */
+/* Título de la sección: al entrar a Diagnóstico reemplaza la barra de Sistema,
+   igual que Conexión. La barra de opciones queda siempre visible debajo, así
+   que no desaparece al navegar sus ítems. */
+.diagnostico-title {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  height: 58px;
+  font-size: 33px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.decoder.settings-mode.settings-sistema-active.diagnostico-entered .diagnostico-title {
+  display: flex;
+}
+
+.diagnostico-options-bar {
+  display: none;
+}
+
+/* Preview: aparece al seleccionar Diagnóstico dentro de la barra de Sistema.
+   Igual que Conexión, la barra hija no lleva borde propio: el separador lo
+   dibuja la barra de Sistema, que ya está en estado entered. */
+.decoder.settings-sistema-entered.diagnostico-option-active .diagnostico-options-bar,
+.decoder.diagnostico-entered .diagnostico-options-bar {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+  height: 58px;
+  gap: 45px;
+  padding: 0 50%;
+}
+
+.decoder.settings-sistema-entered.diagnostico-option-active .diagnostico-options-bar::-webkit-scrollbar,
+.decoder.diagnostico-entered .diagnostico-options-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.diagnostico-option {
+  flex: 0 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 33px;
+  font-weight: 800;
+  line-height: 1;
+  position: relative;
+  color: rgba(230, 240, 247, 0.62);
+  transition: color 0.15s;
+}
+
+/* Entered: la barra reemplaza a la de Sistema y dibuja su separador. */
+.decoder.diagnostico-entered .diagnostico-options-bar {
+  border-bottom: 1px solid var(--line);
+}
+
+.decoder.settings-mode.settings-sistema-active.diagnostico-entered .sistema-options-bar {
+  display: none;
+}
+
+.decoder.diagnostico-entered .diagnostico-option {
+  color: rgba(246, 250, 255, 0.92);
+}
+
+/* El .active se estiliza solo dentro de entered, para que el preview no
+   muestre ningún ítem resaltado. */
+.decoder.diagnostico-entered .diagnostico-option.active {
+  color: var(--cyan);
+}
+
+.decoder.diagnostico-entered .diagnostico-option.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 3px;
+  background: var(--cyan);
+}
+
+/* ── conexion-tabs (pestañas WIFI / ETHERNET) ─────────────── */
+.conexion-tabs {
+  display: none;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+  height: 58px;
+  gap: 45px;
+  padding: 0 50%;
+}
+
+.decoder.settings-mode.settings-sistema-active .sistema-option[data-sistemaoption="conexion"].active ~ .conexion-tabs,
+.decoder.settings-sistema-active.conexion-option-active .conexion-tabs {
+  display: flex;
+}
+
+.decoder.settings-sistema-active.conexion-option-active .conexion-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.conexion-tab {
+  flex: 0 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 33px;
+  font-weight: 800;
+  line-height: 1;
+  position: relative;
+  color: rgba(230, 240, 247, 0.62);
+  transition: color 0.15s;
+}
+
+.conexion-tab.active {
+  color: var(--cyan);
+}
+
+.conexion-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 3px;
+  background: var(--cyan);
+}
+
+/* Estado entered: la barra se comporta como las demás barras del menú.
+   En preview sigue apagada, sin ítem resaltado y sin línea propia, igual que
+   las barras hijas de usuario/general. */
+.decoder.conexion-entered .conexion-tabs {
+  border-bottom: 1px solid var(--line);
+}
+
+.decoder.conexion-entered .conexion-tab {
+  color: rgba(246, 250, 255, 0.92);
+}
+
+.decoder.conexion-entered .conexion-tab.active {
+  color: var(--cyan);
+}
+
+/* Título de la sección: al entrar a Conexión reemplaza la barra de Sistema */
+.conexion-title {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  height: 58px;
+  font-size: 33px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.decoder.settings-mode.settings-sistema-active.conexion-entered .conexion-title {
+  display: flex;
+}
+
+/* Sin barra de Sistema visible: su lugar lo ocupa el título CONEXIÓN */
+.decoder.settings-mode.settings-sistema-active.conexion-entered .sistema-options-bar {
+  display: none;
+}
+
+/* Mensaje de ayuda bajo las pestañas (sin línea propia) */
+.conexion-hint {
+  display: none;
+  font-size: 14px;
+  color: var(--cyan);
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin-top: 14px;
+  text-align: center;
+}
+
+.decoder.settings-mode.settings-sistema-active.conexion-entered .conexion-hint {
+  display: block;
+}
+
+/* Tipo de conexión */
+.conexion-type {
+  display: none;
+  align-items: center;
+  gap: 18px;
+  margin: 40px 88px 0;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
+.decoder.settings-mode.settings-sistema-active.conexion-entered .conexion-type {
+  display: flex;
+}
+
+.conexion-type-icon {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  color: rgba(246, 250, 255, 0.92);
+}
+
+.conexion-type-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.conexion-type-label {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(246, 250, 255, 0.92);
+}
+
+.conexion-type-value {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+  color: rgba(246, 250, 255, 0.72);
+}
+
+/* Línea separadora: gris y con margen lateral, lejos del texto de ayuda */
+.conexion-divider {
+  display: none;
+  height: 1px;
+  background: rgba(246, 250, 255, 0.22);
+  margin: 128px 88px 0;
+}
+
+.decoder.settings-mode.settings-sistema-active.conexion-entered .conexion-divider {
+  display: block;
+}
+
+/* ── Wi-Fi: unir a otra red ───────────────────────────────── */
+.wifi-join-screen {
+  display: none;
+  position: absolute;
+  inset: 24px 42px 20px;
+  z-index: 5;
+  padding: 69px 0 20px 362px;
+  background: transparent;
+}
+
+.decoder.wifi-join-mode .wifi-join-screen { display: flex; align-items: flex-start; }
+.decoder.wifi-join-mode .conexion-title { display: none !important; }
+.decoder.wifi-join-mode .conexion-tabs { display: none !important; }
+.decoder.wifi-join-mode .conexion-hint { display: none !important; }
+.decoder.wifi-join-mode .conexion-type { display: none !important; }
+.decoder.wifi-join-mode .conexion-divider { display: none !important; }
+
+.wifi-join-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 188px;
+  padding-top: 0;
+  position: relative;
+}
+
+.wifi-join-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+/* Chevron de foco: vive en la columna, así no se mueve cuando ATRÁS se alinea
+   a la derecha ni cuando cambia el botón enfocado. */
+.wifi-join-caret {
+  display: none;
+  position: absolute;
+  left: 216px;
+  top: 4px;
+  width: 26px;
+  height: 26px;
+  color: #fff;
+}
+
+.wifi-join-caret svg { display: block; width: 100%; height: 100%; }
+
+.decoder.wifi-join-mode .wifi-join-caret { display: block; }
+
+/* Con el foco en la lista de redes el chevron desaparece */
+.decoder.wifi-join-nets .wifi-join-caret { display: none !important; }
+
+/* Lista de redes disponibles */
+.wifi-networks {
+  display: flex;
+  flex-direction: column;
+  margin-left: 60px;
+  margin-top: -10px;
+}
+
+.wifi-network {
+  display: grid;
+  grid-template-columns: 20px 20px 52px 1fr;
+  align-items: center;
+  column-gap: 10px;
+  height: 43px;
+  font-size: 17px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* La red seleccionada se marca sin rectángulo de fondo: el nombre, el ícono de
+   señal y el porcentaje pasan a celeste. */
+.wifi-network.wifi-net-focus .wifi-net-lock,
+.wifi-network.wifi-net-focus .wifi-net-ssid,
+.wifi-network.wifi-net-focus .wifi-net-signal,
+.wifi-network.wifi-net-strength {
+  color: var(--cyan);
+}
+
+.wifi-net-lock { display: flex; color: #fff; }
+.wifi-net-lock svg { display: block; width: 20px; height: 20px; }
+.wifi-net-signal { display: flex; color: #9be7a9; }
+.wifi-net-signal svg { display: block; width: 20px; height: 20px; }
+.wifi-net-strength { font-size: 14px; font-weight: 400; color: rgba(246, 250, 255, 0.92); }
+.wifi-net-ssid { font-weight: 600; }
+
+.wifi-join-btn[data-wifi-action="join"] {
+  background: #fff;
+  color: #000;
+  border-color: transparent;
+  width: 100%;
+  text-align: center;
+}
+
+.wifi-join-btn[data-wifi-action="back"] {
+  background: #fff;
+  color: #000;
+  border-color: transparent;
+  width: max-content;
+  align-self: flex-end;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.wifi-join-btn.wifi-focus {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: #fff;
+}
+
+/* ── Wi-Fi: teclado de contraseña ─────────────────────────── */
+.wifi-password-screen {
+  display: none;
+  position: absolute;
+  inset: 24px 42px 20px;
+  z-index: 5;
+  padding: 108px 0 0;
+  background: transparent;
+  flex-direction: column;
+  align-items: center;
+}
+
+.decoder.wifi-password-mode .wifi-password-screen { display: flex; }
+.decoder.wifi-password-mode .conexion-title { display: none !important; }
+.decoder.wifi-password-mode .conexion-tabs { display: none !important; }
+.decoder.wifi-password-mode .conexion-hint { display: none !important; }
+.decoder.wifi-password-mode .conexion-type { display: none !important; }
+.decoder.wifi-password-mode .conexion-divider { display: none !important; }
+
+.password-message {
+  height: 19px;
+  line-height: 19px;
+  /* Mismo ancho que la línea divisoria: el borde izquierdo coincide. */
+  width: 642px;
+  max-width: 100%;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--text);
+  text-align: center;
+  white-space: nowrap;
+}
+/* La máscara de asteriscos se pega al borde izquierdo de la línea.
+   Los asteriscos van en negrita y un 10% más grandes que la leyenda. */
+.password-message.masked {
+  text-align: left;
+  font-size: 24px;     /* máscara claramente más grande que la leyenda (15px) */
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+.password-divider {
+  width: 642px;
+  max-width: 100%;
+  height: 1px;
+  margin-top: 16px;
+  background: rgba(246, 250, 255, 0.6);
+}
+
+/* Rejilla del teclado: 14 columnas de 48px por 5 filas de 50px */
+.keyboard {
+  display: grid;
+  grid-template-columns: repeat(14, 48px);
+  grid-auto-rows: 50px;
+  justify-items: center;
+  align-items: center;
+  margin-top: 27px;
+  margin-left: 22px;
+}
+
+.keyboard-key {
+  grid-row: var(--r);
+  grid-column: var(--c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 34px;
+  font-size: 18px;
+  font-weight: 700;
+  color: rgba(246, 250, 255, 0.95);
+  cursor: pointer;
+  user-select: none;
+  background: transparent;
+  border: 0;
+  transition: background 0.1s, color 0.1s;
+}
+
+.keyboard-key svg { display: block; width: 17px; height: 17px; }
+.keyboard-key.acentos,
+.keyboard-key.simbolos { font-size: 15px; }
+/* Fila superior: texto e iconos con el mismo tamaño que las letras de abajo.
+   Cada SVG tiene su propia caja para que la altura de tinta quede en ~14 px,
+   igual que la altura de mayúscula/ascendente de las letras (18 px). */
+.keyboard-key.kb-top,
+.keyboard-key.kb-top.acentos,
+.keyboard-key.kb-top.simbolos { font-size: 18px; }
+.keyboard-key.kb-top svg { width: 21px; height: 21px; }
+.keyboard-key.kb-top[data-key="limpiar"] svg { width: 22px; height: 22px; }
+.keyboard-key.kb-top[data-key="ocultar"] svg { width: 25px; height: 25px; }
+.keyboard-key.kb-top[data-key="mayus"] svg { width: 18px; height: 18px; }
+.keyboard-key.active { background: var(--cyan); color: #fff; }
+
+.keyboard-footer {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  margin-top: 18px;
+  margin-left: 30px;
+}
+
+.keyboard-btn {
+  height: 30px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #000;
+  background: #fff;
+  border: 0;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.keyboard-btn.siguiente {
+  background: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.keyboard-btn.kb-focus {
+  background: var(--cyan);
+  color: #fff;
+}
+
+.sistema-option {
+  flex: 0 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 33px;
+  font-weight: 800;
+  line-height: 1;
+  position: relative;
+  color: rgba(230, 240, 247, 0.62);
+  transition: color 0.15s;
+
+  
+}
+
+.sistema-option.active {
+  color: var(--cyan);
+}
+
+.sistema-option.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 3px;
+  background: var(--cyan);
+}
+
+/* En entered los ítems de Sistema quedan legibles, igual que en las demás
+   barras activas; en preview se mantienen apagados. */
+.decoder.settings-sistema-entered .sistema-option {
+  color: rgba(246, 250, 255, 0.92);
+}
+
+.decoder.settings-sistema-entered .sistema-option.active {
+  color: var(--cyan);
+}
+
+.ajustes-grid {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.ajuste-item {
+  min-width: 180px;
+  padding: 18px 24px;
+  background: rgba(10, 49, 65, 0.5);
+  color: rgba(236, 244, 249, 0.78);
+}
+
+.pin-input-wrap {
+  display: flex;
+  gap: 10px;
+}
+
+.pin-digit {
+  width: 44px;
+  height: 52px;
+  background: rgba(4, 34, 46, 0.74);
+  border: 2px solid rgba(96, 156, 176, 0.7);
+  color: #fff;
+  text-align: center;
+  font-size: 26px;
+  outline: none;
+}
+
+.pin-digit:focus {
+  border-color: var(--cyan);
+}
+
+.remote-panel {
+  --remote-cyan: #16b9f7;
+
+  position: absolute;
+  top: 30px;              /* lo coloca por encima del simulador */
+  left: 5%;
+  transform: translateX(-50%);
+
+  z-index: 20;
+  padding: 14px;
+
+  background: rgba(4, 18, 25, 0.82);
+  border: 1px solid rgba(105, 150, 166, 0.4);
+  border-radius: 8px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.34);
+}
+
+.remote-btn {
+  min-width: 44px;
+  height: 38px;
+  border: 1px solid rgba(210, 232, 241, 0.34);
+  border-radius: 6px;
+  background: rgba(4, 34, 46, 0.74);
+  color: rgba(246, 250, 255, 0.92);
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+
+
+.remote-btn:active {
+  transform: translateY(1px);
+}
+</style>
+</head>
+<body>
+
+<div class="simulator-viewport">
+  <div class="tv-shell">
+    <div class="decoder">
+      <div class="top-bar">
+    <div class="logo">
+        <img src="assets/images/Gemini_Generated_Image_5lzdrc5lzdrc5lzd-removebg-preview.png" alt="Telecentro" onerror="this.style.display='none'">
+    </div>
+    <div class="top-center">
+      <div class="top-center-dots">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-g"></div>
+        <div class="dot dot-b"></div>
+      </div>
+      <div style="border-left:1px solid #2a4a60; padding-left:10px;">
+        <div class="now-playing">En Reproducción</div>
+        <div class="now-title">Ariel en su salsa</div>
+      </div>
+    </div>
+    <div class="top-right">
+      <div>
+        <div style="font-size:11px; color:#7aa5c0; text-align:right;">jue<br>19 enero</div>
+        <div class="clock">11:15</div>
+      </div>
+      <svg class="internet-status" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(231,240,247,0.88)" stroke-width="1.6" aria-label="Conexión a internet activa" role="img">
+        <circle cx="12" cy="12" r="9"/>
+        <ellipse cx="12" cy="12" rx="4" ry="9"/>
+        <path d="M3.5 9h17M3.5 15h17"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="nav-bar" id="navBar">
+    <div class="nav-item" data-section="buscar" onclick="selectNav(this)">BUSCAR</div>
+    <div class="nav-item active" data-section="home" onclick="selectNav(this)">HOME</div>
+    <div class="nav-item" data-section="tv" onclick="selectNav(this)">TV</div>
+    <div class="nav-item kids" data-section="kids" onclick="selectNav(this)"><span class="kids-label">Kids!</span></div>
+    <div class="nav-item" data-section="guia" onclick="selectNav(this)">GUÍA</div>
+    <div class="nav-item" data-section="micontenido" onclick="selectNav(this)">MI CONTENIDO</div>
+    <div class="nav-item" data-section="apps" onclick="selectNav(this)">APPS</div>
+    <div class="nav-item" data-section="ajustes" onclick="selectNav(this)">AJUSTES</div>
+    <div class="nav-item" data-section="adultos" onclick="selectNav(this)">ADULTOS</div>
+  </div>
+
+  <div class="content-area">
+
+    <div class="section visible" id="sec-home">
+      <div class="section-label">Recomendaciones</div>
+      <div class="card-grid">
+        <div class="content-card"><div class="card-thumb"><svg class="ti ti-movie" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" /><path d="M8 4l0 16" /><path d="M16 4l0 16" /><path d="M4 8l4 0" /><path d="M4 16l4 0" /><path d="M4 12l16 0" /><path d="M16 8l4 0" /><path d="M16 16l4 0" /></svg></div><div class="card-info"><div class="card-title">Película destacada</div><div class="card-sub">Acción · 2h 10m</div></div></div>
+        <div class="content-card"><div class="card-thumb"><svg class="ti ti-device-tv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M16 3l-4 4l-4 -4" /></svg></div><div class="card-info"><div class="card-title">Serie recomendada</div><div class="card-sub">Drama · T2</div></div></div>
+        <div class="content-card"><div class="card-thumb"><svg class="ti ti-movie" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" /><path d="M8 4l0 16" /><path d="M16 4l0 16" /><path d="M4 8l4 0" /><path d="M4 16l4 0" /><path d="M4 12l16 0" /><path d="M16 8l4 0" /><path d="M16 16l4 0" /></svg></div><div class="card-info"><div class="card-title">Estreno de la semana</div><div class="card-sub">Thriller · 1h 52m</div></div></div>
+        <div class="content-card"><div class="card-thumb"><svg class="ti ti-device-tv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M16 3l-4 4l-4 -4" /></svg></div><div class="card-info"><div class="card-title">Lo más visto</div><div class="card-sub">Comedia · T1</div></div></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-buscar">
+      <div class="buscar-placeholder">
+        <svg class="ti ti-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+        <span style="color:#4a6a80;">Sección en construcción</span>
+      </div>
+    </div>
+
+    <div class="section" id="sec-tv">
+      <div class="section-label">Ahora en TV</div>
+      <div class="tv-card">
+        <div class="tv-thumb">
+          <svg class="ti ti-device-tv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M16 3l-4 4l-4 -4" /></svg>
+          <div class="tv-time-bar">
+            <span>11:00</span>
+            <span>12:30</span>
+          </div>
+        </div>
+        <div class="tv-title">Ariel en su salsa</div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-kids">
+      <div class="section-label">Recomendado para chicos</div>
+      <div class="card-grid">
+        <div class="content-card"><div class="card-thumb" style="background:#1a2a50;"><svg class="ti ti-mood-happy" style="color:#5a7aaa;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M9 9l.01 0" /><path d="M15 9l.01 0" /><path d="M8 13a4 4 0 1 0 8 0h-8" /></svg></div><div class="card-info"><div class="card-title">Animación infantil</div><div class="card-sub">Aventura · 45m</div></div></div>
+        <div class="content-card"><div class="card-thumb" style="background:#1a2a50;"><svg class="ti ti-star" style="color:#5a7aaa;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg></div><div class="card-info"><div class="card-title">Serie animada</div><div class="card-sub">Comedia · T3</div></div></div>
+        <div class="content-card"><div class="card-thumb" style="background:#1a2a50;"><svg class="ti ti-friends" style="color:#5a7aaa;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 5m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M5 22v-5l-1 -1v-4a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4l-1 1v5" /><path d="M17 5m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M15 22v-4h-2l2 -6a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1l2 6h-2v4" /></svg></div><div class="card-info"><div class="card-title">Película familiar</div><div class="card-sub">Musical · 1h 20m</div></div></div>
+        <div class="content-card"><div class="card-thumb" style="background:#1a2a50;"><svg class="ti ti-mood-happy" style="color:#5a7aaa;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M9 9l.01 0" /><path d="M15 9l.01 0" /><path d="M8 13a4 4 0 1 0 8 0h-8" /></svg></div><div class="card-info"><div class="card-title">Dibujos clásicos</div><div class="card-sub">Acción · T1</div></div></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-guia">
+      <div class="guia-btn-wrap">
+        <div class="guia-btn">PRESIONE OK PARA ABRIR LA GUÍA</div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-micontenido">
+      <div class="grabaciones-label">Grabaciones</div>
+      <div class="card-grid">
+        <div class="content-card"><div class="card-thumb"><svg class="ti ti-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" /><path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /></svg></div><div class="card-info"><div class="card-title">Grabación 1</div><div class="card-sub">Hoy · 2h 00m</div></div></div>
+        <div class="content-card"><div class="card-thumb"><svg class="ti ti-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" /><path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /></svg></div><div class="card-info"><div class="card-title">Grabación 2</div><div class="card-sub">Ayer · 1h 30m</div></div></div>
+        <div class="content-card"><div class="card-thumb"><svg class="ti ti-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" /><path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /></svg></div><div class="card-info"><div class="card-title">Grabación 3</div><div class="card-sub">Lun · 45m</div></div></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-apps">
+      <div class="section-label">Aplicaciones disponibles</div>
+      <div class="apps-grid">
+        <div class="app-card app-netflix">NETFLIX</div>
+        <div class="app-card app-star">STAR+</div>
+        <div class="app-card app-disney">Disney+</div>
+        <div class="app-card app-prime">prime video</div>
+        <div class="app-card app-youtube"><svg class="ti ti-brand-youtube" style="font-size:28px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M2 8a4 4 0 0 1 4 -4h12a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-12a4 4 0 0 1 -4 -4v-8z" /><path d="M10 9l5 3l-5 3z" /></svg></div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-ajustes">
+      <div class="subnav-bar" id="settingsNav">
+        <div class="subnav-item" data-settings="usuario" onclick="selectSetting(this)">Ajustes usuario</div>
+        <div class="subnav-item" data-settings="video" onclick="selectSetting(this)">Video</div>
+        <div class="subnav-item" data-settings="visita" onclick="selectSetting(this)">Visita guiada por voz</div>
+        <div class="subnav-item" data-settings="grabaciones" onclick="selectSetting(this)">Grabaciones</div>
+        <div class="subnav-item" data-settings="sistema" onclick="selectSetting(this)">Sistema</div>
+      </div>
+      <div class="settings-options" id="userNav">
+        <div class="settings-option active" data-useroption="general" onclick="selectUserOption(this)">General</div>
+        <div class="settings-option" onclick="selectUserOption(this)">Idioma</div>
+        <div class="settings-option" onclick="selectUserOption(this)">Control parental</div>
+        <div class="settings-option" onclick="selectUserOption(this)">Grupo de canales</div>
+      </div>
+      <div class="general-options-bar" id="generalNav">
+        <div class="general-option" onclick="selectGeneralOption(this)">Auto apagado</div>
+        <div class="general-option" onclick="selectGeneralOption(this)">Duración banner</div>
+        <div class="general-option" onclick="selectGeneralOption(this)">Tiempo recordatorios</div>
+        <div class="general-option" onclick="selectGeneralOption(this)">Modo de inicio</div>
+        <div class="general-option" onclick="selectGeneralOption(this)">Rutina de mantenimiento</div>
+      </div>
+      <div class="sistema-options-bar" id="sistemaNav">
+        <div class="sistema-option" data-sistemaoption="diagnostico" onclick="selectSistemaOption(this)">Diagnóstico</div>
+        <div class="sistema-option" data-sistemaoption="conexion" onclick="selectSistemaOption(this)">Conexión</div>
+        <div class="sistema-option" onclick="selectSistemaOption(this)">Canales</div>
+        <div class="sistema-option" onclick="selectSistemaOption(this)">Reset</div>
+      </div>
+      <div class="diagnostico-title" id="diagnosticoTitle">DIAGNÓSTICO</div>
+      <div class="diagnostico-options-bar" id="diagnosticoNav">
+        <div class="diagnostico-option" onclick="selectDiagnosticoOption(this)">Resumen</div>
+        <div class="diagnostico-option" onclick="selectDiagnosticoOption(this)">WiFi/ETH</div>
+        <div class="diagnostico-option" onclick="selectDiagnosticoOption(this)">DVB-C</div>
+        <div class="diagnostico-option" onclick="selectDiagnosticoOption(this)">CAS Configuración</div>
+      </div>
+      <div class="conexion-title" id="conexionTitle">CONEXIÓN</div>
+      <div class="conexion-tabs" id="conexionTabs">
+        <div class="conexion-tab active" data-connection="wifi" onclick="activateConexionTab(this)">WIFI</div>
+        <div class="conexion-tab" data-connection="ethernet" onclick="activateConexionTab(this)">ETHERNET</div>
+      </div>
+      <div class="conexion-hint" id="conexionHint">PRESIONE OK PARA CONFIGURAR WIFI</div>
+      <div class="conexion-divider"></div>
+      <div class="conexion-type" id="conexionType">
+        <svg class="conexion-type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/>
+          <ellipse cx="12" cy="12" rx="4" ry="9"/>
+          <path d="M3.5 9h17M3.5 15h17"/>
+        </svg>
+        <div class="conexion-type-text">
+          <div class="conexion-type-label">TIPO DE CONEXIÓN</div>
+          <div class="conexion-type-value">ETHERNET</div>
+        </div>
+      </div>
+      <div class="wifi-join-screen" id="wifiJoinScreen">
+        <div class="wifi-join-actions" id="wifiJoinActions">
+          <div class="wifi-join-btn wifi-focus" data-wifi-action="join" onclick="selectWifiAction(this)">UNIRSE A OTRA RED</div>
+          <div class="wifi-join-btn" data-wifi-action="back" onclick="selectWifiAction(this)">ATRÁS</div>
+          <span class="wifi-join-caret" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span>
+        </div>
+        <div class="wifi-networks" id="wifiNetworks"></div>
+      </div>
+      <div class="wifi-password-screen" id="wifiPasswordScreen">
+        <div class="password-message" id="passwordMessage">ESTA RED ESTÁ PROTEGIDA - POR FAVOR COMPLETE LA CLAVE DE ACCESO</div>
+        <div class="password-divider"></div>
+        <div class="keyboard" id="keyboard"></div>
+        <div class="keyboard-footer">
+          <div class="keyboard-btn back" data-wifi-action="back" onclick="selectWifiAction(this)">ATRÁS</div>
+          <div class="keyboard-btn siguiente" data-wifi-action="siguiente" onclick="selectWifiAction(this)">SIGUIENTE</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-adultos">
+      <div class="adultos-placeholder">
+        <svg class="ti ti-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 1 1 8 0v4" /></svg>
+        <div style="font-size:14px; color:#7aa5c0; letter-spacing:1px; text-transform:uppercase;">Ingresá tu PIN</div>
+        <div class="pin-input-wrap">
+          <input class="pin-digit" type="password" maxlength="1" />
+          <input class="pin-digit" type="password" maxlength="1" />
+          <input class="pin-digit" type="password" maxlength="1" />
+          <input class="pin-digit" type="password" maxlength="1" />
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+</div>
+
+<div class="remote-panel" aria-label="Control remoto del simulador">
+  <button class="remote-btn" type="button" data-remote="up" aria-label="Arriba">▲</button>
+  <button class="remote-btn" type="button" data-remote="down" aria-label="Abajo">▼</button>
+  <button class="remote-btn" type="button" data-remote="left" aria-label="Izquierda">◀</button>
+  <button class="remote-btn" type="button" data-remote="right" aria-label="Derecha">▶</button>
+  <button class="remote-btn" type="button" data-remote="ok">OK</button>
+  <button class="remote-btn" type="button" data-remote="back">ATRAS</button>
+</div>
+
+<script>
+function getDecoder() {
+  return document.querySelector('.decoder');
+}
+
+function isSettingsMode() {
+  return getDecoder().classList.contains('settings-mode');
+}
+
+function isUserOptionMode() {
+  return getDecoder().classList.contains('settings-usuario-entered');
+}
+
+function centerNavItem(el, navId, instant) {
+  var nav = document.getElementById(navId || 'navBar');
+  if (!nav || !el) return;
+  // usamos offsetLeft para que funcione aunque la barra acabe de mostrarse
+  var desired = el.offsetLeft - (nav.clientWidth / 2) + (el.offsetWidth / 2);
+  desired = Math.max(0, Math.min(desired, nav.scrollWidth - nav.clientWidth));
+  // instant=true: reposiciona sin animación (útil al restaurar una barra que
+  // estuvo oculta con display:none y perdió su scroll)
+  nav.scrollTo({ left: desired, behavior: instant ? 'auto' : 'smooth' });
+}
+
+function centerPreviewFirst(navId, itemSelector) {
+  // Estado preview: la barra hija aparece sin ítem activo. Se centra su 1ª
+  // opción para que quede alineada con el ítem activo del menú padre, igual
+  // que queda centrada esa misma opción cuando se entra formalmente.
+  var first = document.querySelector(itemSelector);
+  if (first) centerNavItem(first, navId);
+}
+
+function resetSettingsState() {
+  // Limpieza completa del estado de ajustes: la próxima entrada a Ajustes
+  // debe arrancar siempre en la primera opción, igual que la primera vez.
+  var dec = getDecoder();
+  dec.classList.remove(
+    'settings-mode',
+    'settings-usuario-active',
+    'settings-usuario-entered',
+    'general-entered',
+    'general-option-active',
+    'settings-sistema-active',
+    'settings-sistema-entered',
+    'conexion-entered',
+    'conexion-option-active',
+    'diagnostico-entered',
+    'diagnostico-option-active',
+    'wifi-join-mode',
+    'wifi-join-nets',
+    'wifi-password-mode'
+  );
+  document.querySelectorAll(
+    '.subnav-item, .settings-option, .general-option, .sistema-option, .conexion-tab, .diagnostico-option'
+  ).forEach(function(n) { n.classList.remove('active'); });
+}
+
+function selectNav(el) {
+  var dec = getDecoder();
+  // navBar está oculta en settings-mode: si venimos de ahí, restaurar sin animación
+  var fromSettings = dec.classList.contains('settings-mode');
+  resetSettingsState();
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('visible'); });
+  el.classList.add('active');
+  var target = document.getElementById('sec-' + el.getAttribute('data-section'));
+  if (target) target.classList.add('visible');
+  centerNavItem(el, 'navBar', fromSettings);
+}
+
+function selectSetting(el) {
+  var dec = getDecoder();
+  dec.classList.add('settings-mode');
+    dec.classList.remove(
+    'settings-usuario-entered',
+    'general-entered',
+    'general-option-active',
+    'settings-sistema-entered',
+    'conexion-entered',
+    'conexion-option-active',
+    'diagnostico-entered',
+    'diagnostico-option-active'
+  );
+  document.querySelectorAll('.subnav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.querySelectorAll('.settings-option').forEach(function(n) { n.classList.remove('active'); });
+  document.querySelectorAll('.general-option').forEach(function(n) { n.classList.remove('active'); });
+  document.querySelectorAll('.sistema-option').forEach(function(n) { n.classList.remove('active'); });
+  document.querySelectorAll('.diagnostico-option').forEach(function(n) { n.classList.remove('active'); });
+  el.classList.add('active');
+  var setting = el.getAttribute('data-settings');
+  if (setting === 'usuario') {
+    dec.classList.add('settings-usuario-active');
+    centerPreviewFirst('userNav', '.settings-option');
+  } else dec.classList.remove('settings-usuario-active');
+  if (setting === 'sistema') {
+    dec.classList.add('settings-sistema-active');
+    centerPreviewFirst('sistemaNav', '.sistema-option');
+  } else dec.classList.remove('settings-sistema-active');
+  centerNavItem(el, 'settingsNav');
+}
+
+function selectUserOption(el) {
+  var dec = getDecoder();
+  dec.classList.add('settings-usuario-entered');
+  dec.classList.remove('general-entered');
+  document.querySelectorAll('.settings-option').forEach(function(n) { n.classList.remove('active'); });
+  document.querySelectorAll('.general-option').forEach(function(n) { n.classList.remove('active'); });
+  el.classList.add('active');
+
+  // Preview de General: su barra se muestra mientras General esté activa en la
+  // barra de usuario. Mismo patrón que conexion-option-active en Sistema.
+  if (el.getAttribute('data-useroption') === 'general') {
+    dec.classList.add('general-option-active');
+    centerPreviewFirst('generalNav', '.general-option');
+  } else {
+    dec.classList.remove('general-option-active');
+  }
+
+  centerNavItem(el, 'userNav');
+}
+
+function selectGeneralOption(el) {
+  var dec = getDecoder();
+  dec.classList.add('general-entered');
+  document.querySelectorAll('.general-option').forEach(function(n) { n.classList.remove('active'); });
+  el.classList.add('active');
+  centerNavItem(el, 'generalNav');
+}
+
+function selectSistemaOption(el) {
+  var dec = getDecoder();
+
+  //esto se encarga de decir que se ingresó a sistema
+  dec.classList.add('settings-sistema-entered');
+
+  document.querySelectorAll('.sistema-option').forEach(function(n) {
+    n.classList.remove('active');
+  });
+
+  el.classList.add('active');
+
+  if (el.getAttribute('data-sistemaoption') === 'conexion') {
+    dec.classList.add('conexion-option-active');
+    centerPreviewFirst('conexionTabs', '.conexion-tab');
+  } else {
+    dec.classList.remove('conexion-option-active');
+  }
+
+  if (el.getAttribute('data-sistemaoption') === 'diagnostico') {
+    dec.classList.add('diagnostico-option-active');
+    centerPreviewFirst('diagnosticoNav', '.diagnostico-option');
+  } else {
+    dec.classList.remove('diagnostico-option-active');
+  }
+
+  centerNavItem(el, 'sistemaNav');
+}
+
+function selectDiagnosticoOption(el) {
+  var dec = getDecoder();
+  dec.classList.add('diagnostico-entered');
+  document.querySelectorAll('.diagnostico-option').forEach(function(n) { n.classList.remove('active'); });
+  el.classList.add('active');
+  centerNavItem(el, 'diagnosticoNav');
+}
+
+
+function selectConexionOption(el) {
+  var dec = getDecoder();
+  dec.classList.add('conexion-entered');
+  document.querySelectorAll('.conexion-option').forEach(function(n) { n.classList.remove('active'); });
+  el.classList.add('active');
+  centerNavItem(el, 'conexionNav');
+}
+
+/* ■ Conexión: pestañas WIFI / ETHERNET ■ */
+function selectConexionTab(el) {
+  document.querySelectorAll('.conexion-tab').forEach(function(n) { n.classList.remove('active'); });
+  el.classList.add('active');
+  centerNavItem(el, 'conexionTabs');
+}
+
+/* Click en una pestaña: entra a la barra y la resalta, igual que el resto de
+   barras del menú. */
+function activateConexionTab(el) {
+  getDecoder().classList.add('conexion-entered');
+  selectConexionTab(el);
+}
+
+/* ■ Wi-Fi: unir a otra red ■ */
+var wifiJoinIndex = 0;
+var wifiNetIndex = 0;
+var wifiJoinColumn = 'actions'; // 'actions' | 'networks'
+
+var wifiNetworkList = [
+  { ssid: 'TeleCentro Wifi', strength: 100, locked: false },
+  { ssid: 'FIELD SERVICE 3', strength: 100, locked: true },
+  { ssid: 'FIELD SERVICE 3 (5g)', strength: 100, locked: true },
+  { ssid: 'TeleCentro Wifi (5g)', strength: 100, locked: false },
+  { ssid: '(5g)', strength: 100, locked: true },
+  { ssid: 'TeleCentro Wifi', strength: 92, locked: false },
+  { ssid: 'Recover.Me-161620', strength: 90, locked: true },
+  { ssid: 'FIELD SERVICE 2', strength: 89, locked: true },
+  { ssid: 'TeleCentro Wifi (5g)', strength: 84, locked: false },
+  { ssid: 'FIELD SERVICE 1-5G (5g)', strength: 84, locked: true },
+  { ssid: 'FIELD SERVICE 5', strength: 82, locked: true }
+];
+
+var WIFI_LOCK_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 5.75a2.05 2.05 0 0 0-1.16 3.74l-1.03 4.45a2.25 2.25 0 0 0 4.38 0l-1.03-4.45A2.05 2.05 0 0 0 12 7.75Z"/></svg>';
+var WIFI_SIGNAL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 9.5a12 12 0 0 1 16 0"/><path d="M7 13a8 8 0 0 1 10 0"/><path d="M10 16.5a4 4 0 0 1 4 0"/><circle cx="12" cy="19" r="1" fill="currentColor" stroke="none"/></svg>';
+
+function buildWifiNetworks() {
+  var host = document.getElementById('wifiNetworks');
+  if (!host) return;
+  host.innerHTML = wifiNetworkList.map(function(n) {
+    return '<div class="wifi-network" data-ssid="' + n.ssid + '" data-locked="' + n.locked + '" onclick="selectWifiNetwork(this)">' +
+      '<span class="wifi-net-lock">' + (n.locked ? WIFI_LOCK_SVG : '') + '</span>' +
+      '<span class="wifi-net-signal">' + WIFI_SIGNAL_SVG + '</span>' +
+      '<span class="wifi-net-strength">' + n.strength + '%</span>' +
+      '<span class="wifi-net-ssid">' + n.ssid + '</span>' +
+      '</div>';
+  }).join('');
+}
+
+function wifiJoinActions() {
+  return Array.prototype.slice.call(document.querySelectorAll('#wifiJoinScreen [data-wifi-action]'));
+}
+
+function wifiNetworks() {
+  return Array.prototype.slice.call(document.querySelectorAll('#wifiNetworks .wifi-network'));
+}
+
+function updateWifiJoinFocus() {
+  var dec = getDecoder();
+  document.querySelectorAll('#wifiJoinScreen .wifi-focus').forEach(function(el) { el.classList.remove('wifi-focus'); });
+  document.querySelectorAll('#wifiNetworks .wifi-net-focus').forEach(function(el) { el.classList.remove('wifi-net-focus'); });
+  dec.classList.toggle('wifi-join-nets', wifiJoinColumn === 'networks');
+
+  if (wifiJoinColumn === 'networks') {
+    var nets = wifiNetworks();
+    if (!nets.length) { wifiJoinColumn = 'actions'; updateWifiJoinFocus(); return; }
+    wifiNetIndex = Math.max(0, Math.min(wifiNetIndex, nets.length - 1));
+    nets[wifiNetIndex].classList.add('wifi-net-focus');
+    return;
+  }
+
+  var items = wifiJoinActions();
+  if (items[wifiJoinIndex]) items[wifiJoinIndex].classList.add('wifi-focus');
+}
+
+/* Movimiento vertical dentro de la columna enfocada */
+function wifiJoinMove(direction) {
+  if (wifiJoinColumn === 'networks') {
+    var nets = wifiNetworks();
+    if (!nets.length) return;
+    wifiNetIndex = Math.max(0, Math.min(wifiNetIndex + direction, nets.length - 1));
+  } else {
+    wifiJoinIndex = Math.max(0, Math.min(wifiJoinIndex + direction, 1));
+  }
+  updateWifiJoinFocus();
+}
+
+/* Paso entre la columna de acciones y la lista de redes */
+function wifiJoinMoveColumn(direction) {
+  if (direction > 0 && wifiJoinColumn === 'actions') {
+    if (!wifiNetworks().length) return;
+    wifiJoinColumn = 'networks';
+    wifiNetIndex = 0;
+  } else if (direction < 0 && wifiJoinColumn === 'networks') {
+    wifiJoinColumn = 'actions';
+  }
+  updateWifiJoinFocus();
+}
+
+function wifiJoinActivate() {
+  if (wifiJoinColumn === 'networks') {
+    enterWifiPassword();
+    return;
+  }
+  var items = wifiJoinActions();
+  var el = items[wifiJoinIndex];
+  if (!el) return;
+  var act = el.getAttribute('data-wifi-action');
+  if (act === 'join') enterWifiPassword();
+  else if (act === 'back') remoteBack();
+}
+
+function selectWifiAction(el) {
+  var act = el.getAttribute('data-wifi-action');
+  if (act === 'siguiente') { confirmPassword(); return; }
+
+  if (getDecoder().classList.contains('wifi-password-mode')) { remoteBack(); return; }
+
+  wifiJoinColumn = 'actions';
+  wifiJoinIndex = act === 'join' ? 0 : 1;
+  updateWifiJoinFocus();
+  if (act === 'join') enterWifiPassword();
+  else remoteBack();
+}
+
+function selectWifiNetwork(el) {
+  var nets = wifiNetworks();
+  wifiJoinColumn = 'networks';
+  wifiNetIndex = Math.max(0, nets.indexOf(el));
+  updateWifiJoinFocus();
+  enterWifiPassword();
+}
+
+function enterWifiJoin() {
+  var dec = getDecoder();
+  dec.classList.add('wifi-join-mode');
+  wifiJoinIndex = 0;
+  wifiNetIndex = 0;
+  wifiJoinColumn = 'actions';
+  updateWifiJoinFocus();
+}
+
+/* ■ Wi-Fi: teclado de contraseña ■ */
+var wifiPassword = '';
+var kbKeys = [];
+var kbIndex = 0;
+var kbShift = false;
+
+var KB_ICONS = {
+  /* Retroceso: tecla con punta a la izquierda, relleno blanco y la X
+     recortada al centro (fill-rule evenodd: la X queda como hueco). */
+  backspace: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M9.4 4h11a1.7 1.7 0 0 1 1.7 1.7v12.6a1.7 1.7 0 0 1-1.7 1.7H9.4L2.6 12ZM15.6 10.657 17.128 9.128 18.472 10.472 16.944 12 18.472 13.528 17.128 14.872 15.6 13.344 14.072 14.872 12.728 13.528 14.256 12 12.728 10.472 14.072 9.128Z"/></svg>',
+  left: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 4 6 12l10.4 8V4Z"/></svg>',
+  right: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.6 4 18 12 7.6 20V4Z"/></svg>',
+  clear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M12 5.4c-4.6 0-8.4 3-10 6.6 1.6 3.6 5.4 6.6 10 6.6s8.4-3 10-6.6c-1.6-3.6-5.4-6.6-10-6.6ZM11.9 8.6a3.3 3.3 0 1 0 0 6.6 3.3 3.3 0 0 0 0-6.6ZM10.1 10.1a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8Z"/></svg>',
+  shift: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8 3.4 12h4.7v5.6h7.8V12h4.7L12 2.8Z"/><rect x="8.1" y="19" width="7.8" height="2.2" rx="0.5"/></svg>'
+};
+
+/* Filas 1..5 = teclas del teclado; fila 6 = botones del pie (solo para la
+   navegación). Letras en orden alfabético de 9 en 9, dígitos en las tres
+   últimas columnas y símbolos en la fila inferior. */
+function buildKeyboardData() {
+  var keys = [
+    { r: 1, c: 1, k: 'borrar', icon: 'backspace' },
+    { r: 1, c: 2, k: 'izquierda', icon: 'left' },
+    { r: 1, c: 3, k: 'derecha', icon: 'right' },
+    { r: 1, c: 4, k: 'limpiar', icon: 'clear' },
+    { r: 1, c: 5, k: 'ocultar', icon: 'eye' },
+    { r: 1, c: 7, k: 'mayus', icon: 'shift' },
+    { r: 1, c: 8, k: 'acentos', label: 'àé', cls: 'acentos' },
+    { r: 1, c: 9, k: 'simbolos', label: '!#', cls: 'simbolos' }
+  ];
+  'abcdefghi'.split('').forEach(function(ch, i) { keys.push({ r: 2, c: i + 1, k: ch }); });
+  'jkl'.split('').forEach(function(ch, i) { keys.push({ r: 3, c: i + 1, k: ch }); });
+  'mnopqr'.split('').forEach(function(ch, i) { keys.push({ r: 3, c: i + 4, k: ch }); });
+  'stuvwxyz'.split('').forEach(function(ch, i) { keys.push({ r: 4, c: i + 1, k: ch }); });
+  [['@', 1], ['.', 2], ['\u2014', 5], ['-', 7], ['_', 8]].forEach(function(pair) {
+    keys.push({ r: 5, c: pair[1], k: pair[0] });
+  });
+  '123'.split('').forEach(function(d, i) { keys.push({ r: 2, c: 12 + i, k: d }); });
+  '456'.split('').forEach(function(d, i) { keys.push({ r: 3, c: 12 + i, k: d }); });
+  '789'.split('').forEach(function(d, i) { keys.push({ r: 4, c: 12 + i, k: d }); });
+  keys.push({ r: 5, c: 13, k: '0' });
+  keys.push({ r: 6, c: 6, k: '__back' });
+  keys.push({ r: 6, c: 8, k: '__siguiente' });
+  return keys;
+}
+
+function kbLabel(item) {
+  if (item.icon) return KB_ICONS[item.icon];
+  if (item.label) return item.label;
+  if (kbShift && item.k.length === 1 && item.k >= 'a' && item.k <= 'z') return item.k.toUpperCase();
+  return item.k;
+}
+
+function buildKeyboard() {
+  var kb = document.getElementById('keyboard');
+  kb.innerHTML = '';
+  kbKeys = buildKeyboardData();
+  kbKeys.forEach(function(item, i) {
+    if (item.k === '__back' || item.k === '__siguiente') return;
+    var el = document.createElement('div');
+    el.className = 'keyboard-key' + (item.r === 1 ? ' kb-top' : '') + (item.cls ? ' ' + item.cls : '');
+    el.style.setProperty('--r', item.r);
+    el.style.setProperty('--c', item.c);
+    el.setAttribute('data-key', item.k);
+    el.innerHTML = kbLabel(item);
+    el.onclick = function() { kbIndex = i; updateKeyboardFocus(); typeKey(item.k); };
+    kb.appendChild(el);
+    item.el = el;
+  });
+}
+
+function kbActivate() {
+  var item = kbKeys[kbIndex];
+  if (item) typeKey(item.k);
+}
+
+function updateKeyboardFocus() {
+  document.querySelectorAll('#keyboard .keyboard-key.active').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelectorAll('#wifiPasswordScreen .keyboard-btn').forEach(function(el) { el.classList.remove('kb-focus'); });
+
+  var item = kbKeys[kbIndex];
+  if (item) {
+    if (item.k === '__back' || item.k === '__siguiente') {
+      var act = item.k === '__back' ? 'back' : 'siguiente';
+      var btn = document.querySelector('#wifiPasswordScreen .keyboard-btn[data-wifi-action="' + act + '"]');
+      if (btn) btn.classList.add('kb-focus');
+    } else if (item.el) {
+      item.el.classList.add('active');
+    }
+  }
+
+  var msg = document.getElementById('passwordMessage');
+  if (msg) {
+    var mask = '';
+    for (var i = 0; i < wifiPassword.length; i++) mask += '*';
+    /* La leyenda desaparece apenas empieza a escribir: solo queda la máscara. */
+    msg.textContent = mask
+      ? mask
+      : 'ESTA RED ESTÁ PROTEGIDA - POR FAVOR COMPLETE LA CLAVE DE ACCESO';
+    /* Los asteriscos se pegan al borde izquierdo de la línea. */
+    msg.classList.toggle('masked', !!mask);
+  }
+}
+
+function typeKey(k) {
+  if (k === '__back') { remoteBack(); return; }
+  if (k === '__siguiente') { confirmPassword(); return; }
+
+  if (k === 'borrar') {
+    wifiPassword = wifiPassword.slice(0, -1);
+  } else if (k === 'limpiar') {
+    wifiPassword = '';
+  } else if (k === 'mayus') {
+    kbShift = !kbShift;
+    kbKeys.forEach(function(item) { if (item.el) item.el.innerHTML = kbLabel(item); });
+  } else if (k === 'izquierda' || k === 'derecha' || k === 'ocultar' || k === 'acentos' || k === 'simbolos') {
+    /* Teclas de función del control: no modifican la clave. */
+  } else if (k.length === 1) {
+    wifiPassword += kbShift ? k.toUpperCase() : k;
+  }
+  updateKeyboardFocus();
+}
+
+function enterWifiPassword() {
+  var dec = getDecoder();
+  dec.classList.remove('wifi-join-mode');
+  dec.classList.add('wifi-password-mode');
+  buildKeyboard();
+  kbShift = false;
+  kbIndex = kbKeys.findIndex(function(item) { return item.k === 'a'; });
+  if (kbIndex < 0) kbIndex = 0;
+  updateKeyboardFocus();
+}
+
+/* Navegación geométrica: busca la tecla más cercana en la dirección pedida.
+
+   En horizontal se restringe primero a la MISMA FILA, así el puntero salta de
+   una tecla a la contigua de su fila (p. ej. de "-" a la barra de espacio)
+   en lugar de cruzarse con una letra de la fila de arriba. Si en esa fila no
+   hay ninguna tecla en esa dirección, se toma la más cercana de cualquier
+   fila (por ejemplo, desde la última tecla de la fila 1 hacia los dígitos). */
+function findNearestKey(cur, dr, dc, sameRowOnly) {
+  var best = -1;
+  var bestScore = Infinity;
+  for (var i = 0; i < kbKeys.length; i++) {
+    var item = kbKeys[i];
+    if (item === cur) continue;
+    if (sameRowOnly && item.r !== cur.r) continue;
+    var ddr = item.r - cur.r;
+    var ddc = item.c - cur.c;
+    if (dr !== 0 && Math.sign(ddr) !== dr) continue;
+    if (dc !== 0 && Math.sign(ddc) !== dc) continue;
+    var score = dr !== 0
+      ? Math.abs(ddr) * 4 + Math.abs(ddc)
+      : Math.abs(ddc) * 4 + Math.abs(ddr);
+    if (score < bestScore) { bestScore = score; best = i; }
+  }
+  return best;
+}
+
+function navigateKeyboard(dr, dc) {
+  var cur = kbKeys[kbIndex];
+  if (!cur) return;
+  var best = dc !== 0 ? findNearestKey(cur, dr, dc, true) : -1;
+  if (best < 0) best = findNearestKey(cur, dr, dc, false);
+  if (best >= 0) { kbIndex = best; updateKeyboardFocus(); }
+}
+
+function confirmPassword() {
+  var dec = getDecoder();
+  dec.classList.remove('wifi-password-mode');
+  wifiPassword = '';
+  kbShift = false;
+  var msg = document.getElementById('passwordMessage');
+  if (msg) {
+    msg.textContent = 'ESTA RED ESTÁ PROTEGIDA - POR FAVOR COMPLETE LA CLAVE DE ACCESO';
+    msg.classList.remove('masked');
+  }
+  setTimeout(function() {
+    dec.classList.remove('wifi-join-mode');
+    var firstTab = document.querySelector('.conexion-tab[data-connection="wifi"]');
+    if (firstTab) selectConexionTab(firstTab);
+  }, 400);
+}
+
+function moveNav(selector, direction, selectFn) {
+  var items = Array.prototype.slice.call(document.querySelectorAll(selector));
+  if (!items.length) return;
+  var activeIndex = items.findIndex(function(i) { return i.classList.contains('active'); });
+  if (activeIndex < 0) activeIndex = 0;
+  var next = Math.max(0, Math.min(activeIndex + direction, items.length - 1));
+  if (next === activeIndex) return;
+  selectFn(items[next]);
+}
+
+function goHome() {
+  var home = document.querySelector('.nav-item[data-section="home"]');
+  if (home) selectNav(home);
+}
+
+function remoteBack() {
+  var dec = getDecoder();
+
+  // ── Nivel 1: Teclado de contraseña → "Unirse a otra red" ──
+  if (dec.classList.contains('wifi-password-mode')) {
+    dec.classList.remove('wifi-password-mode');
+    dec.classList.add('wifi-join-mode');
+    wifiPassword = '';
+    var msg = document.getElementById('passwordMessage');
+    if (msg) {
+      msg.textContent = 'ESTA RED ESTÁ PROTEGIDA - POR FAVOR COMPLETE LA CLAVE DE ACCESO';
+      msg.classList.remove('masked');
+    }
+    wifiJoinIndex = 0;
+    updateWifiJoinFocus();
+    return;
+  }
+
+  // ── Nivel 2: "Unirse a otra red" → Conexión (pestañas WIFI/ETHERNET) ──
+  if (dec.classList.contains('wifi-join-mode')) {
+    dec.classList.remove('wifi-join-mode', 'wifi-join-nets');
+    wifiJoinIndex = 0;
+    wifiNetIndex = 0;
+    wifiJoinColumn = 'actions';
+    // Se mantiene conexion-entered: se vuelve a la pantalla de conexión
+    updateWifiJoinFocus();
+    return;
+  }
+
+  // ── Nivel 3: Conexión (pestañas) → Sistema (barra de sistema) ──
+  if (dec.classList.contains('conexion-entered')) {
+    dec.classList.remove('conexion-entered');
+    document.querySelectorAll('.conexion-tab').forEach(function(n) { n.classList.remove('active'); });
+    setTimeout(function() {
+      var activeSysOpt = document.querySelector('.sistema-option.active') || document.querySelector('.sistema-option');
+      if (activeSysOpt) centerNavItem(activeSysOpt, 'sistemaNav', true);
+      var firstConTab = document.querySelector('.conexion-tab');
+      if (firstConTab) centerNavItem(firstConTab, 'conexionTabs');
+    }, 0);
+    return;
+  }
+
+  // ── Nivel 4: Subopción General → Opciones de usuario ──
+  if (dec.classList.contains('general-entered')) {
+    dec.classList.remove('general-entered');
+    setTimeout(function() {
+      var activeUserOpt = document.querySelector('.settings-option.active') || document.querySelector('.settings-option');
+      if (activeUserOpt) centerNavItem(activeUserOpt, 'userNav');
+    }, 0);
+    return;
+  }
+
+  // ── Nivel 5: Opciones de usuario → Subnav de Ajustes ──
+  if (dec.classList.contains('settings-usuario-entered')) {
+    dec.classList.remove('settings-usuario-entered', 'general-entered', 'general-option-active');
+    setTimeout(function() {
+      var activeSetting = document.querySelector('.subnav-item.active') || document.querySelector('.subnav-item');
+      if (activeSetting) centerNavItem(activeSetting, 'settingsNav', true);
+    }, 0);
+    return;
+  }
+
+  // ── Nivel 5b: Opciones de Diagnóstico → Barra de Sistema ──
+  if (dec.classList.contains('diagnostico-entered')) {
+    dec.classList.remove('diagnostico-entered');
+    document.querySelectorAll('.diagnostico-option').forEach(function(n) { n.classList.remove('active'); });
+    setTimeout(function() {
+      var activeSysOpt = document.querySelector('.sistema-option.active') || document.querySelector('.sistema-option');
+      if (activeSysOpt) centerNavItem(activeSysOpt, 'sistemaNav', true);
+      centerPreviewFirst('diagnosticoNav', '.diagnostico-option');
+    }, 0);
+    return;
+  }
+
+  // ── Nivel 6: Opciones de Sistema → Subnav de Ajustes ──
+  if (dec.classList.contains('settings-sistema-entered')) {
+    dec.classList.remove('settings-sistema-entered', 'conexion-entered', 'conexion-option-active', 'diagnostico-entered', 'diagnostico-option-active');
+    document.querySelectorAll('.conexion-tab').forEach(function(n) { n.classList.remove('active'); });
+    document.querySelectorAll('.diagnostico-option').forEach(function(n) { n.classList.remove('active'); });
+    setTimeout(function() {
+      var activeSetting = document.querySelector('.subnav-item.active') || document.querySelector('.subnav-item');
+      if (activeSetting) centerNavItem(activeSetting, 'settingsNav', true);
+    }, 0);
+    return;
+  }
+
+  // ── Nivel 7: Modo Ajustes → Menú principal (home) ──
+  if (dec.classList.contains('settings-mode')) {
+    var home = document.querySelector('.nav-item[data-section="home"]');
+    if (home) selectNav(home);
+    return;
+  }
+
+  // ── Nivel 8: Otra sección del menú principal → home ──
+  var visibleSection = document.querySelector('.section.visible');
+  if (visibleSection && visibleSection.id !== 'sec-home') {
+    var homeNav = document.querySelector('.nav-item[data-section="home"]');
+    if (homeNav) selectNav(homeNav);
+  }
+}
+
+function handleRemoteAction(action) {
+  if (action === 'back') { remoteBack(); return; }
+  if (action === 'home' || action === 'exit') { goHome(); return; }
+  var dec = getDecoder();
+  if (dec.classList.contains('wifi-join-mode')) {
+    if (action === 'left') wifiJoinMoveColumn(-1);
+    else if (action === 'right') wifiJoinMoveColumn(1);
+    else if (action === 'up') wifiJoinMove(-1);
+    else if (action === 'down') wifiJoinMove(1);
+    else if (action === 'ok') wifiJoinActivate();
+    return;
+  }
+  if (dec.classList.contains('wifi-password-mode')) {
+    if (action === 'ok') kbActivate();
+    return;
+  }
+  // Navegación general para los demás modos (conexion-entered, settings-mode, etc.)
+  if (action === 'left' || action === 'right') {
+    navigateCurrentLayer(action === 'right' ? 1 : -1);
+    return;
+  }
+  if (action === 'up' || action === 'down') {
+    navigateCurrentLayer(action === 'down' ? 1 : -1);
+    return;
+  }
+  if (action === 'ok') {
+    selectCurrentItem();
+    return;
+  }
+}
+function isGeneralOptionMode() {
+  return getDecoder().classList.contains('general-entered');
+}
+
+function isSistemaOptionMode() {
+  return getDecoder().classList.contains('settings-sistema-entered');
+}
+
+function isDiagnosticoOptionMode() {
+  return getDecoder().classList.contains('diagnostico-entered');
+}
+
+function isConexionOptionMode() {
+  return getDecoder().classList.contains('conexion-entered');
+}
+
+function getActiveItem(selector) {
+  var items = Array.prototype.slice.call(document.querySelectorAll(selector));
+  return items.find(function(item) { return item.classList.contains('active'); }) || items[0];
+}
+
+function navigateCurrentLayer(direction) {
+  var dec = getDecoder();
+  if (dec.classList.contains('wifi-join-mode')) {
+    wifiJoinMoveColumn(direction);
+  } else if (dec.classList.contains('wifi-password-mode')) {
+    // direccion > 0: derecha/abajo, < 0: izquierda/arriba (se ajusta en keydown)
+    navigateKeyboard(direction > 0 ? 0 : 0, direction > 0 ? 1 : -1);
+  } else if (isConexionOptionMode()) {
+    moveNav('.conexion-tab', direction, selectConexionTab);
+  } else if (isDiagnosticoOptionMode()) {
+    moveNav('.diagnostico-option', direction, selectDiagnosticoOption);
+  } else if (isGeneralOptionMode()) {
+    moveNav('.general-option', direction, selectGeneralOption);
+  } else if (isSistemaOptionMode()) {
+    moveNav('.sistema-option', direction, selectSistemaOption);
+  } else if (isUserOptionMode()) {
+    moveNav('.settings-option', direction, selectUserOption);
+  } else if (dec.classList.contains('settings-mode')) {
+    moveNav('.subnav-item', direction, selectSetting);
+  } else {
+    moveNav('.nav-item', direction, selectNav);
+  }
+}
+function selectCurrentItem() {
+  var dec = getDecoder();
+  if (dec.classList.contains('wifi-join-mode')) {
+    wifiJoinActivate();
+  } else if (dec.classList.contains('wifi-password-mode')) {
+    kbActivate();
+  } else if (isConexionOptionMode()) {
+    var activeConnection = getActiveItem('.conexion-tab');
+    selectConexionTab(activeConnection);
+    // Si la pestaña activa es WIFI, entrar a pantalla "Unirse a otra red"
+    if (activeConnection && activeConnection.getAttribute('data-connection') === 'wifi') {
+      enterWifiJoin();
+    }
+  } else if (isGeneralOptionMode()) {
+    selectGeneralOption(getActiveItem('.general-option'));
+  } else if (isDiagnosticoOptionMode()) {
+    selectDiagnosticoOption(getActiveItem('.diagnostico-option'));
+  } else if (isSistemaOptionMode()) {
+    var activeSys = getActiveItem('.sistema-option');
+    if (activeSys.getAttribute('data-sistemaoption') === 'conexion') {
+      // entrar a pestañas de conexión: se resalta la pestaña activa (WIFI)
+      dec.classList.add('conexion-entered');
+      var activeTab = getActiveItem('.conexion-tab');
+      if (activeTab) selectConexionTab(activeTab);
+    } else if (activeSys.getAttribute('data-sistemaoption') === 'diagnostico') {
+      // entrar a las opciones de diagnóstico: se resalta la primera
+      selectDiagnosticoOption(getActiveItem('.diagnostico-option'));
+    } else {
+      selectSistemaOption(activeSys);
+    }
+  } else if (isUserOptionMode()) {
+    var activeOpt = getActiveItem('.settings-option');
+    if (activeOpt.getAttribute('data-useroption') === 'general') {
+      selectGeneralOption(getActiveItem('.general-option'));
+    } else {
+      selectUserOption(activeOpt);
+    }
+  } else if (dec.classList.contains('settings-mode')) {
+    var activeSetting = getActiveItem('.subnav-item');
+    var setting = activeSetting.getAttribute('data-settings');
+    selectSetting(activeSetting);
+    if (setting === 'usuario') {
+      selectUserOption(getActiveItem('.settings-option'));
+    } else if (setting === 'sistema') {
+      selectSistemaOption(getActiveItem('.sistema-option'));
+    }
+  } else {
+    var activeNav = getActiveItem('.nav-item');
+    if (activeNav.getAttribute('data-section') === 'ajustes') {
+      selectSetting(getActiveItem('.subnav-item'));
+    } else {
+      selectNav(activeNav);
+    }
+  }
+}
+function handleKeydown(event) {
+  var action = null;
+  if (event.key === 'ArrowLeft') action = 'left';
+  else if (event.key === 'ArrowRight') action = 'right';
+  else if (event.key === 'ArrowUp') action = 'up';
+  else if (event.key === 'ArrowDown') action = 'down';
+  else if (event.key === 'Enter') action = 'ok';
+  else if (event.key === 'Escape') action = 'back';
+  else if (event.key === 'Home' || event.key === 'Exit') action = 'home';
+  if (!action) return;
+  event.preventDefault();
+  var dec = getDecoder();
+  if (dec.classList.contains('wifi-password-mode')) {
+    if (action === 'left') navigateKeyboard(0, -1);
+    else if (action === 'right') navigateKeyboard(0, 1);
+    else if (action === 'up') navigateKeyboard(-1, 0);
+    else if (action === 'down') navigateKeyboard(1, 0);
+    else if (action === 'ok') kbActivate();
+    else handleRemoteAction(action);
+    return;
+  }
+  if (dec.classList.contains('wifi-join-mode')) {
+    if (action === 'left') wifiJoinMoveColumn(-1);
+    else if (action === 'right') wifiJoinMoveColumn(1);
+    else if (action === 'up') wifiJoinMove(-1);
+    else if (action === 'down') wifiJoinMove(1);
+    else if (action === 'ok') wifiJoinActivate();
+    else handleRemoteAction(action);
+    return;
+  }
+  if (action === 'left') navigateCurrentLayer(-1);
+  else if (action === 'right') navigateCurrentLayer(1);
+  else if (action === 'up') navigateCurrentLayer(-1);
+  else if (action === 'down') navigateCurrentLayer(1);
+  else if (action === 'ok') selectCurrentItem();
+  else handleRemoteAction(action);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  buildWifiNetworks();
+  document.querySelectorAll('[data-remote]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      handleRemoteAction(this.getAttribute('data-remote'));
+    });
+  });
+  document.addEventListener('keydown', handleKeydown);
+});
+</script>
+
+</body>
+</html>
