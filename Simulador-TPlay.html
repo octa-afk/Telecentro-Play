@@ -1898,6 +1898,175 @@ body {
   pointer-events: none;
   white-space: nowrap;
 }
+
+/* ── Ajustes usuario: barras hijas (General / Idioma / Control parental / Grupo de canales) ──
+   Todas reutilizan .general-options-bar / .general-option; solo la barra actual
+   (.usub-cur) se muestra. Hint + divisor + panel de valores solo entrando (general-entered). */
+.usub-bar:not(.usub-cur) { display: none !important; }
+.usub-hint, .usub-divider, .usub-info { display: none; }
+.usub-hint { min-height: 16px; }
+.usub-divider { margin-top: 160px; }
+.usub-info { margin-top: 36px; }
+.decoder.settings-usuario-entered.general-entered .usub-hint { display: block; }
+.decoder.settings-usuario-entered.general-entered .usub-divider { display: block; }
+.decoder.settings-usuario-entered.general-entered .usub-info { display: grid; }
+.usub-info .fr-v { color: rgba(246, 250, 255, 0.78); }
+
+/* ── Secciones del menú principal (vista previa al navegar) ── */
+.sec-hint {
+  text-align: center;
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-top: -6px;
+}
+.tv-now-card { display: flex; align-items: center; gap: 22px; margin: 92px 0 0 14px; opacity: 0.85; }
+.tv-now-thumb {
+  width: 110px; height: 110px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 35%, #46687a, #1d3846 70%);
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 20px; font-size: 13px; color: rgba(246, 250, 255, 0.85);
+}
+.tv-now-dots { display: flex; gap: 5px; margin-bottom: 8px; }
+.tv-now-dots .dot { width: 14px; height: 14px; border-radius: 50%; }
+.tv-now-title { font-size: 30px; font-weight: 300; color: rgba(246, 250, 255, 0.9); }
+.mc-sub {
+  text-align: center; margin-top: 4px; font-size: 22px; font-weight: 800;
+  color: rgba(230, 240, 247, 0.55); text-transform: uppercase;
+}
+.sec-foot {
+  position: absolute; left: 0; right: 0; bottom: 34px; text-align: center;
+  font-size: 11px; color: var(--muted); letter-spacing: 0.4px; text-transform: uppercase;
+}
+.sec-foot b { color: #f2a81d; margin-right: 4px; }
+#sec-micontenido, #sec-adultos { position: relative; }
+#sec-adultos .adultos-placeholder { display: none; }
+.decoder.now-info-hidden #sec-adultos .adultos-placeholder { display: flex; }
+.decoder.now-info-hidden #sec-adultos .sec-hint { display: none; }
+.apps-prev { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-top: 150px; opacity: 0.55; }
+
+/* ── Capa del tour: Guía, Mi Contenido › Grabaciones, Apps ── */
+.tour-layer {
+  display: none; position: absolute; inset: 0; z-index: 5;
+  background: #062331; color: var(--text); overflow: hidden;
+}
+.decoder.tour-mode .tour-layer { display: block; }
+.tour-head { position: absolute; top: 24px; left: 62px; right: 62px; display: flex; align-items: center; gap: 12px; z-index: 2; }
+.tour-head .fr-logo { width: 150px; }
+.tour-crumb {
+  font-size: 12px; color: var(--muted); letter-spacing: 0.3px; text-transform: uppercase;
+  border-left: 1px solid rgba(246, 250, 255, 0.3); padding-left: 12px;
+}
+.tour-crumb:empty { display: none; }
+.tour-screen { display: none; position: absolute; inset: 0; }
+.tour-screen.visible { display: block; }
+.tour-title {
+  position: absolute; top: 118px; left: 0; right: 0; text-align: center;
+  font-size: 30px; font-weight: 800; text-transform: uppercase; color: rgba(246, 250, 255, 0.92);
+}
+.tour-bar {
+  position: absolute; top: 166px; left: 0; right: 0; height: 58px;
+  display: flex; align-items: center; justify-content: center; gap: 45px;
+  border-bottom: 1px solid var(--line);
+}
+.tour-bar span {
+  position: relative; font-size: 33px; font-weight: 800; line-height: 1;
+  text-transform: uppercase; color: rgba(246, 250, 255, 0.55);
+}
+.tour-bar span.active { color: rgba(246, 250, 255, 0.92); }
+.tour-bar.focus span.active { color: var(--cyan); }
+.tour-bar.focus span.active::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 3px; background: var(--cyan);
+}
+.tour-foot {
+  position: absolute; left: 0; right: 0; bottom: 24px; text-align: center;
+  font-size: 11px; color: var(--muted); letter-spacing: 0.4px; text-transform: uppercase;
+}
+.tour-foot b { color: #f2a81d; margin: 0 4px 0 16px; }
+.tour-foot b:first-child { margin-left: 0; }
+
+/* Guía */
+.guia-art {
+  position: absolute; top: 0; right: 0; width: 520px; height: 220px;
+  background: linear-gradient(90deg, #062331 0%, #0d2f3d 40%, #16384a 100%);
+}
+.guia-info { position: absolute; top: 146px; left: 62px; }
+.gi-time { font-size: 13px; color: var(--muted); }
+.gi-title { margin-top: 6px; font-size: 20px; font-weight: 700; color: var(--cyan); }
+.gi-sub { margin-top: 4px; font-size: 14px; color: rgba(246, 250, 255, 0.85); }
+.gi-sub i { font-weight: 800; }
+.guia-head {
+  position: absolute; top: 236px; left: 0; right: 0; height: 26px; display: flex;
+  border-bottom: 1px solid rgba(246, 250, 255, 0.18); font-size: 13px; color: var(--muted);
+}
+.guia-head .g-ch { font-weight: 800; color: rgba(246, 250, 255, 0.85); align-items: flex-end; padding-bottom: 4px; }
+.guia-head .g-tl { position: relative; }
+.guia-head .g-tick { position: absolute; bottom: 4px; transform: translateX(-50%); }
+.guia-head .g-tick.big { font-weight: 800; color: rgba(246, 250, 255, 0.9); font-size: 14px; }
+.guia-rows { position: absolute; top: 264px; left: 0; right: 0; }
+.g-row { display: flex; height: 52px; border-bottom: 1px solid rgba(246, 250, 255, 0.07); }
+.g-ch { flex: 0 0 98px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding-right: 10px; font-size: 14px; color: rgba(246, 250, 255, 0.85); }
+.g-ch i { width: 22px; height: 22px; border-radius: 4px; background: rgba(246, 250, 255, 0.25); }
+.g-tl { position: relative; flex: 1; display: flex; overflow: hidden; }
+.g-cell {
+  flex: 0 0 auto; box-sizing: border-box; margin-right: 2px; padding: 8px 8px 0;
+  background: rgba(10, 49, 65, 0.78); font-size: 14px; font-weight: 600;
+  text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: rgba(246, 250, 255, 0.9);
+}
+.g-cell.sel { background: #12a8ec; color: #fff; }
+.g-line {
+  position: absolute; top: 264px; bottom: 56px; width: 1px; background: #12a8ec; pointer-events: none;
+  left: calc(98px + (100% - 98px) * 0.25);
+}
+
+/* Grabaciones */
+.grab-body { position: absolute; top: 250px; left: 0; right: 0; }
+.rec-list { width: 540px; margin: 28px auto 0; }
+.rec-row { display: flex; align-items: center; gap: 12px; height: 46px; padding: 0 8px; }
+.rec-row.sel { outline: 2px solid var(--cyan); }
+.rec-thumb { width: 44px; height: 34px; background: linear-gradient(135deg, #8a6a4a, #3a2a2a); }
+.rec-main { flex: 1; min-width: 0; }
+.rec-t { font-size: 16px; font-weight: 700; color: rgba(246, 250, 255, 0.95); }
+.rec-g { font-size: 12px; color: var(--muted); }
+.rec-d { font-size: 12px; color: var(--muted); text-align: right; }
+.rec-d::after { content: ""; display: inline-block; width: 8px; height: 8px; margin-left: 10px; background: #e0245e; transform: rotate(45deg); }
+.grab-empty { text-align: center; margin-top: 70px; }
+.grab-empty svg { width: 64px; height: 64px; color: rgba(214, 224, 230, 0.8); }
+.grab-empty b { display: block; margin-top: 16px; font-size: 24px; color: rgba(246, 250, 255, 0.95); }
+.grab-empty p { width: 600px; margin: 14px auto 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
+.grab-form { width: 560px; margin: 40px auto 0; display: grid; grid-template-columns: 220px 60px 1fr; row-gap: 12px; align-items: center; font-size: 14px; text-transform: uppercase; }
+.grab-form .gf-l { text-align: right; padding-right: 18px; color: rgba(246, 250, 255, 0.85); }
+.grab-form .gf-a { color: rgba(246, 250, 255, 0.85); letter-spacing: 2px; }
+.grab-form .gf-v { color: rgba(246, 250, 255, 0.95); }
+.grab-form .gf-f .gf-l, .grab-form .gf-f .gf-v { color: var(--cyan); font-weight: 800; }
+.grab-space { grid-column: 1 / 4; display: flex; align-items: center; gap: 16px; margin-top: 8px; justify-content: center; }
+.grab-space i { width: 120px; height: 10px; border: 1px solid rgba(246, 250, 255, 0.6); }
+.grab-btns { grid-column: 1 / 4; display: flex; justify-content: center; gap: 14px; margin-top: 10px; }
+.grab-btns span { padding: 3px 8px; background: #fff; color: #05141b; font-size: 12px; font-weight: 800; text-transform: uppercase; }
+.grab-btns span.sel { background: var(--cyan); color: #fff; }
+
+/* Apps */
+.apps-tour { position: absolute; top: 200px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.apps-tour-row, .apps-prev-row { display: flex; gap: 16px; }
+.a-tile {
+  width: 128px; height: 72px; box-sizing: border-box; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; font-weight: 800; font-size: 17px; color: #fff;
+  background: #3a4a52; overflow: hidden;
+}
+.a-tile img { width: 56px; height: auto; }
+.a-tile small { font-size: 7px; letter-spacing: 0.4px; color: #3a4a52; }
+.a-tplay { background: #c3ccd1; }
+.a-netflix { background: #c7c7c7; color: #e50914; letter-spacing: 1px; }
+.a-prime { background: linear-gradient(135deg, #0b2a52, #00a8e1); font-style: italic; font-size: 16px; }
+.a-yt { background: #c7c7c7; color: #d00; font-size: 15px; }
+.a-ytk { background: #c7c7c7; color: #d00; font-size: 12px; }
+.a-disney { background: #0f2b6b; }
+.a-star { background: linear-gradient(135deg, #4b2a8f, #c22d7a); }
+.apps-tour .a-tile { opacity: 0.85; }
+.apps-tour .a-tile.sel { opacity: 1; outline: 3px solid #fff; outline-offset: 0; }
 </style>
 </head>
 <body>
@@ -1965,16 +2134,13 @@ body {
     </div>
 
     <div class="section" id="sec-tv">
-      <div class="section-label">Ahora en TV</div>
-      <div class="tv-card">
-        <div class="tv-thumb">
-          <svg class="ti ti-device-tv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M16 3l-4 4l-4 -4" /></svg>
-          <div class="tv-time-bar">
-            <span>11:00</span>
-            <span>12:30</span>
-          </div>
+      <div class="sec-hint">Volver a TV</div>
+      <div class="tv-now-card">
+        <div class="tv-now-thumb">11:15 · 13:00</div>
+        <div>
+          <div class="tv-now-dots"><span class="dot dot-r"></span><span class="dot dot-g"></span><span class="dot dot-b"></span></div>
+          <div class="tv-now-title">Ariel en su salsa</div>
         </div>
-        <div class="tv-title">Ariel en su salsa</div>
       </div>
     </div>
 
@@ -1989,29 +2155,16 @@ body {
     </div>
 
     <div class="section" id="sec-guia">
-      <div class="guia-btn-wrap">
-        <div class="guia-btn">PRESIONE OK PARA ABRIR LA GUÍA</div>
-      </div>
+      <div class="sec-hint">Presione OK para abrir la guía</div>
     </div>
 
     <div class="section" id="sec-micontenido">
-      <div class="grabaciones-label">Grabaciones</div>
-      <div class="card-grid">
-        <div class="content-card"><div class="card-thumb"><svg class="ti ti-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" /><path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /></svg></div><div class="card-info"><div class="card-title">Grabación 1</div><div class="card-sub">Hoy · 2h 00m</div></div></div>
-        <div class="content-card"><div class="card-thumb"><svg class="ti ti-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" /><path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /></svg></div><div class="card-info"><div class="card-title">Grabación 2</div><div class="card-sub">Ayer · 1h 30m</div></div></div>
-        <div class="content-card"><div class="card-thumb"><svg class="ti ti-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 10l4.553 -2.276a1 1 0 0 1 1.447 .894v6.764a1 1 0 0 1 -1.447 .894l-4.553 -2.276v-4z" /><path d="M3 6m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /></svg></div><div class="card-info"><div class="card-title">Grabación 3</div><div class="card-sub">Lun · 45m</div></div></div>
-      </div>
+      <div class="mc-sub">Grabaciones</div>
+      <div class="sec-foot"><b>OK</b> : Acceso a grabaciones</div>
     </div>
 
     <div class="section" id="sec-apps">
-      <div class="section-label">Aplicaciones disponibles</div>
-      <div class="apps-grid">
-        <div class="app-card app-netflix">NETFLIX</div>
-        <div class="app-card app-star">STAR+</div>
-        <div class="app-card app-disney">Disney+</div>
-        <div class="app-card app-prime">prime video</div>
-        <div class="app-card app-youtube"><svg class="ti ti-brand-youtube" style="font-size:28px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M2 8a4 4 0 0 1 4 -4h12a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-12a4 4 0 0 1 -4 -4v-8z" /><path d="M10 9l5 3l-5 3z" /></svg></div>
-      </div>
+      <div class="apps-prev" id="appsPreview"></div>
     </div>
 
     <div class="section" id="sec-ajustes">
@@ -2024,17 +2177,14 @@ body {
       </div>
       <div class="settings-options" id="userNav">
         <div class="settings-option active" data-useroption="general" onclick="selectUserOption(this)">General</div>
-        <div class="settings-option" onclick="selectUserOption(this)">Idioma</div>
-        <div class="settings-option" onclick="selectUserOption(this)">Control parental</div>
-        <div class="settings-option" onclick="selectUserOption(this)">Grupo de canales</div>
+        <div class="settings-option" data-useroption="idioma" onclick="selectUserOption(this)">Idioma</div>
+        <div class="settings-option" data-useroption="parental" onclick="selectUserOption(this)">Control parental</div>
+        <div class="settings-option" data-useroption="grupos" onclick="selectUserOption(this)">Grupo de canales</div>
       </div>
-      <div class="general-options-bar" id="generalNav">
-        <div class="general-option" onclick="selectGeneralOption(this)">Auto apagado</div>
-        <div class="general-option" onclick="selectGeneralOption(this)">Duración banner</div>
-        <div class="general-option" onclick="selectGeneralOption(this)">Tiempo recordatorios</div>
-        <div class="general-option" onclick="selectGeneralOption(this)">Modo de inicio</div>
-        <div class="general-option" onclick="selectGeneralOption(this)">Rutina de mantenimiento</div>
-      </div>
+      <div class="general-options-bar usub-bar usub-cur" id="generalNav" data-usub="general"></div>
+      <div class="fr-hint usub-hint" id="usubHint"></div>
+      <div class="fr-divider usub-divider"></div>
+      <div class="fr-info usub-info" id="usubInfo"></div>
       <div class="sistema-options-bar" id="sistemaNav">
         <div class="sistema-option" data-sistemaoption="diagnostico" onclick="selectSistemaOption(this)">Diagnóstico</div>
         <div class="sistema-option" data-sistemaoption="conexion" onclick="selectSistemaOption(this)">Conexión</div>
@@ -2111,6 +2261,7 @@ body {
     </div>
 
     <div class="section" id="sec-adultos">
+      <div class="sec-hint">Presione OK para acceder al modo Adultos</div>
       <div class="adultos-placeholder">
         <svg class="ti ti-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 1 1 8 0v4" /></svg>
         <div style="font-size:14px; color:#7aa5c0; letter-spacing:1px; text-transform:uppercase;">Ingresá tu PIN</div>
@@ -2136,6 +2287,37 @@ body {
         </div>
       </div>
       <div class="pin-modal-btn" onclick="closePinModal()">Atrás</div>
+    </div>
+  </div>
+
+  <!-- Tour del menú: Guía, Grabaciones, Apps -->
+  <div class="tour-layer" id="tourLayer">
+    <div class="tour-head">
+      <img class="fr-logo" data-logo alt="Telecentro">
+      <span class="tour-crumb" id="tourCrumb"></span>
+      <div class="fr-tv-clock"><small>jue<br>19 enero</small><b>11:15</b></div>
+    </div>
+    <div class="tour-screen" id="tour-guia">
+      <div class="guia-art"></div>
+      <div class="guia-info">
+        <div class="gi-time" id="guiaTime"></div>
+        <div class="gi-title" id="guiaTitle"></div>
+        <div class="gi-sub" id="guiaSub"></div>
+      </div>
+      <div class="guia-head" id="guiaHead"></div>
+      <div class="guia-rows" id="guiaRows"></div>
+      <div class="g-line"></div>
+      <div class="tour-foot"><b>&#8617;</b> Atrás <b>i</b> Más <b>OK</b> Ir al canal <b>&#9654;&#9654;</b> Saltar 24hs <b>C+ C-</b> Cambiar canal <b>&#9632;</b> Grupo de canales</div>
+    </div>
+    <div class="tour-screen" id="tour-grab">
+      <div class="tour-title">Grabaciones</div>
+      <div class="tour-bar" id="grabBar"></div>
+      <div class="grab-body" id="grabBody"></div>
+      <div class="tour-foot" id="grabFoot"></div>
+    </div>
+    <div class="tour-screen" id="tour-apps">
+      <div class="tour-title">Apps</div>
+      <div class="apps-tour" id="appsTour"></div>
     </div>
   </div>
 
@@ -2509,9 +2691,11 @@ function selectUserOption(el) {
 
   // Preview de General: su barra se muestra mientras General esté activa en la
   // barra de usuario. Mismo patrón que conexion-option-active en Sistema.
-  if (el.getAttribute('data-useroption') === 'general') {
+  var ukey = el.getAttribute('data-useroption');
+  if (USUB[ukey]) {
+    setUsubCur(ukey);
     dec.classList.add('general-option-active');
-    centerPreviewFirst('generalNav', '.general-option');
+    usubPreviewFirst();
   } else {
     dec.classList.remove('general-option-active');
   }
@@ -2524,7 +2708,8 @@ function selectGeneralOption(el) {
   dec.classList.add('general-entered');
   document.querySelectorAll('.general-option').forEach(function(n) { n.classList.remove('active'); });
   el.classList.add('active');
-  centerNavItem(el, 'generalNav');
+  centerNavItem(el, el.parentNode.id);
+  usubRender();
 }
 
 function selectSistemaOption(el) {
@@ -2972,6 +3157,279 @@ function moveNav(selector, direction, selectFn) {
   selectFn(items[next]);
 }
 
+
+/* ■ Ajustes usuario: General / Idioma / Control parental / Grupo de canales ■
+   Cada opción de usuario tiene una barra hija (.usub-bar) con sus ítems y un
+   panel de valores. OK sobre un ítem rota su valor o abre el modal de PIN. */
+var USUB_ITEMS = {
+  apagado:       { label: 'Auto apagado', value: 'Desactivado' },
+  banner:        { label: 'Duración banner', value: '5 segundos' },
+  recordatorios: { label: 'Tiempo recordatorios', value: '5 minutos' },
+  modo:          { label: 'Modo de inicio', value: 'Canal 1002' },
+  rutina:        { label: 'Rutina de mantenimiento', value: 'No permitida' },
+  proxima:       { label: 'Proxima rutina', value: 'N/A' },
+  menu:          { label: 'Menú', value: 'Español' },
+  audio:         { label: 'Audio', value: 'Español' },
+  subs:          { label: 'Subtítulos', value: 'Apagado' },
+  cambiar:       { label: 'Cambiar PIN', value: '....', hint: 'Presione OK para cambiar PIN de control parental' },
+  recordar:      { label: 'Recordar PIN', value: '1 hora' },
+  edades:        { label: 'Definir edades', value: 'Desactivado' },
+  bloqueo:       { label: 'Activación de bloqueo de canales', value: 'Activado' },
+  bloqueados:    { label: 'Canales bloqueados', value: '4 canales', pin: true, hint: 'Presionar OK para agregar o borrar canales bloqueados' },
+  adulto:        { label: 'Tplay adulto', value: 'Activado' },
+  compra:        { label: 'Cambiar código PIN de compra', value: '....', hint: 'Presionar OK para cambiar código PIN de compra' },
+  gestion:       { label: 'Gestión de grupos', hint: 'Presionar OK para crear o editar un grupo' }
+};
+var USUB = {
+  general:  { bar: 'generalNav',  items: ['apagado', 'banner', 'recordatorios', 'modo', 'rutina'],
+              panel: ['apagado', 'banner', 'recordatorios', 'rutina', 'modo', 'proxima'] },
+  idioma:   { bar: 'idiomaNav',   items: ['menu', 'audio', 'subs'], panel: ['menu', 'audio', 'subs'] },
+  parental: { bar: 'parentalNav', items: ['cambiar', 'recordar', 'edades', 'bloqueo', 'bloqueados', 'adulto', 'compra'],
+              panel: ['recordar', 'edades', 'bloqueo', 'adulto', 'cambiar', 'bloqueados', 'compra'] },
+  grupos:   { bar: 'gruposNav',   items: ['gestion'], panel: [] }
+};
+var usubKey = 'general';
+
+function usubValue(id) { return USUB_ITEMS[id].value || ''; }
+
+function usubHint(id) {
+  var d = USUB_ITEMS[id];
+  if (d.hint) return d.hint;
+  return d.value ? 'Presione OK para modificar : ' + d.value : '';
+}
+
+function buildUsub() {
+  var generalBar = document.getElementById('generalNav');
+  var hintEl = document.getElementById('usubHint');
+  Object.keys(USUB).forEach(function(key) {
+    var cfg = USUB[key];
+    var bar = document.getElementById(cfg.bar);
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = cfg.bar;
+      bar.className = 'general-options-bar usub-bar';
+      bar.setAttribute('data-usub', key);
+      generalBar.parentNode.insertBefore(bar, hintEl);
+    }
+    bar.innerHTML = cfg.items.map(function(id) {
+      return '<div class="general-option" data-uitem="' + id + '" onclick="selectGeneralOption(this)">' +
+        USUB_ITEMS[id].label + '</div>';
+    }).join('');
+  });
+  setUsubCur('general');
+}
+
+function setUsubCur(key) {
+  usubKey = key;
+  document.querySelectorAll('.usub-bar').forEach(function(b) {
+    b.classList.toggle('usub-cur', b.getAttribute('data-usub') === key);
+  });
+}
+
+function usubItems() { return '#' + USUB[usubKey].bar + ' .general-option'; }
+
+function usubPreviewFirst() { centerPreviewFirst(USUB[usubKey].bar, usubItems()); }
+
+function usubRender() {
+  var cur = document.querySelector(usubItems() + '.active');
+  document.getElementById('usubHint').textContent = cur ? usubHint(cur.getAttribute('data-uitem')) : '';
+  document.getElementById('usubInfo').innerHTML = USUB[usubKey].panel.map(function(id) {
+    return '<div class="fr-kv"><i class="fr-ico"></i><div><div class="fr-k">' + USUB_ITEMS[id].label +
+      '</div><div class="fr-v">' + usubValue(id) + '</div></div></div>';
+  }).join('');
+}
+
+/* Solo "Canales bloqueados" tiene comportamiento observado en el video (abre el
+   modal de PIN de control parental). El resto de ítems no cambia nada con OK. */
+function usubActivate(el) {
+  if (!el) return;
+  if (USUB_ITEMS[el.getAttribute('data-uitem')].pin) openPinModal('blocked');
+}
+
+/* ■ Tour del menú: Guía, Mi Contenido › Grabaciones y Apps ■
+   Pantallas a pantalla completa (.tour-layer) con su propio manejo de teclas
+   (tourKey), igual que la TV final del reset. Back vuelve al menú principal. */
+var tour = { screen: null };
+
+function hm(s) { var p = s.split(':'); return +p[0] * 60 + +p[1]; }
+function hmStr(m) { return (m < 600 ? '0' : '') + Math.floor(m / 60) + ':' + (m % 60 < 10 ? '0' : '') + (m % 60); }
+
+var GUIA_WIN = { from: hm('10:30'), to: hm('13:30'), now: hm('11:15') };
+var GUIA_ROWS = [
+  { n: 10, c: [['Difusión', '10:00', '11:00', ''], ['Difusión', '11:00', '12:00', ''], ['Difusión', '12:00', '13:00', ''], ['Difusión', '13:00', '14:00', '']] },
+  { n: 11, c: [['MusicTop', '10:00', '11:00', 'música'], ['MusicTop', '11:00', '12:00', 'música'], ['MusicTop', '12:00', '13:00', 'música'], ['MusicTop', '13:00', '14:00', 'música']] },
+  { n: 12, c: [['A la barbaros…', '10:00', '11:15', 'variedades'], ['Ariel en su salsa', '11:15', '13:00', 'variedades'], ['El noticiero de la gente', '13:00', '14:00', '']] },
+  { n: 13, c: [['AM Noticias', '09:00', '12:00', ''], ['Vivo al mediodía', '12:00', '14:00', '']] },
+  { n: 14, c: [['Noso…', '10:00', '11:00', ''], ['Socios del espectáculo', '11:00', '13:00', ''], ['Mediodía noticias', '13:00', '14:00', '']] },
+  { n: 15, c: [['Bda e…', '10:00', '11:00', ''], ['Epa!', '11:00', '13:30', ''], ['Intruso', '13:30', '15:00', '']] },
+  { n: 16, c: [['Modo Fontevecchia', '10:00', '12:00', ''], ['La usurpadora', '12:00', '13:30', ''], ['Toda la vida', '13:30', '15:00', '']] },
+  { n: 17, c: [['Imagen positiva', '09:00', '12:00', 'noticias'], ['IP Noticias - 2da. edición', '12:00', '14:00', '']] },
+  { n: 18, c: [['Prim…', '10:00', '11:00', ''], ['Avenida Brasil', '11:00', '12:30', ''], ['Bravo Argentina', '12:30', '13:30', ''], ['Los herederos del monte', '13:30', '15:00', '']] }
+];
+var guia = { sel: 2, cell: 1, top: 0 };
+
+function guiaPickCell() {
+  var cells = GUIA_ROWS[guia.sel].c;
+  guia.cell = 0;
+  cells.forEach(function(c, i) { if (hm(c[1]) <= GUIA_WIN.now && GUIA_WIN.now < hm(c[2])) guia.cell = i; });
+}
+
+function guiaRender() {
+  var VIS = 6;
+  guia.top = Math.max(0, Math.min(guia.sel - 1, GUIA_ROWS.length - VIS));
+  var span = GUIA_WIN.to - GUIA_WIN.from;
+  var cell = GUIA_ROWS[guia.sel].c[guia.cell];
+  document.getElementById('guiaTime').textContent = cell[1] + ' - ' + cell[2];
+  document.getElementById('guiaTitle').textContent = cell[0].replace('…', '');
+  document.getElementById('guiaSub').innerHTML = '<i>SAM 13</i> ' + cell[3];
+  var ticks = '';
+  for (var m = GUIA_WIN.from + 30; m <= GUIA_WIN.to; m += 30) {
+    ticks += '<span class="g-tick' + (m % 60 === 0 ? ' big' : '') + '" style="left:' + ((m - GUIA_WIN.from) / span * 100) + '%">' + hmStr(m) + '</span>';
+  }
+  document.getElementById('guiaHead').innerHTML = '<div class="g-ch">HOY</div><div class="g-tl">' + ticks + '</div>';
+  document.getElementById('guiaRows').innerHTML = GUIA_ROWS.slice(guia.top, guia.top + VIS).map(function(r, ri) {
+    var idx = guia.top + ri;
+    var cells = r.c.map(function(c, ci) {
+      var a = Math.max(hm(c[1]), GUIA_WIN.from), b = Math.min(hm(c[2]), GUIA_WIN.to);
+      if (b <= a) return '';
+      var sel = idx === guia.sel && ci === guia.cell;
+      return '<div class="g-cell' + (sel ? ' sel' : '') + '" style="width:calc(' + ((b - a) / span * 100) + '% - 2px)">' + c[0] + '</div>';
+    }).join('');
+    return '<div class="g-row"><div class="g-ch">' + r.n + '<i></i></div><div class="g-tl">' + cells + '</div></div>';
+  }).join('');
+}
+
+function guiaKey(action) {
+  if (action === 'up' || action === 'down') {
+    var n = guia.sel + (action === 'up' ? -1 : 1);
+    if (n < 0 || n >= GUIA_ROWS.length) return;
+    guia.sel = n;
+    guiaPickCell();
+  } else if (action === 'left' || action === 'right') {
+    var c = guia.cell + (action === 'left' ? -1 : 1);
+    if (c < 0 || c >= GUIA_ROWS[guia.sel].c.length) return;
+    guia.cell = c;
+  } else if (action === 'back') { closeTour(false); return; }
+  guiaRender();
+}
+
+/* Grabaciones */
+var GRAB_TABS = ['Mis grabaciones', 'Grabaciones programadas', 'Crear'];
+var GRAB_REC = [
+  ['Curve: la curva de la muerte', 'Ciencia ficción', '2022.09.08 - 85mins.'],
+  ['La voz Argentina', 'Espectáculo', '2021.08.29 - 90min.'],
+  ['La voz Argentina', 'Espectáculo', '2021.08.27 - 90min.'],
+  ['La voz Argentina', 'Espectáculo', '2021.08.26 - 90min.'],
+  ['La voz Argentina', 'Espectáculo', '2021.08.25 - 90min.'],
+  ['La voz Argentina', 'Espectáculo', '2021.08.24 - 90min.']
+];
+var grab = { tab: 0 };
+
+function grabRender() {
+  var bar = document.getElementById('grabBar');
+  bar.className = 'tour-bar focus';
+  bar.innerHTML = GRAB_TABS.map(function(t, i) { return '<span' + (i === grab.tab ? ' class="active"' : '') + '>' + t + '</span>'; }).join('');
+  var body = '', foot = '';
+  if (grab.tab === 2) {
+    body = '<div class="grab-form">' +
+      [['Canal', '&lsaquo; &rsaquo;', 'TELEFE'], ['Fecha', '', ''], ['Hora de inicio', '&lsaquo; &rsaquo;', '11:15'],
+       ['Duración', '&lsaquo; &rsaquo;', '1 hora&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12:15'], ['Protegido', '&lsaquo;', 'No']].map(function(r) {
+        return '<div class="gf-l">' + r[0] + '</div><div class="gf-a">' + r[1] + '</div><div class="gf-v">' + r[2] + '</div>';
+      }).join('') +
+      '<div class="grab-space">ESPACIO UTILIZADO <i></i> 0 de 20 hs.</div>' +
+      '<div class="grab-btns"><span>Cancelar grabación</span><span>Aplicar</span></div></div>';
+    foot = '<b>&#8617;</b> Volver a grabaciones';
+  } else if (grab.tab === 0) {
+    body = '<div class="rec-list">' + GRAB_REC.map(function(r) {
+      return '<div class="rec-row"><div class="rec-thumb"></div>' +
+        '<div class="rec-main"><div class="rec-t">' + r[0] + '</div><div class="rec-g">' + r[1] + '</div></div><div class="rec-d">' + r[2] + '</div></div>';
+    }).join('') + '</div>';
+    foot = '<b>&#8617;</b> Volver a grabaciones <b>OK</b> Más <b>&#9654;</b> Mirar <b>&#9679;</b> Borrar';
+  } else {
+    body = '<div class="grab-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="12" rx="1.5"/><path d="M8 21h8M3 3l18 18"/></svg>' +
+      '<b>No tiene grabaciones</b><p>Para grabar algo, elija algún canal de interés en la grilla y pulse el botón rojo del control remoto.</p></div>';
+  }
+  document.getElementById('grabBody').innerHTML = body;
+  document.getElementById('grabFoot').innerHTML = foot;
+}
+
+/* Solo se observa el cambio entre pestañas; el resto de la pantalla es estática. */
+function grabKey(action) {
+  if (action === 'left' || action === 'right') {
+    var t = grab.tab + (action === 'left' ? -1 : 1);
+    if (t < 0 || t > 2) return;
+    grab.tab = t;
+  } else if (action === 'back') { closeTour(false); return; }
+  grabRender();
+}
+
+/* Apps */
+var APPS_TILES = [
+  ['a-tplay', 'tplay', 'Series y películas'], ['a-netflix', 'NETFLIX'], ['a-prime', 'prime video'],
+  ['a-yt', 'YouTube'], ['a-tplay', 'tplay', 'Últimas 24 hs de TV'],
+  ['a-ytk', 'YouTube Kids'], ['a-disney', 'Disney+'], ['a-star', 'STAR+']
+];
+var apps = { idx: 0 };
+
+function appsTileHTML(t, i) {
+  var inner = t[1] === 'tplay'
+    ? '<img data-logo alt="Telecentro"><small>' + t[2].toUpperCase() + '</small>'
+    : t[1];
+  return '<div class="a-tile ' + t[0] + '" data-app="' + i + '">' + inner + '</div>';
+}
+
+function appsRowsHTML(rowClass) {
+  return '<div class="' + rowClass + '">' + APPS_TILES.slice(0, 5).map(function(t, i) { return appsTileHTML(t, i); }).join('') + '</div>' +
+    '<div class="' + rowClass + '">' + APPS_TILES.slice(5).map(function(t, i) { return appsTileHTML(t, i + 5); }).join('') + '</div>';
+}
+
+function appsRender() {
+  document.querySelectorAll('#appsTour .a-tile').forEach(function(el) {
+    el.classList.toggle('sel', +el.getAttribute('data-app') === apps.idx);
+  });
+}
+
+function appsKey(action) {
+  var i = apps.idx, row = i < 5 ? 0 : 1, col = row ? i - 5 : i;
+  if (action === 'left' && col > 0) apps.idx = i - 1;
+  else if (action === 'right' && col < (row ? 2 : 4)) apps.idx = i + 1;
+  else if (action === 'down' && row === 0) apps.idx = 5 + Math.min(col, 2);
+  else if (action === 'up' && row === 1) apps.idx = col;
+  else if (action === 'back') { closeTour(false); return; }
+  appsRender();
+}
+
+function buildTour() {
+  document.getElementById('appsTour').innerHTML = appsRowsHTML('apps-tour-row');
+  document.getElementById('appsPreview').innerHTML = appsRowsHTML('apps-prev-row');
+  buildUsub();
+}
+
+function openTour(name) {
+  tour.screen = name;
+  getDecoder().classList.add('tour-mode');
+  document.querySelectorAll('.tour-screen').forEach(function(s) {
+    s.classList.toggle('visible', s.id === 'tour-' + name);
+  });
+  document.getElementById('tourCrumb').textContent = name === 'guia' ? 'Guía' : (name === 'grab' ? 'Mi contenido > Grabaciones' : '');
+  if (name === 'guia') { guia.sel = 2; guiaPickCell(); guiaRender(); }
+  else if (name === 'grab') { grab.tab = 0; grabRender(); }
+  else { apps.idx = 0; appsRender(); }
+}
+
+function closeTour(toHome) {
+  tour.screen = null;
+  getDecoder().classList.remove('tour-mode');
+  if (toHome) goHome();
+}
+
+function tourKey(action) {
+  if (action === 'home') { closeTour(true); return; }
+  if (tour.screen === 'guia') guiaKey(action);
+  else if (tour.screen === 'grab') grabKey(action);
+  else if (tour.screen === 'apps') appsKey(action);
+}
+
 /* ■ Reset de fábrica ■
    Ajustes › Sistema › Reset › RESET DE FÁBRICA → modal de PIN → reinicio
    (splash 4K, "Iniciando decodificador") → asistente de instalación de 10
@@ -3016,7 +3474,9 @@ function renderPin() {
   });
 }
 
-function openPinModal() {
+var pinPurpose = 'reset';
+function openPinModal(purpose) {
+  pinPurpose = purpose || 'reset';
   frPinValue = '';
   renderPin();
   getDecoder().classList.add('pin-modal-mode');
@@ -3035,7 +3495,7 @@ function pinKey(key) {
     frPinValue = frPinValue.slice(0, -1);
   } else if (frPinValue.length < 4) {
     frPinValue += key;
-    if (frPinValue.length === 4) frPinTimer = setTimeout(startFactoryReset, FR_T.pin);
+    if (frPinValue.length === 4) if (pinPurpose === 'reset') frPinTimer = setTimeout(startFactoryReset, FR_T.pin);
   }
   renderPin();
 }
@@ -3369,7 +3829,7 @@ function remoteBack() {
     setTimeout(function() {
       var activeUserOpt = document.querySelector('.settings-option.active') || document.querySelector('.settings-option');
       if (activeUserOpt) centerNavItem(activeUserOpt, 'userNav');
-      centerPreviewFirst('generalNav', '.general-option');
+      usubPreviewFirst();
     }, 0);
     return;
   }
@@ -3518,7 +3978,7 @@ function navigateCurrentLayer(direction) {
   } else if (isDiagnosticoOptionMode()) {
     moveNav('.diagnostico-option', direction, selectDiagnosticoOption);
   } else if (isGeneralOptionMode()) {
-    moveNav('.general-option', direction, selectGeneralOption);
+    moveNav(usubItems(), direction, selectGeneralOption);
   } else if (isSistemaOptionMode()) {
     moveNav('.sistema-option', direction, selectSistemaOption);
   } else if (isUserOptionMode()) {
@@ -3551,7 +4011,7 @@ function selectCurrentItem() {
       enterWifiJoin();
     }
   } else if (isGeneralOptionMode()) {
-    selectGeneralOption(getActiveItem('.general-option'));
+    usubActivate(getActiveItem(usubItems()));
   } else if (isDiagnosticoOptionMode()) {
     selectDiagnosticoOption(getActiveItem('.diagnostico-option'));
   } else if (isSistemaOptionMode()) {
@@ -3572,8 +4032,10 @@ function selectCurrentItem() {
     }
   } else if (isUserOptionMode()) {
     var activeOpt = getActiveItem('.settings-option');
-    if (activeOpt.getAttribute('data-useroption') === 'general') {
-      selectGeneralOption(getActiveItem('.general-option'));
+    var okey = activeOpt.getAttribute('data-useroption');
+    if (USUB[okey]) {
+      setUsubCur(okey);
+      selectGeneralOption(getActiveItem(usubItems()));
     } else {
       selectUserOption(activeOpt);
     }
@@ -3588,8 +4050,11 @@ function selectCurrentItem() {
     }
   } else {
     var activeNav = getActiveItem('.nav-item');
-    if (activeNav.getAttribute('data-section') === 'ajustes') {
+    var navSec = activeNav.getAttribute('data-section');
+    if (navSec === 'ajustes') {
       selectSetting(getActiveItem('.subnav-item'));
+    } else if (navSec === 'guia' || navSec === 'apps' || navSec === 'micontenido') {
+      openTour(navSec === 'micontenido' ? 'grab' : navSec);
     } else {
       selectNav(activeNav);
     }
@@ -3619,6 +4084,8 @@ function handleKeydown(event) {
     frTvShowBanner();
     return;
   }
+  // Tour (Guía / Grabaciones / Apps): maneja sus propias teclas.
+  if (tour.screen) { tourKey(action); return; }
   if (dec.classList.contains('wifi-password-mode')) {
     if (action === 'left') navigateKeyboard(0, -1);
     else if (action === 'right') navigateKeyboard(0, 1);
@@ -3647,6 +4114,7 @@ function handleKeydown(event) {
 
 document.addEventListener('DOMContentLoaded', function() {
   buildWifiNetworks();
+  buildTour();
   // Reutiliza el logo embebido en el top-bar (evita duplicar el base64)
   var logoSrc = document.querySelector('.logo img').src;
   document.querySelectorAll('img[data-logo]').forEach(function(img) { img.src = logoSrc; });
