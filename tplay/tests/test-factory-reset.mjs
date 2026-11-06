@@ -39,7 +39,7 @@ const waitStep = async key => {
 };
 
 // Tiempos cortos (variables globales del script)
-await page.evaluate(() => { FR_T.splash = 400; FR_T.boot = 400; FR_T.sync = 400; FR_T.canales = 400; FR_T.update = 400; FR_T.final = 400; FR_T.pin = 100; });
+await page.evaluate(() => { FR_T.splash = 400; FR_T.bars = 500; FR_T.black = 300; FR_T.tvLock = 400; FR_T.tvBanner = 1500; FR_T.boot = 400; FR_T.sync = 400; FR_T.canales = 400; FR_T.update = 400; FR_T.final = 400; FR_T.pin = 100; });
 
 // ── Ajustes › Sistema › Reset ──
 await press('ArrowRight', 6);   // HOME → AJUSTES
@@ -88,6 +88,10 @@ for (const k of ['1', '2', '3', '4']) await press(k);
 await page.waitForFunction(() => document.querySelector('.decoder').classList.contains('fr-mode'));
 check('el reset olvida la red conectada', !(await has('wifi-connected')) && (await page.evaluate(() => wifiConnectedSsid)) === null);
 check('fr-mode activo y settings limpio', (await has('fr-mode')) && !(await has('settings-mode')) && !(await has('reset-entered')));
+await page.waitForFunction(() => document.getElementById('fr-bars').classList.contains('visible'), null, { timeout: 3000 });
+check('arranque: barras de color', await page.evaluate(() => getComputedStyle(document.getElementById('fr-bars')).backgroundImage.includes('linear-gradient')));
+await shot('4a-barras');
+await page.waitForFunction(() => document.getElementById('fr-black').classList.contains('visible'), null, { timeout: 3000 });
 await page.waitForFunction(() => document.getElementById('fr-boot').classList.contains('visible'), null, { timeout: 3000 });
 await shot('4-boot');
 await press('Escape'); await press('Home');
@@ -197,7 +201,17 @@ check('paso 10: PASO : 10 / 10', (await text('#frStepCount')) === 'PASO : 10 / 1
 check('paso 10: título de felicitaciones', (await text('#fr-step-final .fr-title')).toLowerCase().startsWith('felicitaciones'));
 await shot('13-final');
 await page.waitForFunction(() => document.getElementById('fr-tv').classList.contains('visible'));
+const tvCls = () => page.evaluate(() => [...document.getElementById('fr-tv').classList].filter(c => c.startsWith('tv-')).sort().join(' '));
 await shot('14-tv');
+check('TV: entra con banner y sin candado', (await tvCls()) === 'tv-banner');
+await page.waitForFunction(() => document.getElementById('fr-tv').classList.contains('tv-lock'), null, { timeout: 3000 });
+check('TV: candado + banner', (await tvCls()) === 'tv-banner tv-lock');
+check('TV: cabecera En Reproducción', (await text('#fr-tv .fr-tv-now')).includes('En Reproducción'));
+await page.waitForFunction(() => !document.getElementById('fr-tv').classList.contains('tv-banner'), null, { timeout: 4000 });
+check('TV: banner se oculta solo (queda el candado)', (await tvCls()) === 'tv-lock');
+await shot('14b-tv-candado');
+await press('Enter');
+check('TV: una tecla vuelve a mostrar el banner', (await tvCls()) === 'tv-banner tv-lock');
 await press('Escape'); await press('Enter');
 check('TV: Back/OK no salen', await has('fr-mode'));
 await press('Home');

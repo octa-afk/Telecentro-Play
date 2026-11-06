@@ -59,44 +59,11 @@ body {
   --line: rgba(18, 177, 235, 0.58);
   --text: rgba(245, 250, 255, 0.92);
   --muted: rgba(221, 232, 240, 0.64);
-  background:
-    linear-gradient(rgba(2, 30, 40, 0.82), rgba(1, 25, 35, 0.86)),
-    radial-gradient(circle at 12% -10%, rgba(9, 74, 92, 0.55) 0 12%, transparent 12.5%),
-    radial-gradient(circle at 36% 0%, rgba(8, 65, 84, 0.5) 0 11%, transparent 11.5%),
-    radial-gradient(circle at 59% -3%, rgba(8, 65, 84, 0.5) 0 12%, transparent 12.5%),
-    radial-gradient(circle at 78% -6%, rgba(8, 65, 84, 0.45) 0 13%, transparent 13.5%),
-    #063343;
+  background: #062331;
   color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
   position: relative;
   overflow: hidden;
-}
-
-.decoder::before {
-  content: "";
-  position: absolute;
-  inset: 48px 42px 0;
-  background:
-    linear-gradient(rgba(5, 42, 55, 0.68), rgba(5, 42, 55, 0.68)),
-    linear-gradient(90deg, transparent 0 30%, rgba(255,255,255,0.09) 30% 30.3%, transparent 30.3% 68%, rgba(255,255,255,0.09) 68% 68.3%, transparent 68.3%),
-    linear-gradient(180deg, transparent 0 49%, rgba(255,255,255,0.09) 49% 49.5%, transparent 49.5%),
-    radial-gradient(circle at 17% 68%, rgba(245,245,245,0.24), transparent 11%),
-    radial-gradient(circle at 50% 46%, rgba(230,230,230,0.23), transparent 17%),
-    radial-gradient(circle at 83% 66%, rgba(238,238,238,0.23), transparent 12%),
-    linear-gradient(135deg, rgba(90, 122, 134, 0.34), transparent 24%),
-    linear-gradient(45deg, transparent 62%, rgba(94, 114, 126, 0.34));
-  border: 6px solid rgba(95, 145, 159, 0.14);
-  opacity: 0.72;
-  pointer-events: none;
-}
-
-.decoder::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(1, 29, 39, 0.53);
-  pointer-events: none;
-  z-index: 2;
 }
 
 .top-bar,
@@ -156,6 +123,14 @@ body {
 .dot-r { background: #099ee5; }
 .dot-g { background: #1ce66a; }
 .dot-b { background: #ee255f; }
+
+/* Bloque del canal en la top bar (puntos telefe + "En Reproducción" + título):
+   solo visible navegando la barra principal / en HOME. Al entrar a una opción
+   con OK/Enter (Ajustes, y todo lo que cuelga de ahí, reset de fábrica incluido)
+   se oculta completo. visibility mantiene el layout sin salto. */
+.decoder.now-info-hidden .top-center {
+  visibility: hidden;
+}
 
 .top-center > div:last-child {
   border-left: 3px solid rgba(229, 239, 247, 0.88) !important;
@@ -1545,6 +1520,13 @@ body {
 
 #fr-splash { background: #071563; }
 #fr-boot { background: #03032e; }
+#fr-black { background: #000; }
+/* Barras de color de prueba (señal de video al reiniciar) */
+#fr-bars {
+  background: linear-gradient(90deg,
+    #fdfdfd 0 12.5%, #ffff00 12.5% 25%, #00ffff 25% 37.5%, #00ff00 37.5% 50%,
+    #ff00ff 50% 62.5%, #ff1000 62.5% 75%, #0000ff 75% 87.5%, #050505 87.5% 100%);
+}
 
 .fr-4k {
   margin-top: 26px;
@@ -1820,9 +1802,26 @@ body {
 .fr-toast-msg { margin-top: 2px; font-size: 21px; font-weight: 700; line-height: 1.15; color: #5f727c; }
 
 /* TV: canal sin suscripción (pantalla final) */
-#fr-tv {
-  background: linear-gradient(180deg, #03080b 0%, #05131b 45%, #040a0e 100%);
+/* Estados (clases sobre #fr-tv): .tv-lock = candado, .tv-banner = banner/guía.
+   Reposo: solo candado sobre fondo plano; el banner aparece con una tecla. */
+#fr-tv { background: #062331; }
+#fr-tv.tv-banner { background: linear-gradient(180deg, #03080b 0%, #05131b 45%, #040a0e 100%); }
+#fr-tv:not(.tv-banner) .fr-tv-top,
+#fr-tv:not(.tv-banner) .fr-tv-now,
+#fr-tv:not(.tv-banner) .fr-tv-bottom,
+#fr-tv:not(.tv-lock) .fr-lock { display: none; }
+#fr-tv:not(.tv-lock) .fr-tv-thumb { display: none; }
+.fr-tv-now {
+  position: absolute;
+  top: 28px;
+  left: 0;
+  right: 0;
+  margin-left: 100px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
 }
+.fr-tv-now > div { border-left: 3px solid rgba(229, 239, 247, 0.88); padding-left: 13px; text-align: left; }
 .fr-tv-top {
   position: absolute;
   top: 24px;
@@ -1916,7 +1915,7 @@ body {
         <div class="dot dot-g"></div>
         <div class="dot dot-b"></div>
       </div>
-      <div style="border-left:1px solid #2a4a60; padding-left:10px;">
+      <div class="now-info" style="border-left:1px solid #2a4a60; padding-left:10px;">
         <div class="now-playing">En Reproducción</div>
         <div class="now-title">Ariel en su salsa</div>
       </div>
@@ -2147,6 +2146,10 @@ body {
       <div class="fr-4k"><b>4K</b><span>ULTRA HD</span></div>
     </div>
 
+    <div class="fr-screen" id="fr-bars"></div>
+
+    <div class="fr-screen" id="fr-black"></div>
+
     <div class="fr-screen fr-center" id="fr-boot">
       <img class="fr-logo" data-logo alt="Telecentro">
       <div class="fr-boot-text">INICIANDO DECODIFICADOR…</div>
@@ -2352,6 +2355,12 @@ body {
         <img class="fr-logo" data-logo alt="Telecentro">
         <div class="fr-tv-clock"><small>jue<br>19 enero</small><b>12:50</b></div>
       </div>
+      <div class="fr-tv-now">
+        <div>
+          <div class="now-playing">En Reproducción</div>
+          <div class="now-title">Sin Información</div>
+        </div>
+      </div>
       <div class="fr-lock">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6z" fill="currentColor"/><path d="M8 11V7a4 4 0 1 1 8 0v4" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="12" cy="15.2" r="1.3" fill="#2b3a43"/><path d="M12 15.5v2.2" stroke="#2b3a43" stroke-width="1.6" stroke-linecap="round"/></svg>
         <div class="fr-lock-id">CANAL SIN SUSCRIPCION (ID 121)</div>
@@ -2434,7 +2443,7 @@ function resetSettingsState() {
   ).forEach(function(n) { n.classList.remove('active'); });
 }
 
-function selectNav(el) {
+function selectNav(el, enter) {
   var dec = getDecoder();
   // navBar está oculta en settings-mode: si venimos de ahí, restaurar sin animación
   var fromSettings = dec.classList.contains('settings-mode');
@@ -2444,12 +2453,20 @@ function selectNav(el) {
   el.classList.add('active');
   var target = document.getElementById('sec-' + el.getAttribute('data-section'));
   if (target) target.classList.add('visible');
+  // Info del canal (puntos telefe + "En Reproducción" + título): visible solo
+  // mientras se NAVEGA la barra principal (flechas, enter=false). Cuando se
+  // ENTRA a una opción con OK/Enter/clic (enter=true) desaparece, salvo en HOME.
+  var entering = enter !== false;
+  dec.classList.toggle('now-info-hidden', entering && el.getAttribute('data-section') !== 'home');
   centerNavItem(el, 'navBar', fromSettings);
 }
 
 function selectSetting(el) {
   var dec = getDecoder();
   dec.classList.add('settings-mode');
+  // El bloque del canal se oculta al entrar a Ajustes por cualquier vía:
+  // OK/Enter entra por acá (selectCurrentItem), sin pasar por selectNav.
+  dec.classList.add('now-info-hidden');
     dec.classList.remove(
     'settings-usuario-entered',
     'general-entered',
@@ -2961,7 +2978,7 @@ function moveNav(selector, direction, selectFn) {
    pasos → TV (canal sin suscripción). Todo el proceso vive en el .decoder con
    la clase fr-mode; fr-wifi cede la pantalla a las vistas de Conexión WiFi. */
 var FR_STEPS = ['sync', 'modo', 'red', 'canales', 'idiomas', 'operador', 'parental', 'firmware', 'portal', 'final'];
-var FR_T = { splash: 3000, boot: 6000, sync: 4000, canales: 5000, update: 5000, final: 3500, pin: 350 };
+var FR_T = { splash: 3000, bars: 700, black: 1000, boot: 6000, tvLock: 1500, tvBanner: 6000, sync: 4000, canales: 5000, update: 5000, final: 3500, pin: 350 };
 var frIndex = 0;
 var frTimer = null;
 var frToastTimer = null;
@@ -3037,14 +3054,22 @@ function startFactoryReset() {
   frResetWizard();
   dec.classList.add('fr-mode');
   frShowScreen('splash');
+  // splash 4K → barras de color → negro → "Iniciando decodificador" → asistente
   frAfter(FR_T.splash, function() {
-    frShowScreen('boot');
-    frAfter(FR_T.boot, function() { frGoStep(0); });
+    frShowScreen('bars');
+    frAfter(FR_T.bars, function() {
+      frShowScreen('black');
+      frAfter(FR_T.black, function() {
+        frShowScreen('boot');
+        frAfter(FR_T.boot, function() { frGoStep(0); });
+      });
+    });
   });
 }
 
 function frResetWizard() {
   clearTimeout(frTimer);
+  frTvReset();
   clearTimeout(frToastTimer);
   document.getElementById('frToast').classList.remove('show');
   document.querySelectorAll('.fr-step').forEach(function(s) {
@@ -3239,14 +3264,38 @@ function frWifiDone() {
 }
 
 /* ── TV final ── */
+var frTvLockTimer = null;
+var frTvBannerTimer = null;
+
+function frTvReset() {
+  clearTimeout(frTvLockTimer);
+  clearTimeout(frTvBannerTimer);
+  document.getElementById('fr-tv').classList.remove('tv-banner', 'tv-lock');
+}
+
+// Muestra el banner y lo oculta solo pasado FR_T.tvBanner.
+function frTvShowBanner() {
+  var tv = document.getElementById('fr-tv');
+  tv.classList.add('tv-banner');
+  clearTimeout(frTvBannerTimer);
+  frTvBannerTimer = setTimeout(function() { tv.classList.remove('tv-banner'); }, FR_T.tvBanner);
+}
+
+// Entrada a la TV: banner sin candado → aparece el candado → el banner se oculta solo.
 function frShowTv() {
+  frTvReset();
   frShowScreen('tv');
+  frTvShowBanner();
+  frTvLockTimer = setTimeout(function() {
+    document.getElementById('fr-tv').classList.add('tv-lock');
+  }, FR_T.tvLock);
 }
 
 function frHome() {
   if (!document.getElementById('fr-tv').classList.contains('visible')) return;
   var dec = getDecoder();
   clearTimeout(frTimer);
+  frTvReset();
   dec.classList.remove('fr-mode');
   document.querySelectorAll('.fr-screen').forEach(function(s) { s.classList.remove('visible'); });
   goHome();
@@ -3477,7 +3526,9 @@ function navigateCurrentLayer(direction) {
   } else if (dec.classList.contains('settings-mode')) {
     moveNav('.subnav-item', direction, selectSetting);
   } else {
-    moveNav('.nav-item', direction, selectNav);
+    // Barra principal: navegar con flechas solo resalta la opción (y el canal
+    // sigue visible, enter=false). La entrada a la sección pasa por OK (selectCurrentItem).
+    moveNav('.nav-item', direction, function(item) { selectNav(item, false); });
   }
 }
 function selectCurrentItem() {
@@ -3563,6 +3614,11 @@ function handleKeydown(event) {
   if (!action) return;
   event.preventDefault();
   var dec = getDecoder();
+  // TV final: cualquier tecla (salvo Home/Exit) muestra el banner de nuevo.
+  if (isFrActive() && document.getElementById('fr-tv').classList.contains('visible') && action !== 'home') {
+    frTvShowBanner();
+    return;
+  }
   if (dec.classList.contains('wifi-password-mode')) {
     if (action === 'left') navigateKeyboard(0, -1);
     else if (action === 'right') navigateKeyboard(0, 1);
