@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telecentro Play · app mobile (simulador)</title>
+<style>
+/* ── Base ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: #0b0d12;
+  display: flex; align-items: center; justify-content: center;
+  font-family: Roboto, "Noto Sans", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; background: none; border: 0; color: inherit; cursor: pointer; }
+
+/* ── Marco del teléfono (captura 1080×2340 a 3× → 360×780 CSS px) ── */
+.phone {
+  position: relative;
+  width: 360px; height: 780px;
+  background: #001423;
+  color: #cbe2f4;
+  overflow: hidden;
+  border-radius: 22px;
+}
+
+/* ── Barra de estado (solo hora; no es parte de la app) ── */
+.statusbar {
+  position: absolute; top: 0; left: 0; right: 0; height: 27px; z-index: 5;
+  display: flex; align-items: center;
+  padding: 0 14px;
+  font-size: 12px; font-weight: 500;
+  color: #e6eef6;
+}
+
+/* ── Pantallas (estado por clases: .screen.is-active) ── */
+.screen { position: absolute; top: 27px; bottom: 66px; left: 0; right: 0; display: none; }
+.screen.is-active { display: block; }
+
+/* ── Encabezado ── */
+.header {
+  position: absolute; top: 0; left: 0; right: 0; height: 61px;
+  display: flex; align-items: center;
+  padding: 0 16px;
+}
+.header .logo { width: 24px; height: 28px; margin-right: 18px; flex: 0 0 auto; }
+.header .title {
+  font-size: 24px; font-weight: 500; color: #cbe2f4;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.header .gear {
+  position: absolute; right: 16px; top: 15px;
+  width: 37px; height: 37px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  display: flex; align-items: center; justify-content: center;
+}
+.header.sub { padding-left: 8px; }
+.header .back {
+  width: 24px; height: 24px; margin-right: 10px; flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: center;
+}
+.header .back svg { width: 20px; height: 20px; }
+
+/* ── Cuerpo de Inicio (filas de pósters) ── */
+.body { position: absolute; top: 61px; bottom: 0; left: 0; right: 0; overflow: hidden; }
+.row-title {
+  position: absolute; left: 15px;
+  font-size: 17px; font-weight: 500; color: #e8f1f8;
+  transform: translateY(-50%);
+}
+.row { position: absolute; left: 15px; right: 0; display: flex; gap: 8px; }
+.poster {
+  flex: 0 0 127px; height: 189px;
+  border-radius: 3px;
+  background: linear-gradient(160deg, #2a3442 0%, #161c26 100%);
+}
+.row-top { top: 4px; height: 125px; }
+.row-top .poster { height: 125px; }
+.row-2 { top: 180px; }
+.row-3 { top: 421px; }
+
+/* ── Menú de Configuración ── */
+.menu { position: absolute; top: 61px; left: 0; right: 0; }
+.menu-item {
+  display: block; width: 100%; height: 48px;
+  padding-left: 15px; text-align: left;
+  font-size: 21px; font-weight: 500; line-height: 48px; color: #cbe2f4;
+}
+.menu-item[data-target] { cursor: pointer; }
+
+/* ── Bloques absolutos de cada subpantalla (centros en coordenadas de pantalla) ── */
+.at { position: absolute; transform: translateY(-50%); }
+.center { left: 0; right: 0; text-align: center; }
+.lbl { font-size: 13px; font-weight: 500; letter-spacing: 0.3px; color: #7d8f9e; text-transform: uppercase; }
+.val { font-size: 18px; font-weight: 500; color: #e6eef6; }
+.txt { font-size: 14px; color: #8fa3b5; line-height: 17px; }
+
+/* ── Avatar (círculo claro con silueta) ── */
+.avatar {
+  position: absolute; left: 142px; top: 65px;
+  width: 75px; height: 75px; border-radius: 50%;
+  background: #c9e0f3; overflow: hidden;
+}
+.avatar::before {
+  content: ""; position: absolute; left: 25px; top: 15px;
+  width: 25px; height: 25px; border-radius: 50%; background: #5a6b78;
+}
+.avatar::after {
+  content: ""; position: absolute; left: 13px; top: 44px;
+  width: 49px; height: 49px; border-radius: 50%; background: #5a6b78;
+}
+
+/* ── Barra de grabaciones ── */
+.rec-bar { position: absolute; left: 80px; top: 215px; width: 200px; height: 13px; border-radius: 7px; background: #26313b; }
+.rec-line { position: absolute; left: 83px; top: 218px; width: 2px; height: 55px; background: #cbe2f4; }
+
+/* ── Botón claro (Gestión de almacenamiento) ── */
+.btn-light {
+  position: absolute; left: 68px; top: 460px; width: 224px; height: 39px;
+  border-radius: 20px; background: #cbe2f4; color: #001423;
+  font-size: 17px; font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── Botón contorno (Cerrar todas las sesiones) ── */
+.btn-outline {
+  position: absolute; left: 15px; right: 15px; top: 172px; height: 46px;
+  border: 1px solid #cbe2f4; border-radius: 23px;
+  color: #e6eef6; font-size: 16px; font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── Dispositivos ── */
+.dev-icon {
+  position: absolute; left: 15px; width: 37px; height: 37px; border-radius: 50%;
+  background: #3a4a57; display: flex; align-items: center; justify-content: center;
+  transform: translateY(-50%);
+}
+.dev-icon svg { width: 16px; height: 16px; fill: none; stroke: #cbe2f4; stroke-width: 2; }
+.dev-name { position: absolute; left: 64px; right: 60px; font-size: 17px; font-weight: 500; color: #e6eef6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transform: translateY(-50%); }
+.dev-sub { position: absolute; left: 64px; right: 60px; font-size: 13px; color: #8fa3b5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transform: translateY(-50%); }
+.dev-sub b { font-weight: 500; color: #e6eef6; }
+.dev-x {
+  position: absolute; left: 313px; width: 31px; height: 31px; border-radius: 50%;
+  border: 1.5px solid #00ccff; color: #00ccff;
+  display: flex; align-items: center; justify-content: center;
+  transform: translateY(-50%);
+}
+.dev-x svg { width: 12px; height: 12px; stroke: #00ccff; stroke-width: 2.4; }
+
+/* ── Toggles (estado visual; no son interactivos en el simulador) ── */
+.toggle {
+  position: absolute; left: 295px; width: 50px; height: 28px; border-radius: 14px;
+  background: #00506a; transform: translateY(-50%);
+}
+.toggle::after {
+  content: ""; position: absolute; right: 3px; top: 3px;
+  width: 22px; height: 22px; border-radius: 50%; background: #00ccff;
+}
+
+/* ── Búsqueda ── */
+.search {
+  position: absolute; left: 15px; right: 15px; top: 66px; height: 44px;
+  border: 2px solid #00ccff; border-radius: 6px; background: #04304d;
+  padding: 0 11px; display: flex; align-items: center;
+  font-size: 17px; color: #7d8f9e;
+}
+.recent-row { position: absolute; left: 15px; right: 15px; height: 40px; transform: translateY(-50%); display: flex; align-items: center; justify-content: space-between; font-size: 17px; color: #e6eef6; }
+.recent-row .x { color: #cbe2f4; font-size: 18px; padding: 0 2px; }
+
+/* ── TV en vivo: pestañas internas ── */
+.seg {
+  position: absolute; top: 65px; height: 31px; border-radius: 16px;
+  border: 1px solid #cbe2f4; color: #e6eef6; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent;
+}
+.seg.is-active { background: #00ccff; border-color: #00ccff; color: #001423; font-weight: 500; }
+.filter-btn {
+  position: absolute; left: 311px; top: 64px; width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid #cbe2f4; display: flex; align-items: center; justify-content: center;
+}
+.filter-btn svg { width: 16px; height: 16px; fill: none; stroke: #cbe2f4; stroke-width: 1.8; }
+
+/* ── Tarjetas de canal ── */
+.card {
+  position: absolute; width: 160px; height: 96px; border-radius: 4px; overflow: hidden;
+  background: linear-gradient(160deg, #2a3442 0%, #161c26 100%);
+}
+.card .ch { position: absolute; right: 8px; top: 7px; font-size: 14px; font-weight: 500; color: #fff; }
+.card .nm { position: absolute; left: 8px; bottom: 9px; right: 8px; font-size: 14px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card .pg { position: absolute; left: 0; bottom: 0; height: 4px; background: #1e88e5; }
+.card.is-sel { outline: 2px solid #00ccff; outline-offset: -2px; }
+.grp-title { position: absolute; left: 15px; font-size: 17px; font-weight: 500; color: #cbe2f4; transform: translateY(-50%); }
+.tv-view { position: absolute; inset: 0; display: none; pointer-events: none; }
+.tv-view .card { pointer-events: auto; }
+.tv-grupo { display: block; }
+.tv-listado { display: none; }
+.is-listado .tv-grupo { display: none; }
+.is-listado .tv-listado { display: block; }
+
+/* ── Menú flotante de Más ── */
+.overlay { position: absolute; top: 27px; bottom: 66px; left: 0; right: 0; background: rgba(0, 8, 14, 0.62); z-index: 3; display: none; }
+.popup {
+  position: absolute; left: 228px; top: 573px; width: 124px; height: 123px; z-index: 4;
+  border: 1px solid #3a4a57; border-radius: 6px; background: #001423; display: none;
+}
+.popup.is-open, .overlay.is-open { display: block; }
+.popup-item {
+  position: absolute; left: 0; right: 0; height: 30px; transform: translateY(-50%);
+  display: flex; align-items: center; padding-left: 28px; font-size: 14px; color: #e6eef6;
+}
+.popup-item svg { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; fill: none; stroke: #cbe2f4; stroke-width: 1.8; }
+
+/* ── Mi contenido (estado vacío) ── */
+.empty-art { position: absolute; left: 0; top: 0; width: 360px; height: 687px; pointer-events: none; }
+.empty-title { position: absolute; left: 0; right: 0; top: 350px; transform: translateY(-50%); text-align: center; white-space: nowrap; font-size: 16px; font-weight: 600; color: #cbe2f4; }
+.empty-text { position: absolute; left: 0; right: 0; top: 376px; text-align: center; font-size: 15px; line-height: 22px; color: #cbe2f4; }
+.empty-text b { font-weight: 600; }
+.btn-explore {
+  position: absolute; left: 60px; top: 481px; width: 239px; height: 37px;
+  border-radius: 19px; background: #cbe2f4; color: #001423;
+  font-size: 16px; font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── Barra inferior (compartida por las pantallas principales) ── */
+.tabbar {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 66px; z-index: 4;
+  display: flex;
+  background: #001423;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.tab {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px;
+  font-size: 11px; color: #c5d6e6;
+  background: none; border: 0; cursor: pointer;
+}
+.tab svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.tab.is-active { color: #00ccff; }
+
+/* ── Barra de gesto del sistema ── */
+.gesture {
+  position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); z-index: 6;
+  width: 108px; height: 4px; border-radius: 2px;
+  background: rgba(255, 255, 255, 0.55);
+}
+</style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+
+  <div class="statusbar"><span id="clock">18:58</span></div>
+
+  <!-- ── Sección: Inicio ── -->
+  <section id="sec-inicio" class="screen is-active" data-tab="inicio">
+    <header class="header">
+      <svg class="logo" viewBox="0 0 24 28" aria-hidden="true">
+        <path d="M2 2 L22 14 L2 26 Z" fill="#00ccff"/>
+        <path d="M8 9 H17 V12 H13.5 V20 H10.5 V12 H8 Z" fill="#001423"/>
+      </svg>
+      <h1 class="title">Inicio</h1>
+      <button class="gear" data-open="sec-configuracion" aria-label="Ajustes">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#cbe2f4" aria-hidden="true">
+          <path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.2h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.7h4l.4-2.7a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/>
+        </svg>
+      </button>
+    </header>
+
+    <div class="body">
+      <div class="row row-top">
+        <div class="poster"></div><div class="poster"></div><div class="poster"></div>
+      </div>
+      <div class="row-title" style="top: 160px;">Ecos de otros universos</div>
+      <div class="row row-2">
+        <div class="poster"></div><div class="poster"></div><div class="poster"></div>
+      </div>
+      <div class="row-title" style="top: 401px;">Alta tensión: policías y acción sin Freno</div>
+      <div class="row row-3">
+        <div class="poster"></div><div class="poster"></div><div class="poster"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Sección: Búsqueda ── -->
+  <section id="sec-busqueda" class="screen" data-tab="buscar">
+    <header class="header">
+      <svg class="logo" viewBox="0 0 24 28" aria-hidden="true">
+        <path d="M2 2 L22 14 L2 26 Z" fill="#00ccff"/>
+        <path d="M8 9 H17 V12 H13.5 V20 H10.5 V12 H8 Z" fill="#001423"/>
+      </svg>
+      <h1 class="title">Búsqueda</h1>
+      <button class="gear" data-open="sec-configuracion" aria-label="Ajustes">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#cbe2f4" aria-hidden="true">
+          <path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.2h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.7h4l.4-2.7a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/>
+        </svg>
+      </button>
+    </header>
+    <div class="search">¿Qué estás buscando?</div>
+    <div class="at" style="top: 134px; left: 15px; font-size: 18px; font-weight: 500; color: #cbe2f4;">Búsquedas recientes:</div>
+    <div class="recent-row" style="top: 173px;"><span>Búsqueda de ejemplo 1</span><span class="x">✕</span></div>
+    <div class="recent-row" style="top: 222px;"><span>Búsqueda de ejemplo 2</span><span class="x">✕</span></div>
+  </section>
+
+  <!-- ── Sección: TV en vivo ── -->
+  <section id="sec-tv-en-vivo" class="screen" data-tab="tv">
+    <header class="header">
+      <svg class="logo" viewBox="0 0 24 28" aria-hidden="true">
+        <path d="M2 2 L22 14 L2 26 Z" fill="#00ccff"/>
+        <path d="M8 9 H17 V12 H13.5 V20 H10.5 V12 H8 Z" fill="#001423"/>
+      </svg>
+      <h1 class="title">TV en vivo</h1>
+      <button class="gear" data-open="sec-configuracion" aria-label="Ajustes">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#cbe2f4" aria-hidden="true">
+          <path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.2h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.7h4l.4-2.7a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/>
+        </svg>
+      </button>
+    </header>
+
+    <button class="seg is-active" data-seg="grupo" style="left: 15px; width: 126px;">Grupo de canales</button>
+    <button class="seg" data-seg="listado" style="left: 148px; width: 132px;">Listado de canales</button>
+    <button class="filter-btn" aria-label="Filtrar"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
+
+    <!-- Vista: Grupo de canales -->
+    <div class="tv-view tv-grupo">
+      <div class="grp-title" style="top: 159px;">Noticias</div>
+      <div class="card" style="left: 15px; top: 180px;"><span class="ch">CH 13</span><span class="nm">26 Historia</span><span class="pg" style="width: 45%"></span></div>
+      <div class="card" style="left: 185px; top: 180px;"><span class="ch">CH 1002</span><span class="nm">26 Historia</span><span class="pg" style="width: 55%"></span></div>
+
+      <div class="grp-title" style="top: 307px;">Deportes</div>
+      <div class="card is-sel" style="left: 15px; top: 327px;"><span class="ch">CH 109</span><span class="nm">Atl. Mineiro (Bra) ...</span><span class="pg" style="width: 12%"></span></div>
+      <div class="card" style="left: 185px; top: 327px;"><span class="ch">CH 1101</span><span class="nm">GCL Supercup Ver...</span><span class="pg" style="width: 100%"></span></div>
+
+      <div class="grp-title" style="top: 454px;">Infantil</div>
+      <div class="card" style="left: 15px; top: 474px;"><span class="ch">CH 203</span><span class="nm">Teen Beach Movie</span><span class="pg" style="width: 50%"></span></div>
+      <div class="card" style="left: 185px; top: 474px;"><span class="ch">CH 1027</span><span class="nm">Teen Beach Movie</span><span class="pg" style="width: 60%"></span></div>
+
+      <div class="grp-title" style="top: 601px;">Películas</div>
+      <div class="card" style="left: 15px; top: 622px;"><span class="ch">CH 1060</span></div>
+      <div class="card" style="left: 185px; top: 622px;"><span class="ch">CH 1061</span></div>
+    </div>
+
+    <!-- Vista: Listado de canales -->
+    <div class="tv-view tv-listado">
+      <div class="card" style="left: 15px; top: 117px;"><span class="ch">CH 104</span><span class="nm">Francia vs. Argen...</span><span class="pg" style="width: 96%"></span></div>
+      <div class="card" style="left: 185px; top: 117px;"><span class="ch">CH 105</span><span class="nm">Atl. Mineiro (Bra) ...</span><span class="pg" style="width: 12%"></span></div>
+      <div class="card" style="left: 15px; top: 222px;"><span class="ch">CH 106</span><span class="nm">Sportia</span><span class="pg" style="width: 92%"></span></div>
+      <div class="card" style="left: 185px; top: 222px;"><span class="ch">CH 107</span><span class="nm">Misfit Garage - T6:...</span><span class="pg" style="width: 55%"></span></div>
+      <div class="card" style="left: 15px; top: 327px;"><span class="ch">CH 108</span><span class="nm">Semifinal 1 - Com...</span><span class="pg" style="width: 25%"></span></div>
+      <div class="card is-sel" style="left: 185px; top: 327px;"><span class="ch">CH 109</span><span class="nm">Atl. Mineiro (Bra) ...</span><span class="pg" style="width: 12%"></span></div>
+      <div class="card" style="left: 15px; top: 432px;"><span class="ch">CH 110</span><span class="nm">GCL Supercup Ve...</span><span class="pg" style="width: 100%"></span></div>
+      <div class="card" style="left: 185px; top: 432px;"><span class="ch">CH 111</span><span class="nm">Rosario Central vs...</span><span class="pg" style="width: 35%"></span></div>
+      <div class="card" style="left: 15px; top: 536px;"><span class="ch">CH 112</span><span class="nm">Match Day: Post ...</span><span class="pg" style="width: 100%"></span></div>
+      <div class="card" style="left: 185px; top: 536px;"><span class="ch">CH 200</span><span class="nm">Pili y el guardián e...</span><span class="pg" style="width: 100%"></span></div>
+    </div>
+  </section>
+
+  <!-- ── Sección: Mi contenido (estado vacío) ── -->
+  <section id="sec-mi-contenido" class="screen" data-tab="micontenido">
+    <header class="header">
+      <svg class="logo" viewBox="0 0 24 28" aria-hidden="true">
+        <path d="M2 2 L22 14 L2 26 Z" fill="#00ccff"/>
+        <path d="M8 9 H17 V12 H13.5 V20 H10.5 V12 H8 Z" fill="#001423"/>
+      </svg>
+      <h1 class="title">Mi contenido</h1>
+      <button class="gear" data-open="sec-configuracion" aria-label="Ajustes">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#cbe2f4" aria-hidden="true">
+          <path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.2h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.7h4l.4-2.7a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/>
+        </svg>
+      </button>
+    </header>
+
+    <svg class="empty-art" viewBox="0 0 360 687" aria-hidden="true">
+      <circle cx="167" cy="215" r="73" fill="#009ec9"/>
+      <path d="M146 181 L201 215 L146 249 Z" fill="#f2f2f2" stroke="#f2f2f2" stroke-width="4" stroke-linejoin="round"/>
+      <circle cx="233" cy="276" r="41" fill="#001423"/>
+      <circle cx="233" cy="276" r="35" fill="#95a9b8"/>
+      <path d="M216 276 H250 M233 259 V293" stroke="#0b1a26" stroke-width="5" stroke-linecap="round"/>
+      <g fill="#e8b860">
+        <path d="M101 137 Q101 146 110 146 Q101 146 101 155 Q101 146 92 146 Q101 146 101 137 Z"/>
+        <path d="M247 160 Q247 169 256 169 Q247 169 247 178 Q247 169 238 169 Q247 169 247 160 Z"/>
+        <path d="M86 259 Q86 268 95 268 Q86 268 86 277 Q86 268 77 268 Q86 268 86 259 Z"/>
+        <path d="M102 275 Q102 284 111 284 Q102 284 102 293 Q102 284 93 284 Q102 284 102 275 Z"/>
+      </g>
+    </svg>
+
+    <div class="empty-title">¡Accedé a T-Play desde tus dispositivos!</div>
+    <div class="empty-text">Lo que veas se irá sumando en esta sección para<br><b>Continuar viendo</b>. También vas a poder<br>encontrar acá tus <b>Grabaciones</b> y tus <b>Favoritos</b>.</div>
+    <button class="btn-explore" data-target="sec-inicio">Explorá el contenido de T-Play</button>
+  </section>
+
+  <!-- ── Sección: Configuración (menú) ── -->
+  <section id="sec-configuracion" class="screen">
+    <header class="header">
+      <svg class="logo" viewBox="0 0 24 28" aria-hidden="true">
+        <path d="M2 2 L22 14 L2 26 Z" fill="#00ccff"/>
+        <path d="M8 9 H17 V12 H13.5 V20 H10.5 V12 H8 Z" fill="#001423"/>
+      </svg>
+      <h1 class="title">Configuración</h1>
+    </header>
+    <div class="menu">
+      <button class="menu-item" data-target="sec-mis-datos">Mis datos</button>
+      <button class="menu-item" data-target="sec-gestion-dispositivos">Gestión de dispositivos</button>
+      <button class="menu-item" data-target="sec-mis-canales">Mis canales</button>
+      <button class="menu-item" data-target="sec-notificaciones">Notificaciones</button>
+      <button class="menu-item" data-target="sec-detalles-tecnicos">Detalles técnicos</button>
+      <button class="menu-item" data-target="sec-ayuda-legales">Ayuda y legales</button>
+      <button class="menu-item">Cerrar sesión</button>
+    </div>
+  </section>
+
+  <!-- ── Sección: Mis datos ── -->
+  <section id="sec-mis-datos" class="screen">
+    <header class="header sub">
+      <button class="back" aria-label="Atrás"><svg viewBox="0 0 24 24" fill="none" stroke="#8fa3b5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 L8 12 L15 19"/></svg></button>
+      <h1 class="title">Mis datos</h1>
+    </header>
+    <div class="avatar"></div>
+    <div class="at center lbl" style="top: 180px;">Grabaciones en tu cuenta</div>
+    <div class="at center val" style="top: 199px;">Te quedan 20 de 20 horas</div>
+    <div class="rec-bar"></div>
+    <div class="rec-line"></div>
+    <div class="at" style="top: 254px; left: 0; width: 78px; text-align: right; font-size: 14px; line-height: 13px; color: #cbe2f4;">0 horas<br>grabadas</div>
+    <div class="at center lbl" style="top: 326px;">Usuario:</div>
+    <div class="at center val" style="top: 344px; font-size: 19px; font-weight: 500;">NOMBRE APELLIDO</div>
+    <div class="at center lbl" style="top: 397px;">Número de cliente:</div>
+    <div class="at center val" style="top: 416px; font-size: 19px;">0000000</div>
+    <div class="btn-light">Gestión de almacenamiento</div>
+  </section>
+
+  <!-- ── Sección: Gestión de dispositivos ── -->
+  <section id="sec-gestion-dispositivos" class="screen">
+    <header class="header sub">
+      <button class="back" aria-label="Atrás"><svg viewBox="0 0 24 24" fill="none" stroke="#8fa3b5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 L8 12 L15 19"/></svg></button>
+      <h1 class="title">Gestión de dispositivos</h1>
+    </header>
+    <div class="at" style="top: 74px; left: 15px; font-size: 17px; font-weight: 500; color: #e6eef6;">Este dispositivo</div>
+    <div class="dev-icon" style="top: 123px;"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg></div>
+    <div class="dev-name" style="top: 113px;">SM-S711B</div>
+    <div class="dev-sub" style="top: 134px;">Último ingreso: <b>ahora</b></div>
+    <div class="dev-x" style="top: 123px;"><svg viewBox="0 0 12 12"><path d="M2 2 L10 10 M10 2 L2 10"/></svg></div>
+    <div class="btn-outline">Cerrar todas las sesiones</div>
+    <div class="at" style="top: 266px; left: 15px; width: 22px;"><span style="display:block;width:10px;height:10px;border-radius:50%;background:#4fc3f7;margin:0 auto;"></span></div>
+    <div class="at" style="top: 266px; left: 45px; right: 15px; font-size: 14px; line-height: 20px; color: #cbe2f4;">Recordá que podés iniciar sesión en <b style="font-weight:500">hasta 5 dispositivos.</b></div>
+    <div class="at" style="top: 319px; left: 15px; font-size: 17px; font-weight: 500; color: #cbe2f4;">Otros dispositivos activos <span style="color:#7d8f9e;">(3)</span></div>
+
+    <div class="dev-icon" style="top: 369px;"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg></div>
+    <div class="dev-name" style="top: 359px;">ANDROID-TV Linux-armv7l Chr...</div>
+    <div class="dev-sub" style="top: 381px;">Último ingreso: <b>Hoy</b></div>
+    <div class="dev-x" style="top: 369px;"><svg viewBox="0 0 12 12"><path d="M2 2 L10 10 M10 2 L2 10"/></svg></div>
+
+    <div class="dev-icon" style="top: 448px;"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg></div>
+    <div class="dev-name" style="top: 438px;">ANDROID-TV Linux-armv7l Chr...</div>
+    <div class="dev-sub" style="top: 460px;">Último ingreso: <b>17-11-2026</b></div>
+    <div class="dev-x" style="top: 448px;"><svg viewBox="0 0 12 12"><path d="M2 2 L10 10 M10 2 L2 10"/></svg></div>
+
+    <div class="dev-icon" style="top: 528px;"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg></div>
+    <div class="dev-name" style="top: 518px;">ANDROID-TV Linux-armv7l Chr...</div>
+    <div class="dev-sub" style="top: 539px;">Último ingreso: <b>5-11-2026</b></div>
+    <div class="dev-x" style="top: 528px;"><svg viewBox="0 0 12 12"><path d="M2 2 L10 10 M10 2 L2 10"/></svg></div>
+  </section>
+
+  <!-- ── Sección: Mis canales ── -->
+  <section id="sec-mis-canales" class="screen">
+    <header class="header sub">
+      <button class="back" aria-label="Atrás"><svg viewBox="0 0 24 24" fill="none" stroke="#8fa3b5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 L8 12 L15 19"/></svg></button>
+      <h1 class="title">Mis canales</h1>
+    </header>
+    <div class="at" style="top: 76px; left: 15px; right: 15px; font-size: 17px; line-height: 23px; font-weight: 500; color: #cbe2f4;">Gestioná la visualización de tus canales favoritos y más vistos</div>
+    <div class="at" style="top: 138px; left: 15px; font-size: 18px; font-weight: 500; color: #e6eef6;">♥&nbsp;&nbsp;Mostrar mis canales favoritos</div>
+    <div class="toggle" style="top: 138px;"></div>
+    <div class="at" style="top: 194px; left: 15px; font-size: 18px; font-weight: 500; color: #e6eef6;">Mostrar mis canales más vistos</div>
+    <div class="toggle" style="top: 194px;"></div>
+  </section>
+
+  <!-- ── Sección: Notificaciones ── -->
+  <section id="sec-notificaciones" class="screen">
+    <header class="header sub">
+      <button class="back" aria-label="Atrás"><svg viewBox="0 0 24 24" fill="none" stroke="#8fa3b5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 L8 12 L15 19"/></svg></button>
+      <h1 class="title">Notificaciones</h1>
+    </header>
+    <div class="at" style="top: 78px; left: 15px; font-size: 18px; font-weight: 500; color: #e6eef6;">Notificaciones push</div>
+    <div class="toggle" style="top: 78px;"></div>
+    <div class="at txt" style="top: 108px; left: 15px; right: 15px;">Las notificaciones están activadas.</div>
+    <div class="at txt" style="top: 125px; left: 15px; right: 15px;">Te compartiremos todas las novedades de T-Play.</div>
+  </section>
+
+  <!-- ── Sección: Detalles técnicos ── -->
+  <section id="sec-detalles-tecnicos" class="screen">
+    <header class="header sub">
+      <button class="back" aria-label="Atrás"><svg viewBox="0 0 24 24" fill="none" stroke="#8fa3b5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 L8 12 L15 19"/></svg></button>
+      <h1 class="title">Detalles técnicos</h1>
+    </header>
+    <div class="avatar" style="background:#c9e0f3;"><span style="position:absolute;left:23px;top:23px;width:29px;height:29px;border-radius:50%;background:#5a6b78;color:#c9e0f3;font:600 22px/29px Roboto,system-ui,sans-serif;text-align:center;">i</span></div>
+    <div class="at center" style="top: 185px; font-size: 19px; font-weight: 500; color: #e6eef6;">Telecentro Play</div>
+    <div class="at center lbl" style="top: 237px;">Versión</div>
+    <div class="at center val" style="top: 257px;">4.19.3.2021033555</div>
+    <div class="at center lbl" style="top: 311px;">Dispositivo</div>
+    <div class="at center val" style="top: 331px;">SM-S711B</div>
+    <div class="at center lbl" style="top: 385px;">Sistema</div>
+    <div class="at center val" style="top: 405px;">Android 16</div>
+  </section>
+
+  <!-- ── Sección: Ayuda y legales ── -->
+  <section id="sec-ayuda-legales" class="screen">
+    <header class="header sub">
+      <button class="back" aria-label="Atrás"><svg viewBox="0 0 24 24" fill="none" stroke="#8fa3b5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 L8 12 L15 19"/></svg></button>
+      <h1 class="title">Ayuda y legales</h1>
+    </header>
+    <div class="avatar" style="background:#c9e0f3;"><span style="position:absolute;left:23px;top:20px;width:29px;height:29px;border-radius:50%;background:#5a6b78;color:#c9e0f3;font:600 22px/29px Roboto,system-ui,sans-serif;text-align:center;">?</span></div>
+    <div class="at center" style="top: 155px; font-size: 17px; font-weight: 500; color: #e6eef6;">Ayuda</div>
+    <div class="at center txt" style="top: 180px; font-size: 15px; color: #cbe2f4;">Para obtener ayuda on-line,</div>
+    <div class="at center txt" style="top: 202px; font-size: 15px; color: #cbe2f4;">ingresá desde tu navegador a:</div>
+    <div class="at center" style="top: 226px; font-size: 13px; font-weight: 500; color: #1a9bf0;">https://ayuda.telecentro.com.ar/category/servicios</div>
+    <div class="at center" style="top: 303px; font-size: 17px; font-weight: 500; color: #cbe2f4;">Política de privacidad</div>
+    <div class="at center" style="top: 320px; font-size: 13px; font-weight: 500; color: #1a9bf0;">https://telecentro.com.ar/politica-privacidad</div>
+    <div class="at center" style="top: 370px; font-size: 17px; font-weight: 500; color: #cbe2f4;">Términos y condiciones</div>
+    <div class="at center" style="top: 388px; font-size: 13px; font-weight: 500; color: #1a9bf0;">https://telecentro.com.ar/terminos</div>
+    <div class="at center" style="top: 437px; font-size: 17px; font-weight: 500; color: #cbe2f4;">Licencia de terceros</div>
+    <div class="at center" style="top: 456px; font-size: 13px; font-weight: 500; color: #1a9bf0; text-decoration: underline;">Ver licencia de terceros</div>
+  </section>
+
+<!-- Menú flotante de Más: se abre desde la pestaña Más, no navega -->
+<div class="overlay" id="masOverlay"></div>
+<div class="popup" id="masPopup" aria-label="Menú Más">
+  <div class="popup-item" style="top: 28px;"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18"/><path d="M8 3v18M16 3v18M4 8h4M4 13h4M16 8h4M16 13h4"/></svg><span style="padding-left: 24px;">Películas</span></div>
+  <div class="popup-item" style="top: 63px;"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M10 9l5 3-5 3z"/><path d="M8 21h8"/></svg><span style="padding-left: 24px;">Series</span></div>
+  <div class="popup-item" style="top: 99px;"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M7 9h10M7 12h10M7 15h6"/><path d="M8 21h8"/></svg><span style="padding-left: 24px;">Guía</span></div>
+</div>
+
+<!-- Barra inferior compartida (visible en todas las pantallas de la captura) -->
+<nav class="tabbar" id="tabbar" aria-label="Navegación principal">
+  <button class="tab" data-tab="inicio" data-target="sec-inicio">
+    <svg viewBox="0 0 24 24"><path d="M3 11 L12 4 L21 11 V20 H14.5 V14.5 H9.5 V20 H3 Z"/></svg>
+    <span>Inicio</span>
+  </button>
+  <button class="tab" data-tab="buscar" data-target="sec-busqueda">
+    <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 L21 21"/></svg>
+    <span>Buscar</span>
+  </button>
+  <button class="tab" data-tab="tv" data-target="sec-tv-en-vivo">
+    <svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="13" rx="2"/><path d="M9.5 9.5 L15.5 12.5 L9.5 15.5 Z"/><path d="M8 3 L12 6 L16 3"/></svg>
+    <span>TV en vivo</span>
+  </button>
+  <button class="tab" data-tab="micontenido" data-target="sec-mi-contenido">
+    <svg viewBox="0 0 24 24"><path d="M6.5 3.5 H17.5 V20.5 L12 16.5 L6.5 20.5 Z"/></svg>
+    <span>Mi contenido</span>
+  </button>
+  <button class="tab" id="tabMas" data-popup="1">
+    <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="19" cy="12" r="1.4" fill="currentColor"/></svg>
+    <span>Más</span>
+  </button>
+</nav>
+
+<div class="gesture"></div>
+</div>
+
+<script>
+/* ── Reloj (hora fija de la captura; no es dato de la app) ── */
+var clockEl = document.getElementById('clock');
+function setClock(hhmm) { if (clockEl) clockEl.textContent = hhmm; }
+
+/* ── Navegación ── */
+var currentId = 'sec-inicio';
+var navStack = [];
+
+function setScreen(id) {
+  currentId = id;
+  var secs = document.querySelectorAll('.screen');
+  for (var i = 0; i < secs.length; i++) {
+    secs[i].classList.toggle('is-active', secs[i].id === id);
+  }
+  setActiveTab(id);
+}
+
+/* La pestaña activa sigue a la pantalla; Más se marca mientras su menú está abierto */
+function setActiveTab(id) {
+  var owner = document.getElementById(id);
+  var tabName = owner ? owner.getAttribute('data-tab') : null;
+  var popup = isPopupOpen();
+  var tabs = document.querySelectorAll('.tab[data-tab]');
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].classList.toggle('is-active', !popup && tabs[i].getAttribute('data-tab') === tabName);
+  }
+  document.getElementById('tabMas').classList.toggle('is-active', popup);
+}
+
+/* Avanza a una pantalla hija y recuerda la anterior */
+function openScreen(id) {
+  if (!document.getElementById(id) || id === currentId) return;
+  navStack.push(currentId);
+  setScreen(id);
+}
+
+/* Back del sistema / botón ‹ : vuelve un nivel; desde Inicio no hace nada */
+function goBack() {
+  if (navStack.length) { setScreen(navStack.pop()); }
+}
+
+/* Pestañas inferiores: cambian de raíz y limpian el historial */
+function goTab(id) {
+  closePopup();
+  navStack = [];
+  setScreen(id);
+}
+
+/* ── Menú Más (flotante) ── */
+function isPopupOpen() {
+  return document.getElementById('masPopup').classList.contains('is-open');
+}
+function openPopup() {
+  document.getElementById('masPopup').classList.add('is-open');
+  document.getElementById('masOverlay').classList.add('is-open');
+  setActiveTab(currentId);
+}
+function closePopup() {
+  document.getElementById('masPopup').classList.remove('is-open');
+  document.getElementById('masOverlay').classList.remove('is-open');
+  setActiveTab(currentId);
+}
+
+/* ── Segmentos de TV en vivo ── */
+function setTvSeg(seg) {
+  var tv = document.getElementById('sec-tv-en-vivo');
+  tv.classList.toggle('is-listado', seg === 'listado');
+  var btns = tv.querySelectorAll('.seg');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle('is-active', btns[i].getAttribute('data-seg') === seg);
+  }
+}
+
+document.addEventListener('click', function (ev) {
+  var t = ev.target;
+
+  var seg = t.closest('.seg');
+  if (seg) { setTvSeg(seg.getAttribute('data-seg')); return; }
+
+  if (t.closest('#masOverlay')) { closePopup(); return; }
+  if (t.closest('#tabMas')) { if (isPopupOpen()) { closePopup(); } else { openPopup(); } return; }
+
+  var exploreEl = t.closest('.btn-explore');
+  if (exploreEl) { goTab(exploreEl.getAttribute('data-target')); return; }
+
+  var tabEl = t.closest('.tab[data-target]');
+  if (tabEl) { goTab(tabEl.getAttribute('data-target')); return; }
+
+  var openEl = t.closest('[data-open]');
+  if (openEl) { openScreen(openEl.getAttribute('data-open')); return; }
+
+  var targetEl = t.closest('[data-target]');
+  if (targetEl) { openScreen(targetEl.getAttribute('data-target')); return; }
+
+  if (t.closest('.back')) { goBack(); }
+});
+
+document.addEventListener('keydown', function (ev) {
+  if (ev.key !== 'Escape') return;
+  if (isPopupOpen()) { closePopup(); } else { goBack(); }
+});
+
+/* Estado inicial: Inicio activa y su pestaña marcada */
+setScreen(currentId);
+</script>
+</body>
+</html>
