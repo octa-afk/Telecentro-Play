@@ -35,6 +35,8 @@ Pendiente de confirmar: si Configuración y pestaña **Más** muestran las misma
 
 ## Pestaña Más (relevado)
 
+Verificado en el teléfono: la opción **Series** del menú abre la pantalla Series (Más queda marcada; la pestaña de la pantalla anterior, p. ej. Inicio, sigue marcada mientras el menú está abierto). Películas y Guía se cablearon igual por analogía, sin verificar cada una. La pantalla Series completa tiene chips VER TODAS · CN · SPACE · TNT · G y las secciones "Las series que te recomendamos" y "Novedades".
+
 Toque en **Más** abre un menú flotante sobre la pantalla actual (la pantalla de fondo queda atenuada) con 3 opciones: **Películas**, **Series**, **Guía**. Back cierra el menú. No es el mismo contenido que Configuración.
 
 ## Búsqueda (relevado parcialmente)

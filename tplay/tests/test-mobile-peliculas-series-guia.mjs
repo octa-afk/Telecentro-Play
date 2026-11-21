@@ -40,8 +40,8 @@ check('Escape vuelve a Inicio', (await activeScreen()) === 'sec-inicio' && (awai
 // ── Series ──
 await click('#sec-inicio .shortcut:has-text("Series")');
 check('Series abre su pantalla', (await activeScreen()) === 'sec-series');
-check('Series: chips con SPACE seleccionado', (await text('#sec-series .chip.sel')) === 'SPACE' && (await count('#sec-series .chip')) === 5);
-check('Series: sección Especiales con 1 póster', (await text('#sec-series .sec-ttl')) === 'Especiales' && (await count('#sec-series .pst')) === 1);
+check('Series: chips VER TODAS seleccionado', (await text('#sec-series .chip.sel')) === 'VER TODAS' && JSON.stringify(await all('#sec-series .chip')) === JSON.stringify(['VER TODAS', 'CN', 'SPACE', 'TNT', 'G']));
+check('Series: secciones y 6 pósteres', JSON.stringify(await all('#sec-series .sec-ttl')) === JSON.stringify(['Las series que te recomendamos', 'Novedades']) && (await count('#sec-series .pst')) === 6);
 await page.screenshot({ path: join(SHOT_DIR, 'mobile-series.png') });
 await press('Escape');
 

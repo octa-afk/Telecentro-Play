@@ -62,13 +62,16 @@ check('vuelve a Grupo de canales', (await visibleCount('#sec-tv-en-vivo .tv-grup
 // ── Menú Más (flotante, no navega) ──
 await click('#tabMas');
 check('Más abre el menú flotante', (await popupOpen()) === true);
-check('Más: pestaña marcada mientras está abierto', (await activeTab()) === 'Más');
+check('Más: pestaña marcada mientras está abierto (y TV en vivo sigue activa)', await page.evaluate(() => document.getElementById('tabMas').classList.contains('is-active') && document.querySelector('.tab[data-tab="tv"]').classList.contains('is-active')));
 check('Más: 3 opciones', (await count('#masPopup .popup-item')) === 3);
 check('Más: Películas, Series, Guía', JSON.stringify(await page.evaluate(() => [...document.querySelectorAll('#masPopup .popup-item')].map(e => e.textContent.trim()))) === JSON.stringify(['Películas', 'Series', 'Guía']));
 check('Más: no cambia de pantalla', (await activeScreen()) === 'sec-tv-en-vivo');
 await page.screenshot({ path: join(SHOT_DIR, 'mobile-mas-popup.png') });
-await click('#masPopup .popup-item');
-check('opción del menú Más no navega (inerte)', (await activeScreen()) === 'sec-tv-en-vivo' && (await popupOpen()) === true);
+await click('#masPopup .popup-item:has-text("Series")');
+check('opción Series del menú Más abre Series y cierra el menú', (await activeScreen()) === 'sec-series' && (await popupOpen()) === false);
+await press('Escape');
+check('Escape vuelve a TV en vivo', (await activeScreen()) === 'sec-tv-en-vivo');
+await click('#tabMas');
 await press('Escape');
 check('Escape cierra el menú Más', (await popupOpen()) === false);
 check('Más: deja de estar marcada al cerrar', (await activeTab()) === 'TV en vivo');

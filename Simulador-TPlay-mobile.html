@@ -372,13 +372,20 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
     <div class="stage">
       <div class="banner" style="top: 65px;"></div>
       <div class="dots" style="top: 247px;"><i class="on"></i><i></i><i></i></div>
-      <div class="chip sel" style="left: 15px;">SPACE</div>
-      <div class="chip" style="left: 91px;">TNT</div>
-      <div class="chip" style="left: 167px;">G</div>
-      <div class="chip" style="left: 243px;">film&amp;arts</div>
-      <div class="chip" style="left: 319px;">AMC</div>
-      <div class="sec-ttl" style="top: 370px;">Especiales</div>
+      <span class="btn-ver">VER</span>
+      <div class="chip sel" style="left: 15px;">VER TODAS</div>
+      <div class="chip" style="left: 91px;">CN</div>
+      <div class="chip" style="left: 167px;">SPACE</div>
+      <div class="chip" style="left: 243px;">TNT</div>
+      <div class="chip" style="left: 319px;">G</div>
+      <div class="sec-ttl" style="top: 370px;">Las series que te recomendamos</div>
       <div class="pst" style="left: 15px; top: 390px;"></div>
+      <div class="pst" style="left: 151px; top: 390px;"></div>
+      <div class="pst" style="left: 287px; top: 390px;"></div>
+      <div class="sec-ttl" style="top: 611px;">Novedades</div>
+      <div class="pst" style="left: 15px; top: 631px;"></div>
+      <div class="pst" style="left: 151px; top: 631px;"></div>
+      <div class="pst" style="left: 287px; top: 631px;"></div>
     </div>
   </section>
 
@@ -658,9 +665,9 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 <!-- Menú flotante de Más: se abre desde la pestaña Más, no navega -->
 <div class="overlay" id="masOverlay"></div>
 <div class="popup" id="masPopup" aria-label="Menú Más">
-  <div class="popup-item" style="top: 28px;"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18"/><path d="M8 3v18M16 3v18M4 8h4M4 13h4M16 8h4M16 13h4"/></svg><span style="padding-left: 24px;">Películas</span></div>
-  <div class="popup-item" style="top: 63px;"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M10 9l5 3-5 3z"/><path d="M8 21h8"/></svg><span style="padding-left: 24px;">Series</span></div>
-  <div class="popup-item" style="top: 99px;"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M7 9h10M7 12h10M7 15h6"/><path d="M8 21h8"/></svg><span style="padding-left: 24px;">Guía</span></div>
+  <div class="popup-item" data-target="sec-peliculas" style="top: 28px;"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18"/><path d="M8 3v18M16 3v18M4 8h4M4 13h4M16 8h4M16 13h4"/></svg><span style="padding-left: 24px;">Películas</span></div>
+  <div class="popup-item" data-target="sec-series" style="top: 63px;"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M10 9l5 3-5 3z"/><path d="M8 21h8"/></svg><span style="padding-left: 24px;">Series</span></div>
+  <div class="popup-item" data-target="sec-guia" style="top: 99px;"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M7 9h10M7 12h10M7 15h6"/><path d="M8 21h8"/></svg><span style="padding-left: 24px;">Guía</span></div>
 </div>
 
 <!-- Barra inferior compartida (visible en todas las pantallas de la captura) -->
@@ -715,7 +722,7 @@ function setActiveTab(id) {
   var popup = isPopupOpen();
   var tabs = document.querySelectorAll('.tab[data-tab]');
   for (var i = 0; i < tabs.length; i++) {
-    tabs[i].classList.toggle('is-active', !popup && tabs[i].getAttribute('data-tab') === tabName);
+    tabs[i].classList.toggle('is-active', tabs[i].getAttribute('data-tab') === tabName);
   }
   document.getElementById('tabMas').classList.toggle('is-active', popup || tabName === 'mas');
 }
@@ -778,6 +785,9 @@ document.addEventListener('click', function (ev) {
 
   var tabEl = t.closest('.tab[data-target]');
   if (tabEl) { goTab(tabEl.getAttribute('data-target')); return; }
+
+  var popItem = t.closest('.popup-item[data-target]');
+  if (popItem) { closePopup(); openScreen(popItem.getAttribute('data-target')); return; }
 
   var openEl = t.closest('[data-open]');
   if (openEl) { openScreen(openEl.getAttribute('data-open')); return; }
