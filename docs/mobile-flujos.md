@@ -103,3 +103,9 @@ Pendiente: las demás pantallas no se desplazan; botones favorito/grabar e ícon
 - **Guía de canales**: solo se desplaza la grilla (el panel del programa y la línea de tiempo quedan fijos). Canales vistos: 104 a 109, 111, 112, 200 a 203. La fila 110 se completó con el título "GCL Supercup Ve..." de TV en vivo (la fila no se llegó a ver en la Guía). Los horarios son los de la captura (21:00, 21:30, 22:00) y no avanzan.
 - **TV en vivo › Grupo de canales** (verificado con swipes, desde arriba): Aire, Noticias, Deportes, Infantil, Películas, Series, Música, Pack fútbol, Documentales, Entretenimiento, Internacional (puede haber más). Cada grupo es una fila de tarjetas de canal con número CH y programa en curso; CH 105 aparece resaltado (el canal que se estaba viendo). En Internacional no se leyeron los números de canal. El listado abre en el tramo del canal resaltado (CH 100 a 111) y no siempre desde CH 1.
 - Pendiente de desplazamiento: Búsqueda y más canales del listado.
+
+## Canales (filtro de TV en vivo)
+
+El botón de filtro (arriba a la derecha en TV en vivo) abre la pantalla **Canales**: título "Canales", botón ✕ para cerrar, chips alfabéticos **A-C · D-G · H-P · Q-T · U-W** (A-C seleccionado) y una grilla de 3 columnas con logo y nombre del canal. La barra inferior sigue visible, con TV en vivo activa. Relevados A&E, A&E HD, ABC, ADULTSWIM, ADULTSWIM HD, ALPHA TV, AMC, AMC HD, AMC SERIES HD, AMC SERIES SD, AMERICA, AMERICA 24, AMERICA HD, ANIMAL PLANET, ANIMAL PLANET HD, ARGENTINA 12, ARGENTINISIMA, AXN.
+
+Implementado en el simulador (`#sec-canales`, test `test-mobile-canales.mjs`) solo con los nombres, sin logos de marca. No se tocó ningún canal de la grilla (no se sabe qué hace) ni se cambió de rango. Pendiente: resto de A-C (había más debajo) y los demás rangos.

@@ -259,6 +259,11 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 .g-cell.now { background: #0a2e49; }
 .g-cell.sel { background: #00ccff; color: #001423; }
 
+.c-ttl { position: absolute; left: 15px; top: 31px; transform: translateY(-50%); font-size: 22px; font-weight: 500; color: #cbe2f4; }
+.c-x { position: absolute; left: 317px; top: 17px; width: 28px; height: 28px; border-radius: 50%; background: #1a2a38; display: flex; align-items: center; justify-content: center; }
+.a-chip { position: absolute; top: 60px; width: 59px; height: 27px; border: 1px solid #cbe2f4; border-radius: 14px; color: #e6eef6; font-size: 15px; display: flex; align-items: center; justify-content: center; }
+.a-chip.sel { background: #00ccff; border-color: #00ccff; color: #001423; }
+.c-name { position: absolute; width: 112px; transform: translate(-50%, -50%); text-align: center; font-size: 14px; line-height: 20px; color: #cbe2f4; }
 /* ── Mi contenido (estado vacío) ── */
 .empty-art { position: absolute; left: 0; top: 0; width: 360px; height: 687px; pointer-events: none; }
 .empty-title { position: absolute; left: 0; right: 0; top: 350px; transform: translateY(-50%); text-align: center; white-space: nowrap; font-size: 16px; font-weight: 600; color: #cbe2f4; }
@@ -511,7 +516,7 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 
     <button class="seg is-active" data-seg="grupo" style="left: 15px; width: 126px;">Grupo de canales</button>
     <button class="seg" data-seg="listado" style="left: 148px; width: 132px;">Listado de canales</button>
-    <button class="filter-btn" aria-label="Filtrar"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
+    <button class="filter-btn" data-open="sec-canales" aria-label="Filtrar"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
 
     <!-- Vista: Grupo de canales (11 grupos verificados con swipes) -->
     <div class="tv-view tv-grupo">
@@ -577,6 +582,37 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
         <div class="card" style="left: 185px; top: 958px;"><span class="ch">CH 20</span><span class="nm">El destape</span><span class="pg" style="width: 30%"></span></div>
       </div></div>
     </div>
+  </section>
+
+  <!-- ── Sección: Canales (filtro alfabético de TV en vivo) ── -->
+  <section id="sec-canales" class="screen" data-tab="tv">
+    <div class="c-ttl">Canales</div>
+    <button class="back c-x" aria-label="Cerrar"><svg viewBox="0 0 12 12" width="12" height="12"><path d="M2 2 L10 10 M10 2 L2 10" stroke="#cbe2f4" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <div class="a-chip sel" style="left: 14px;">A-C</div>
+    <div class="a-chip" style="left: 88px;">D-G</div>
+    <div class="a-chip" style="left: 161px;">H-P</div>
+    <div class="a-chip" style="left: 235px;">Q-T</div>
+    <div class="a-chip" style="left: 309px;">U-W</div>
+    <div class="scroll" style="top: 104px;"><div class="sc-in plain" style="height: 640px;">
+        <div class="c-name" style="left: 58px; top: 71px;">A&amp;E</div>
+        <div class="c-name" style="left: 180px; top: 71px;">A&amp;E HD</div>
+        <div class="c-name" style="left: 301px; top: 71px;">ABC</div>
+        <div class="c-name" style="left: 58px; top: 168px;">ADULTSWIM</div>
+        <div class="c-name" style="left: 180px; top: 168px;">ADULTSWIM HD</div>
+        <div class="c-name" style="left: 301px; top: 168px;">ALPHA TV</div>
+        <div class="c-name" style="left: 58px; top: 264px;">AMC</div>
+        <div class="c-name" style="left: 180px; top: 264px;">AMC HD</div>
+        <div class="c-name" style="left: 301px; top: 264px;">AMC SERIES HD</div>
+        <div class="c-name" style="left: 58px; top: 361px;">AMC SERIES SD</div>
+        <div class="c-name" style="left: 180px; top: 361px;">AMERICA</div>
+        <div class="c-name" style="left: 301px; top: 361px;">AMERICA 24</div>
+        <div class="c-name" style="left: 58px; top: 458px;">AMERICA HD</div>
+        <div class="c-name" style="left: 180px; top: 458px;">ANIMAL PLANET</div>
+        <div class="c-name" style="left: 301px; top: 458px;">ANIMAL PLANET HD</div>
+        <div class="c-name" style="left: 58px; top: 571px;">ARGENTINA 12</div>
+        <div class="c-name" style="left: 180px; top: 571px;">ARGENTINISIMA</div>
+        <div class="c-name" style="left: 301px; top: 571px;">AXN</div>
+    </div></div>
   </section>
 
   <!-- ── Sección: Mi contenido (estado vacío) ── -->
