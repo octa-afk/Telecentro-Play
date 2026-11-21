@@ -23,10 +23,16 @@ check('sección #sec-inicio activa', (await page.evaluate(() => document.querySe
 check('título "Inicio"', (await text('.header .title')) === 'Inicio');
 check('barra inferior: 5 pestañas', JSON.stringify(await all('.tab span')) === JSON.stringify(['Inicio', 'Buscar', 'TV en vivo', 'Mi contenido', 'Más']), JSON.stringify(await all('.tab span')));
 check('pestaña activa es Inicio', (await text('.tab.is-active span')) === 'Inicio');
-check('secciones visibles', JSON.stringify(await all('#sec-inicio .sec-ttl')) === JSON.stringify(['Lo más visto ahora', 'Ver últimas 24hs', 'Viví el mejor Deporte']));
+check('secciones en orden', JSON.stringify(await all('#sec-inicio .sec-ttl')) === JSON.stringify(['Lo más visto ahora', 'Ver últimas 24hs', 'Viví el mejor Deporte', 'Las películas que te recomendamos', 'Novedades', 'Las series que te recomendamos', 'Héroes y Fantasía', 'Acción Explosiva', 'Grandes Odiseas del cine', 'Historias para no dormir']));
+await page.mouse.move(200, 400);
+await page.mouse.wheel(0, 700);
+await page.waitForTimeout(300);
+check('Inicio se desplaza con la rueda', (await page.evaluate(() => document.getElementById('homeScroll').scrollTop)) > 0);
+check('el encabezado queda fijo al desplazar', (await page.evaluate(() => { const h = document.querySelector('#sec-inicio .header').getBoundingClientRect(), p = document.querySelector('.phone').getBoundingClientRect(); return Math.round(h.top - p.top) === 27; })));
+await page.evaluate(() => { document.getElementById('homeScroll').scrollTop = 0; });
 check('accesos Películas · Series · Guía', JSON.stringify(await all('#sec-inicio .shortcut')) === JSON.stringify(['Películas', 'Series', 'Guía']));
 check('banner con 5 puntos', (await page.evaluate(() => document.querySelectorAll('#sec-inicio .dots i').length)) === 5);
-check('4 tarjetas de canal', (await page.evaluate(() => document.querySelectorAll('#sec-inicio .card').length)) === 4);
+check('6 tarjetas de canal', (await page.evaluate(() => document.querySelectorAll('#sec-inicio .card').length)) === 6);
 check('botón de Ajustes en el encabezado', (await page.evaluate(() => !!document.querySelector('.header .gear'))));
 check('barra inferior dentro del marco del teléfono', (await page.evaluate(() => document.querySelector('.phone').contains(document.querySelector('.tabbar')))));
 check('teléfono de 360×780',(await page.evaluate(() => { const r = document.querySelector('.phone').getBoundingClientRect(); return r.width === 360 && r.height === 780; })));

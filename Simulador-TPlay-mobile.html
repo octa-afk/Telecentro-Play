@@ -217,6 +217,10 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 /* ── Inicio actual, Películas, Series y Guía ── */
 .stage { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .stage > * { pointer-events: auto; }
+.scroll { position: absolute; top: 61px; bottom: 0; left: 0; right: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
+.scroll::-webkit-scrollbar { display: none; }
+.sc-in { position: relative; height: 2430px; }
+.sc-in > * { margin-top: -61px; }
 .banner { position: absolute; left: 17px; right: 17px; height: 195px; border-radius: 6px; background: linear-gradient(135deg, #1b2530 0%, #0c1219 100%); }
 .dots { position: absolute; left: 0; right: 0; height: 8px; display: flex; justify-content: center; gap: 8px; }
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: #3a4048; }
@@ -308,7 +312,7 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
       </button>
     </header>
 
-    <div class="stage">
+    <div class="scroll" id="homeScroll"><div class="sc-in">
       <div class="banner" style="top: 65px;"></div>
       <div class="dots" style="top: 247px;"><i class="on"></i><i></i><i></i><i></i><i></i></div>
       <div class="hline" style="top: 283px;"></div>
@@ -332,7 +336,24 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
       <div class="card two" style="left: 196px; top: 547px; width: 172px;"><span class="ch">CH 14</span><span class="nm">Es mi sueño</span><span class="sb">Ayer de 21:00 a 22:30 ...</span></div>
 
       <div class="sec-ttl" style="top: 675px;">Viví el mejor Deporte</div>
-    </div>
+      <div class="card" style="left: 15px; top: 695px; width: 172px;"><span class="ch">CH 995</span><span class="nm">Atl. Mineiro (Bra) v...</span><span class="pg" style="width: 38%"></span></div>
+      <div class="card" style="left: 196px; top: 695px; width: 172px;"><span class="ch">CH 996</span><span class="nm">Rayo Vallecano vs. ...</span><span class="pg" style="width: 45%"></span></div>
+
+      <div class="sec-ttl" style="top: 822px;">Las películas que te recomendamos</div>
+      <div class="pst" style="left: 15px; top: 842px;"></div><div class="pst" style="left: 151px; top: 842px;"></div><div class="pst" style="left: 287px; top: 842px;"></div>
+      <div class="sec-ttl" style="top: 1062px;">Novedades</div>
+      <div class="pst" style="left: 15px; top: 1082px;"></div><div class="pst" style="left: 151px; top: 1082px;"></div><div class="pst" style="left: 287px; top: 1082px;"></div>
+      <div class="sec-ttl" style="top: 1302px;">Las series que te recomendamos</div>
+      <div class="pst" style="left: 15px; top: 1322px;"></div><div class="pst" style="left: 151px; top: 1322px;"></div><div class="pst" style="left: 287px; top: 1322px;"></div>
+      <div class="sec-ttl" style="top: 1543px;">Héroes y Fantasía</div>
+      <div class="pst" style="left: 15px; top: 1563px;"></div><div class="pst" style="left: 151px; top: 1563px;"></div><div class="pst" style="left: 287px; top: 1563px;"></div>
+      <div class="sec-ttl" style="top: 1783px;">Acción Explosiva</div>
+      <div class="pst" style="left: 15px; top: 1803px;"></div><div class="pst" style="left: 151px; top: 1803px;"></div><div class="pst" style="left: 287px; top: 1803px;"></div>
+      <div class="sec-ttl" style="top: 2023px;">Grandes Odiseas del cine</div>
+      <div class="pst" style="left: 15px; top: 2043px;"></div><div class="pst" style="left: 151px; top: 2043px;"></div><div class="pst" style="left: 287px; top: 2043px;"></div>
+      <div class="sec-ttl" style="top: 2263px;">Historias para no dormir</div>
+      <div class="pst" style="left: 15px; top: 2283px;"></div><div class="pst" style="left: 151px; top: 2283px;"></div><div class="pst" style="left: 287px; top: 2283px;"></div>
+    </div></div>
   </section>
 
   <!-- ── Sección: Películas ── -->

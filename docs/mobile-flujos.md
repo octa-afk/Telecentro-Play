@@ -84,7 +84,9 @@ Pendiente: ver cómo se ve Mi contenido con contenido (Continuar viendo, Grabaci
 
 Implementado en el simulador: Inicio actualizado (carrusel, accesos, "Lo más visto ahora", "Ver últimas 24hs", "Viví el mejor Deporte"), `#sec-peliculas`, `#sec-series`, `#sec-guia`. Tests: `test-mobile-inicio.mjs` y `test-mobile-peliculas-series-guia.mjs`. Las opciones del menú flotante Más siguen inertes (no se verificó que abran estas pantallas).
 
-Pendiente: el Inicio y las demás pantallas no se desplazan; botones favorito/grabar e ícono de info de la Guía sin ícono; detalle de un programa; chips de canales sin función.
+Inicio se desplaza (encabezado fijo) con las secciones vistas al hacer swipes: Lo más visto ahora, Ver últimas 24hs, Viví el mejor Deporte, Las películas que te recomendamos, Novedades, Las series que te recomendamos, Héroes y Fantasía, Acción Explosiva, Grandes Odiseas del cine, Historias para no dormir. El orden entre Héroes y Fantasía y Acción Explosiva no está confirmado como adyacente (el swipe pudo saltear secciones); los pósteres son bloques neutros.
+
+Pendiente: las demás pantallas no se desplazan; botones favorito/grabar e ícono de info de la Guía sin ícono; detalle de un programa; chips de canales sin función.
 
 ## Flujos siguientes (pendientes)
 

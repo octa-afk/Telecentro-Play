@@ -21,6 +21,7 @@ El repo ya contiene el simulador del **decodificador** (`Simulador-TPlay.html`, 
 - Trabajar **exclusivamente** sobre la app de TPlay. No tocar ninguna otra app, ajuste, notificación, cuenta o archivo del teléfono.
 - Los toques se mandan con `adb shell input tap` y siempre caen dentro de la app.
 - Volver atrás: `adb shell input keyevent 4` (back del sistema).
+- Desplazamiento: se autorizan swipes (`adb shell input swipe`) dentro de la app para ver el resto de una pantalla. Verticales, de a uno, sobre el contenido (no sobre la barra inferior) y con captura después de cada uno.
 - Nunca usar home, recents, barra de notificaciones, `am start` ni ningún comando que saque de la app. Si ya no se está en TPlay, parar y pedir que la abran.
 - Un solo toque a la vez: capturar, verificar que la pantalla cambió como se esperaba, y recién ahí seguir. Si no coincide, parar.
 - Si aparece login, PIN o cualquier pedido de credenciales: detenerse y consultar. No escribir credenciales.
