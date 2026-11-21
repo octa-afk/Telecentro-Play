@@ -70,6 +70,20 @@ Implementado en el simulador: `#sec-mi-contenido` (estado vacío), test `tplay/t
 
 Pendiente: ver cómo se ve Mi contenido con contenido (Continuar viendo, Grabaciones, Favoritos). En la cuenta actual está vacío, así que no hay nada que capturar por ahora.
 
+## Inicio actual y Películas (relevado)
+
+**Inicio actual** (distinto del que está en el simulador): carrusel de banners con puntos de paginación (y botón "VER" en algunos), fila de accesos **Películas · Series · Guía**, y secciones "Lo más visto ahora" y "Ver últimas 24hs" (tarjetas de canal con CH y barra de progreso), "Viví el mejor Deporte", etc.
+
+**Películas** (acceso desde Inicio): pantalla "Películas" con engranaje; la pestaña **Más** queda marcada en cyan. Contenido: carrusel con botón "VER" (3 puntos), fila de chips de canales ("VER TODAS", SPACE, TNT, film&arts, AMC…) y secciones de pósters "Las películas que te recomendamos" y "Heroes y Fantasia". Back vuelve a Inicio.
+
+**Series** (acceso desde Inicio): igual que Películas, con carrusel (3 puntos), chips (SPACE seleccionado, TNT, G, film&arts, AMC) y la sección "Especiales" con un póster. Más queda marcada. El primer toque sobre el acceso no navegó (el carrusel se estaba moviendo); el segundo sí.
+
+**Guía de canales** (acceso desde Inicio): filtro, categorías "Ver todos · Aire · Noticias · Deportes…", panel del programa en vivo (canal, botones favorito / reproducir / grabar, título, "EN VIVO", horario, info), línea de tiempo "HOY 20:30 · 21:00 · 21:30" con marcador de hora actual y grilla de canales 104 a 109 con el programa en curso resaltado. Más queda marcada.
+
+Implementado en el simulador: Inicio actualizado (carrusel, accesos, "Lo más visto ahora", "Ver últimas 24hs", "Viví el mejor Deporte"), `#sec-peliculas`, `#sec-series`, `#sec-guia`. Tests: `test-mobile-inicio.mjs` y `test-mobile-peliculas-series-guia.mjs`. Las opciones del menú flotante Más siguen inertes (no se verificó que abran estas pantallas).
+
+Pendiente: el Inicio y las demás pantallas no se desplazan; botones favorito/grabar e ícono de info de la Guía sin ícono; detalle de un programa; chips de canales sin función.
+
 ## Flujos siguientes (pendientes)
 
 - Reproductor de TV en vivo (bloqueado para captura, ver arriba).

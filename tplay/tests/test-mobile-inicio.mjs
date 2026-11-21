@@ -23,8 +23,10 @@ check('sección #sec-inicio activa', (await page.evaluate(() => document.querySe
 check('título "Inicio"', (await text('.header .title')) === 'Inicio');
 check('barra inferior: 5 pestañas', JSON.stringify(await all('.tab span')) === JSON.stringify(['Inicio', 'Buscar', 'TV en vivo', 'Mi contenido', 'Más']), JSON.stringify(await all('.tab span')));
 check('pestaña activa es Inicio', (await text('.tab.is-active span')) === 'Inicio');
-check('filas con títulos visibles', JSON.stringify(await all('.row-title')) === JSON.stringify(['Ecos de otros universos', 'Alta tensión: policías y acción sin Freno']));
-check('9 pósteres (3 filas × 3)', (await page.evaluate(() => document.querySelectorAll('.poster').length)) === 9);
+check('secciones visibles', JSON.stringify(await all('#sec-inicio .sec-ttl')) === JSON.stringify(['Lo más visto ahora', 'Ver últimas 24hs', 'Viví el mejor Deporte']));
+check('accesos Películas · Series · Guía', JSON.stringify(await all('#sec-inicio .shortcut')) === JSON.stringify(['Películas', 'Series', 'Guía']));
+check('banner con 5 puntos', (await page.evaluate(() => document.querySelectorAll('#sec-inicio .dots i').length)) === 5);
+check('4 tarjetas de canal', (await page.evaluate(() => document.querySelectorAll('#sec-inicio .card').length)) === 4);
 check('botón de Ajustes en el encabezado', (await page.evaluate(() => !!document.querySelector('.header .gear'))));
 check('barra inferior dentro del marco del teléfono', (await page.evaluate(() => document.querySelector('.phone').contains(document.querySelector('.tabbar')))));
 check('teléfono de 360×780',(await page.evaluate(() => { const r = document.querySelector('.phone').getBoundingClientRect(); return r.width === 360 && r.height === 780; })));

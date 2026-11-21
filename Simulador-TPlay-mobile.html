@@ -214,6 +214,42 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 }
 .popup-item svg { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; fill: none; stroke: #cbe2f4; stroke-width: 1.8; }
 
+/* ── Inicio actual, Películas, Series y Guía ── */
+.stage { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.stage > * { pointer-events: auto; }
+.banner { position: absolute; left: 17px; right: 17px; height: 195px; border-radius: 6px; background: linear-gradient(135deg, #1b2530 0%, #0c1219 100%); }
+.dots { position: absolute; left: 0; right: 0; height: 8px; display: flex; justify-content: center; gap: 8px; }
+.dots i { width: 7px; height: 7px; border-radius: 50%; background: #3a4048; }
+.dots i.on { background: #cbe2f4; }
+.btn-ver { position: absolute; left: 35px; top: 207px; width: 63px; height: 28px; border: 1px solid #cbe2f4; border-radius: 14px; color: #e6eef6; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.hline { position: absolute; left: 17px; right: 17px; height: 1px; background: rgba(255, 255, 255, 0.08); }
+.shortcut { position: absolute; top: 284px; width: 100px; height: 62px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font-size: 15px; color: #cbe2f4; }
+.shortcut svg { width: 22px; height: 22px; fill: none; stroke: #cbe2f4; stroke-width: 1.8; }
+.sec-ttl { position: absolute; left: 15px; transform: translateY(-50%); font-size: 19px; font-weight: 500; color: #cbe2f4; white-space: nowrap; }
+.sec-ttl.ico { left: 42px; }
+.chip { position: absolute; top: 283px; width: 67px; height: 55px; border-radius: 4px; background: #1a2a38; color: #e6eef6; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.2; }
+.chip.sel { background: #064e6b; }
+.card .sb { position: absolute; left: 8px; right: 8px; bottom: 9px; font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card.two .nm { bottom: 27px; }
+.pst { position: absolute; width: 127px; height: 190px; border-radius: 3px; background: linear-gradient(160deg, #2a3442 0%, #161c26 100%); }
+.g-chip { position: absolute; top: 66px; height: 31px; border: 1px solid #cbe2f4; border-radius: 16px; color: #e6eef6; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+.g-chip.sel { background: #00ccff; border-color: #00ccff; color: #001423; font-weight: 500; }
+.g-hero { position: absolute; left: 0; right: 0; top: 108px; height: 203px; background: linear-gradient(160deg, #14233f 0%, #070d1a 100%); }
+.g-hero .ch { position: absolute; right: 12px; top: 13px; font-size: 16px; font-weight: 500; color: #fff; }
+.g-circ { position: absolute; top: 187px; width: 39px; height: 39px; border: 2px solid #cbe2f4; border-radius: 50%; transform: translateY(-50%); }
+.g-play { position: absolute; left: 156px; top: 185px; width: 47px; height: 47px; border-radius: 50%; background: #00a8d8; transform: translateY(-50%); }
+.g-play::after { content: ""; position: absolute; left: 18px; top: 13px; border-left: 16px solid #001423; border-top: 10px solid transparent; border-bottom: 10px solid transparent; }
+.g-title { position: absolute; left: 15px; top: 154px; font-size: 17px; font-weight: 600; color: #fff; white-space: nowrap; }
+.g-live { position: absolute; left: 15px; top: 178px; font-size: 15px; color: #e6eef6; display: flex; align-items: center; gap: 5px; }
+.g-live i { width: 9px; height: 9px; border-radius: 50%; background: #e53935; }
+.g-time { position: absolute; left: 0; right: 0; top: 311px; height: 34px; background: #0b2033; font-size: 15px; color: #e6eef6; }
+.g-time span { position: absolute; top: 9px; }
+.g-line { position: absolute; left: 71px; top: 311px; bottom: 0; width: 2px; background: #1e88e5; z-index: 1; }
+.g-row { position: absolute; left: 0; right: 0; height: 55px; border-bottom: 1px solid #001423; }
+.g-num { position: absolute; left: 0; width: 51px; top: 0; bottom: 0; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 9px; font-size: 17px; font-weight: 500; color: #e6eef6; background: #0b1b2b; }
+.g-cell { position: absolute; top: 0; bottom: 0; background: #05243b; color: #e6eef6; font-size: 15px; display: flex; align-items: center; padding: 0 8px; white-space: nowrap; overflow: hidden; border-right: 1px solid #001423; }
+.g-cell.sel { background: #00ccff; color: #001423; }
+
 /* ── Mi contenido (estado vacío) ── */
 .empty-art { position: absolute; left: 0; top: 0; width: 360px; height: 687px; pointer-events: none; }
 .empty-title { position: absolute; left: 0; right: 0; top: 350px; transform: translateY(-50%); text-align: center; white-space: nowrap; font-size: 16px; font-weight: 600; color: #cbe2f4; }
@@ -272,18 +308,112 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
       </button>
     </header>
 
-    <div class="body">
-      <div class="row row-top">
-        <div class="poster"></div><div class="poster"></div><div class="poster"></div>
+    <div class="stage">
+      <div class="banner" style="top: 65px;"></div>
+      <div class="dots" style="top: 247px;"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+      <div class="hline" style="top: 283px;"></div>
+      <button class="shortcut" style="left: 25px;" data-target="sec-peliculas">
+        <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18"/><path d="M8 3v18M16 3v18M4 8h4M4 13h4M16 8h4M16 13h4"/></svg><span>Películas</span>
+      </button>
+      <button class="shortcut" style="left: 134px;" data-target="sec-series">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M10 9l5 3-5 3z"/><path d="M8 21h8"/></svg><span>Series</span>
+      </button>
+      <button class="shortcut" style="left: 239px;" data-target="sec-guia">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M7 9h10M7 12h10M7 15h6"/><path d="M8 21h8"/></svg><span>Guía</span>
+      </button>
+      <div class="hline" style="top: 347px;"></div>
+
+      <div class="sec-ttl ico" style="top: 376px;">Lo más visto ahora</div>
+      <div class="card" style="left: 15px; top: 397px; width: 172px;"><span class="ch">CH 105</span><span class="nm">Atl. Mineiro (Bra) v...</span><span class="pg" style="width: 45%"></span></div>
+      <div class="card" style="left: 196px; top: 397px; width: 172px;"><span class="ch">CH 109</span><span class="nm">Atl. Mineiro (Bra) v...</span><span class="pg" style="width: 40%"></span></div>
+
+      <div class="sec-ttl ico" style="top: 526px;">Ver últimas 24hs</div>
+      <div class="card two" style="left: 15px; top: 547px; width: 172px;"><span class="ch">CH 12</span><span class="nm">Masterchef Junior ...</span><span class="sb">Ayer de 21:30 a 22:45 ...</span></div>
+      <div class="card two" style="left: 196px; top: 547px; width: 172px;"><span class="ch">CH 14</span><span class="nm">Es mi sueño</span><span class="sb">Ayer de 21:00 a 22:30 ...</span></div>
+
+      <div class="sec-ttl" style="top: 675px;">Viví el mejor Deporte</div>
+    </div>
+  </section>
+
+  <!-- ── Sección: Películas ── -->
+  <section id="sec-peliculas" class="screen" data-tab="mas">
+    <header class="header">
+      <svg class="logo" viewBox="0 0 24 28" aria-hidden="true"><path d="M2 2 L22 14 L2 26 Z" fill="#00ccff"/><path d="M8 9 H17 V12 H13.5 V20 H10.5 V12 H8 Z" fill="#001423"/></svg>
+      <h1 class="title">Películas</h1>
+      <button class="gear" data-open="sec-configuracion" aria-label="Ajustes"><svg width="22" height="22" viewBox="0 0 24 24" fill="#cbe2f4" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.2h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.7h4l.4-2.7a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg></button>
+    </header>
+    <div class="stage">
+      <div class="banner" style="top: 65px;"></div>
+      <span class="btn-ver">VER</span>
+      <div class="dots" style="top: 247px;"><i class="on"></i><i></i><i></i></div>
+      <div class="chip sel" style="left: 15px;">VER TODAS</div>
+      <div class="chip" style="left: 91px;">SPACE</div>
+      <div class="chip" style="left: 167px;">TNT</div>
+      <div class="chip" style="left: 243px;">film&amp;arts</div>
+      <div class="chip" style="left: 319px;">AMC</div>
+      <div class="sec-ttl" style="top: 370px;">Las películas que te recomendamos</div>
+      <div class="pst" style="left: 15px; top: 390px;"></div>
+      <div class="pst" style="left: 151px; top: 390px;"></div>
+      <div class="pst" style="left: 287px; top: 390px;"></div>
+      <div class="sec-ttl" style="top: 611px;">Heroes y Fantasia</div>
+      <div class="pst" style="left: 15px; top: 631px;"></div>
+      <div class="pst" style="left: 151px; top: 631px;"></div>
+      <div class="pst" style="left: 287px; top: 631px;"></div>
+    </div>
+  </section>
+
+  <!-- ── Sección: Series ── -->
+  <section id="sec-series" class="screen" data-tab="mas">
+    <header class="header">
+      <svg class="logo" viewBox="0 0 24 28" aria-hidden="true"><path d="M2 2 L22 14 L2 26 Z" fill="#00ccff"/><path d="M8 9 H17 V12 H13.5 V20 H10.5 V12 H8 Z" fill="#001423"/></svg>
+      <h1 class="title">Series</h1>
+      <button class="gear" data-open="sec-configuracion" aria-label="Ajustes"><svg width="22" height="22" viewBox="0 0 24 24" fill="#cbe2f4" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.2h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.7h4l.4-2.7a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg></button>
+    </header>
+    <div class="stage">
+      <div class="banner" style="top: 65px;"></div>
+      <div class="dots" style="top: 247px;"><i class="on"></i><i></i><i></i></div>
+      <div class="chip sel" style="left: 15px;">SPACE</div>
+      <div class="chip" style="left: 91px;">TNT</div>
+      <div class="chip" style="left: 167px;">G</div>
+      <div class="chip" style="left: 243px;">film&amp;arts</div>
+      <div class="chip" style="left: 319px;">AMC</div>
+      <div class="sec-ttl" style="top: 370px;">Especiales</div>
+      <div class="pst" style="left: 15px; top: 390px;"></div>
+    </div>
+  </section>
+
+  <!-- ── Sección: Guía de canales ── -->
+  <section id="sec-guia" class="screen" data-tab="mas">
+    <header class="header">
+      <svg class="logo" viewBox="0 0 24 28" aria-hidden="true"><path d="M2 2 L22 14 L2 26 Z" fill="#00ccff"/><path d="M8 9 H17 V12 H13.5 V20 H10.5 V12 H8 Z" fill="#001423"/></svg>
+      <h1 class="title">Guía de canales</h1>
+      <button class="gear" data-open="sec-configuracion" aria-label="Ajustes"><svg width="22" height="22" viewBox="0 0 24 24" fill="#cbe2f4" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.2h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.7h4l.4-2.7a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg></button>
+    </header>
+    <div class="stage">
+      <button class="filter-btn" style="left: 15px; top: 66px;" aria-label="Filtrar"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
+      <div class="g-chip sel" style="left: 68px; width: 80px;">Ver todos</div>
+      <div class="g-chip" style="left: 158px; width: 48px;">Aire</div>
+      <div class="g-chip" style="left: 216px; width: 72px;">Noticias</div>
+      <div class="g-chip" style="left: 297px; width: 80px;">Deportes</div>
+
+      <div class="g-hero">
+        <span class="ch">CH 105</span>
+        <span class="g-title">Atl. Mineiro (Bra) vs. Boca Jrs. (Arg) - ...</span>
+        <span class="g-live"><i></i>EN VIVO&nbsp;-&nbsp; Hoy de 19:00 a 21:45 hs.</span>
       </div>
-      <div class="row-title" style="top: 160px;">Ecos de otros universos</div>
-      <div class="row row-2">
-        <div class="poster"></div><div class="poster"></div><div class="poster"></div>
-      </div>
-      <div class="row-title" style="top: 401px;">Alta tensión: policías y acción sin Freno</div>
-      <div class="row row-3">
-        <div class="poster"></div><div class="poster"></div><div class="poster"></div>
-      </div>
+      <div class="g-circ" style="left: 87px; top: 209px;"></div>
+      <div class="g-play" style="top: 209px;"></div>
+      <div class="g-circ" style="left: 235px; top: 209px;"></div>
+
+      <div class="g-time"><span style="left: 15px; font-weight: 600;">HOY</span><span style="left: 74px;">20:30</span><span style="left: 186px;">21:00</span><span style="left: 298px;">21:30</span></div>
+      <div class="g-line"></div>
+
+      <div class="g-row" style="top: 349px;"><div class="g-num">104</div><div class="g-cell" style="left: 51px; width: 263px;">Tala vs. Newman - Nacional de Clube...</div><div class="g-cell" style="left: 314px; right: 0;">UEFA</div></div>
+      <div class="g-row" style="top: 404px;"><div class="g-num" style="color: #00ccff;">105</div><div class="g-cell sel" style="left: 51px; right: 0;">Atl. Mineiro (Bra) vs. Boca Jrs. (Arg) - CONMEB...</div></div>
+      <div class="g-row" style="top: 459px;"><div class="g-num">106</div><div class="g-cell" style="left: 51px; width: 263px;">Sportia</div><div class="g-cell" style="left: 314px; right: 0;">Presi</div></div>
+      <div class="g-row" style="top: 514px;"><div class="g-num">107</div><div class="g-cell" style="left: 51px; width: 181px;">Mexicános - T6:E10</div><div class="g-cell" style="left: 232px; width: 82px;">Maest...</div><div class="g-cell" style="left: 314px; right: 0;">Maes</div></div>
+      <div class="g-row" style="top: 569px;"><div class="g-num">108</div><div class="g-cell" style="left: 51px; width: 207px;">Moto GP - Sprint Race</div><div class="g-cell" style="left: 258px; right: 0;">GP Las Vegas -</div></div>
+      <div class="g-row" style="top: 624px;"><div class="g-num">109</div><div class="g-cell" style="left: 51px; right: 0;">Atl. Mineiro (Bra) vs. Boca Jrs. (Arg) - CONMEBOL</div></div>
     </div>
   </section>
 
@@ -587,7 +717,7 @@ function setActiveTab(id) {
   for (var i = 0; i < tabs.length; i++) {
     tabs[i].classList.toggle('is-active', !popup && tabs[i].getAttribute('data-tab') === tabName);
   }
-  document.getElementById('tabMas').classList.toggle('is-active', popup);
+  document.getElementById('tabMas').classList.toggle('is-active', popup || tabName === 'mas');
 }
 
 /* Avanza a una pantalla hija y recuerda la anterior */
