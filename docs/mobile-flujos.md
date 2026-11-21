@@ -1,6 +1,6 @@
 # Telecentro Play mobile — inventario de flujos
 
-Fuente: capturas de la app real (SM-S711B), un toque por vez, volviendo con back del sistema. Sin datos personales: nombres, números de cliente y dispositivos reales no se anotan.
+Fuente: capturas de la app real, un toque por vez, volviendo con back del sistema. Sin datos personales: nombres, números de cliente y dispositivos reales no se anotan.
 
 Estado: **relevado** = recorrido y verificado; **pendiente** = no recorrido aún; **no operar** = acción destructiva o sensible, solo se describe.
 
@@ -13,7 +13,7 @@ Pantalla "Configuración": lista vertical de 7 ítems.
 | Ítem | Pantalla que abre | Contenido | Estado |
 |------|-------------------|-----------|--------|
 | Mis datos | "Mis datos" | Avatar, bloque "Grabaciones en tu cuenta" (horas disponibles y grabadas), usuario, número de cliente, botón "Gestión de almacenamiento" | relevado (solo lectura; datos personales no anotados) |
-| Gestión de dispositivos | "Gestión de dispositivos" | Sección "Este dispositivo" (teléfono), botón "Cerrar todas las sesiones", aviso "hasta 5 dispositivos", sección "Otros dispositivos activos (N)" con botón ❌ por dispositivo | relevado; **no operar** "Cerrar todas las sesiones" ni ❌ |
+| Gestión de dispositivos | "Gestión de dispositivos" | Sección "Este dispositivo", botón "Cerrar todas las sesiones", aviso "hasta 5 dispositivos", sección "Otros dispositivos activos (N)" con botón ❌ por dispositivo | relevado; **no operar** "Cerrar todas las sesiones" ni ❌ |
 | Mis canales | "Mis canales" | Subtítulo "Gestioná la visualización de tus canales favoritos y más vistos"; toggles "Mostrar mis canales favoritos" y "Mostrar mis canales más vistos" (ambos ON) | relevado; toggles no tocados |
 | Notificaciones | "Notificaciones" | Toggle "Notificaciones push" (ON) + texto "Las notificaciones están activadas. Te compartiremos todas las novedades de T-Play." | relevado; toggle no tocado |
 | Detalles técnicos | "Detalles técnicos" | Logo, "Versión", "Dispositivo", "Sistema" (solo lectura) | relevado |
@@ -109,3 +109,7 @@ Pendiente: las demás pantallas no se desplazan; botones favorito/grabar e ícon
 El botón de filtro (arriba a la derecha en TV en vivo) abre la pantalla **Canales**: título "Canales", botón ✕ para cerrar, chips alfabéticos **A-C · D-G · H-P · Q-T · U-W** (A-C seleccionado) y una grilla de 3 columnas con logo y nombre del canal. La barra inferior sigue visible, con TV en vivo activa. Relevados A&E, A&E HD, ABC, ADULTSWIM, ADULTSWIM HD, ALPHA TV, AMC, AMC HD, AMC SERIES HD, AMC SERIES SD, AMERICA, AMERICA 24, AMERICA HD, ANIMAL PLANET, ANIMAL PLANET HD, ARGENTINA 12, ARGENTINISIMA, AXN.
 
 Implementado en el simulador (`#sec-canales`, test `test-mobile-canales.mjs`) solo con los nombres, sin logos de marca. No se tocó ningún canal de la grilla (no se sabe qué hace) ni se cambió de rango. Pendiente: resto de A-C (había más debajo) y los demás rangos.
+
+## Datos de demostración
+
+Todos los datos de cuenta y dispositivo que muestra el simulador salen del objeto `DEMO` (en el `<script>` de `Simulador-TPlay-mobile.html`) y se vuelcan en los elementos con `data-var`: usuario, número de cliente, horas de grabación, dispositivo actual y otros dispositivos, fechas, búsquedas recientes, versión, modelo y sistema. Son valores genéricos; para cambiarlos se edita solo `DEMO`.

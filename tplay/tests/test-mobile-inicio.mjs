@@ -1,4 +1,4 @@
-// Simulador mobile: pantalla Inicio (fuente: captura SM-S711B, 1080×2340 a 3×).
+// Simulador mobile: pantalla Inicio (fuente: captura de la app real, 1080×2340 a 3×).
 // Capturas opcionales: SHOT_DIR=/ruta node tests/test-mobile-inicio.mjs
 import { firefox } from 'playwright-core';
 import { tmpdir } from 'node:os';

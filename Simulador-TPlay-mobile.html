@@ -495,8 +495,8 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
     </header>
     <div class="search">¿Qué estás buscando?</div>
     <div class="at" style="top: 134px; left: 15px; font-size: 18px; font-weight: 500; color: #cbe2f4;">Búsquedas recientes:</div>
-    <div class="recent-row" style="top: 173px;"><span>Búsqueda de ejemplo 1</span><span class="x">✕</span></div>
-    <div class="recent-row" style="top: 222px;"><span>Búsqueda de ejemplo 2</span><span class="x">✕</span></div>
+    <div class="recent-row" style="top: 173px;"><span data-var="busqueda1"></span><span class="x">✕</span></div>
+    <div class="recent-row" style="top: 222px;"><span data-var="busqueda2"></span><span class="x">✕</span></div>
   </section>
 
   <!-- ── Sección: TV en vivo ── -->
@@ -677,14 +677,14 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
     </header>
     <div class="avatar"></div>
     <div class="at center lbl" style="top: 180px;">Grabaciones en tu cuenta</div>
-    <div class="at center val" style="top: 199px;">Te quedan 20 de 20 horas</div>
+    <div class="at center val" style="top: 199px;">Te quedan <span data-var="horasRestantes"></span> de <span data-var="horasTotal"></span> horas</div>
     <div class="rec-bar"></div>
     <div class="rec-line"></div>
     <div class="at" style="top: 254px; left: 0; width: 78px; text-align: right; font-size: 14px; line-height: 13px; color: #cbe2f4;">0 horas<br>grabadas</div>
     <div class="at center lbl" style="top: 326px;">Usuario:</div>
-    <div class="at center val" style="top: 344px; font-size: 19px; font-weight: 500;">NOMBRE APELLIDO</div>
+    <div class="at center val" style="top: 344px; font-size: 19px; font-weight: 500;" data-var="usuario"></div>
     <div class="at center lbl" style="top: 397px;">Número de cliente:</div>
-    <div class="at center val" style="top: 416px; font-size: 19px;">0000000</div>
+    <div class="at center val" style="top: 416px; font-size: 19px;" data-var="cliente"></div>
     <div class="btn-light">Gestión de almacenamiento</div>
   </section>
 
@@ -696,27 +696,27 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
     </header>
     <div class="at" style="top: 74px; left: 15px; font-size: 17px; font-weight: 500; color: #e6eef6;">Este dispositivo</div>
     <div class="dev-icon" style="top: 123px;"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg></div>
-    <div class="dev-name" style="top: 113px;">SM-S711B</div>
-    <div class="dev-sub" style="top: 134px;">Último ingreso: <b>ahora</b></div>
+    <div class="dev-name" style="top: 113px;" data-var="dispositivoActual"></div>
+    <div class="dev-sub" style="top: 134px;">Último ingreso: <b data-var="ultimoActual"></b></div>
     <div class="dev-x" style="top: 123px;"><svg viewBox="0 0 12 12"><path d="M2 2 L10 10 M10 2 L2 10"/></svg></div>
     <div class="btn-outline">Cerrar todas las sesiones</div>
     <div class="at" style="top: 266px; left: 15px; width: 22px;"><span style="display:block;width:10px;height:10px;border-radius:50%;background:#4fc3f7;margin:0 auto;"></span></div>
-    <div class="at" style="top: 266px; left: 45px; right: 15px; font-size: 14px; line-height: 20px; color: #cbe2f4;">Recordá que podés iniciar sesión en <b style="font-weight:500">hasta 5 dispositivos.</b></div>
-    <div class="at" style="top: 319px; left: 15px; font-size: 17px; font-weight: 500; color: #cbe2f4;">Otros dispositivos activos <span style="color:#7d8f9e;">(3)</span></div>
+    <div class="at" style="top: 266px; left: 45px; right: 15px; font-size: 14px; line-height: 20px; color: #cbe2f4;">Recordá que podés iniciar sesión en <b style="font-weight:500">hasta <span data-var="maxDispositivos"></span> dispositivos.</b></div>
+    <div class="at" style="top: 319px; left: 15px; font-size: 17px; font-weight: 500; color: #cbe2f4;">Otros dispositivos activos <span style="color:#7d8f9e;">(<span data-var="otrosCount"></span>)</span></div>
 
     <div class="dev-icon" style="top: 369px;"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg></div>
-    <div class="dev-name" style="top: 359px;">ANDROID-TV Linux-armv7l Chr...</div>
-    <div class="dev-sub" style="top: 381px;">Último ingreso: <b>Hoy</b></div>
+    <div class="dev-name" style="top: 359px;" data-var="otro1Nombre"></div>
+    <div class="dev-sub" style="top: 381px;">Último ingreso: <b data-var="otro1Ultimo"></b></div>
     <div class="dev-x" style="top: 369px;"><svg viewBox="0 0 12 12"><path d="M2 2 L10 10 M10 2 L2 10"/></svg></div>
 
     <div class="dev-icon" style="top: 448px;"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg></div>
-    <div class="dev-name" style="top: 438px;">ANDROID-TV Linux-armv7l Chr...</div>
-    <div class="dev-sub" style="top: 460px;">Último ingreso: <b>17-11-2026</b></div>
+    <div class="dev-name" style="top: 438px;" data-var="otro2Nombre"></div>
+    <div class="dev-sub" style="top: 460px;">Último ingreso: <b data-var="otro2Ultimo"></b></div>
     <div class="dev-x" style="top: 448px;"><svg viewBox="0 0 12 12"><path d="M2 2 L10 10 M10 2 L2 10"/></svg></div>
 
     <div class="dev-icon" style="top: 528px;"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg></div>
-    <div class="dev-name" style="top: 518px;">ANDROID-TV Linux-armv7l Chr...</div>
-    <div class="dev-sub" style="top: 539px;">Último ingreso: <b>5-11-2026</b></div>
+    <div class="dev-name" style="top: 518px;" data-var="otro3Nombre"></div>
+    <div class="dev-sub" style="top: 539px;">Último ingreso: <b data-var="otro3Ultimo"></b></div>
     <div class="dev-x" style="top: 528px;"><svg viewBox="0 0 12 12"><path d="M2 2 L10 10 M10 2 L2 10"/></svg></div>
   </section>
 
@@ -754,11 +754,11 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
     <div class="avatar" style="background:#c9e0f3;"><span style="position:absolute;left:23px;top:23px;width:29px;height:29px;border-radius:50%;background:#5a6b78;color:#c9e0f3;font:600 22px/29px Roboto,system-ui,sans-serif;text-align:center;">i</span></div>
     <div class="at center" style="top: 185px; font-size: 19px; font-weight: 500; color: #e6eef6;">Telecentro Play</div>
     <div class="at center lbl" style="top: 237px;">Versión</div>
-    <div class="at center val" style="top: 257px;">4.19.3.2021033555</div>
+    <div class="at center val" style="top: 257px;" data-var="appVersion"></div>
     <div class="at center lbl" style="top: 311px;">Dispositivo</div>
-    <div class="at center val" style="top: 331px;">SM-S711B</div>
+    <div class="at center val" style="top: 331px;" data-var="appModelo"></div>
     <div class="at center lbl" style="top: 385px;">Sistema</div>
-    <div class="at center val" style="top: 405px;">Android 16</div>
+    <div class="at center val" style="top: 405px;" data-var="appSistema"></div>
   </section>
 
   <!-- ── Sección: Ayuda y legales ── -->
@@ -816,6 +816,36 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 </div>
 
 <script>
+/* ── Datos de demostración (genéricos; no son datos reales de ningún usuario) ── */
+var DEMO = {
+  usuario: 'NOMBRE APELLIDO',
+  cliente: '0000000',
+  horasRestantes: 20,
+  horasTotal: 20,
+  dispositivoActual: 'DISPOSITIVO ACTUAL',
+  ultimoActual: 'ahora',
+  maxDispositivos: 5,
+  otrosCount: 3,
+  otro1Nombre: 'DISPOSITIVO 1', otro1Ultimo: 'Hoy',
+  otro2Nombre: 'DISPOSITIVO 2', otro2Ultimo: 'DD-MM-AAAA',
+  otro3Nombre: 'DISPOSITIVO 3', otro3Ultimo: 'DD-MM-AAAA',
+  busqueda1: 'BÚSQUEDA RECIENTE 1',
+  busqueda2: 'BÚSQUEDA RECIENTE 2',
+  appVersion: '0.0.0.0000000000',
+  appModelo: 'MODELO DEL DISPOSITIVO',
+  appSistema: 'Android 00'
+};
+
+/* Vuelca DEMO en los elementos con data-var */
+function bindDemo() {
+  var els = document.querySelectorAll('[data-var]');
+  for (var i = 0; i < els.length; i++) {
+    var k = els[i].getAttribute('data-var');
+    if (DEMO.hasOwnProperty(k)) { els[i].textContent = DEMO[k]; }
+  }
+}
+bindDemo();
+
 /* ── Reloj (hora fija de la captura; no es dato de la app) ── */
 var clockEl = document.getElementById('clock');
 function setClock(hhmm) { if (clockEl) clockEl.textContent = hhmm; }

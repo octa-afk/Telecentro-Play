@@ -73,8 +73,10 @@ await click('#sec-notificaciones .back');
 // ── Detalles técnicos ──
 await click('[data-target="sec-detalles-tecnicos"]');
 const det = await page.evaluate(() => document.querySelector('#sec-detalles-tecnicos').textContent);
-check('Detalles: versión', det.includes('4.19.3.2021033555'));
-check('Detalles: dispositivo y sistema', det.includes('SM-S711B') && det.includes('Android 16'));
+const D = await page.evaluate(() => window.DEMO);
+check('Detalles: versión', det.includes(D.appVersion));
+check('Detalles: dispositivo y sistema', det.includes(D.appModelo) && det.includes(D.appSistema));
+check('datos genéricos: sin datos reales en pantalla', !/SM-S711B|ANDROID-TV|Android 16|2021033555/.test(await page.evaluate(() => document.querySelector('.phone').textContent)));
 await click('#sec-detalles-tecnicos .back');
 
 // ── Ayuda y legales (links no navegan) ──
