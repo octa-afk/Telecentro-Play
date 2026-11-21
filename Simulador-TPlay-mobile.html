@@ -222,6 +222,9 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 .scroll::-webkit-scrollbar { display: none; }
 .sc-in { position: relative; height: 2430px; }
 .sc-in > * { margin-top: -61px; }
+.sc-in.plain > * { margin-top: 0; }
+.tv-view .scroll { pointer-events: auto; }
+.tv-listado .card { height: 90px; }
 .banner { position: absolute; left: 17px; right: 17px; height: 195px; border-radius: 6px; background: linear-gradient(135deg, #1b2530 0%, #0c1219 100%); }
 .dots { position: absolute; left: 0; right: 0; height: 8px; display: flex; justify-content: center; gap: 8px; }
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: #3a4048; }
@@ -249,10 +252,11 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 .g-live i { width: 9px; height: 9px; border-radius: 50%; background: #e53935; }
 .g-time { position: absolute; left: 0; right: 0; top: 311px; height: 34px; background: #0b2033; font-size: 15px; color: #e6eef6; }
 .g-time span { position: absolute; top: 9px; }
-.g-line { position: absolute; left: 71px; top: 311px; bottom: 0; width: 2px; background: #1e88e5; z-index: 1; }
+.g-line { pointer-events: none; position: absolute; left: 71px; top: 311px; bottom: 0; width: 2px; background: #1e88e5; z-index: 1; }
 .g-row { position: absolute; left: 0; right: 0; height: 55px; border-bottom: 1px solid #001423; }
 .g-num { position: absolute; left: 0; width: 51px; top: 0; bottom: 0; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 9px; font-size: 17px; font-weight: 500; color: #e6eef6; background: #0b1b2b; }
-.g-cell { position: absolute; top: 0; bottom: 0; background: #05243b; color: #e6eef6; font-size: 15px; display: flex; align-items: center; padding: 0 8px; white-space: nowrap; overflow: hidden; border-right: 1px solid #001423; }
+.g-cell { position: absolute; top: 0; bottom: 0; background: #041a2b; color: #e6eef6; font-size: 15px; display: flex; align-items: center; padding: 0 8px; white-space: nowrap; overflow: hidden; border-right: 1px solid #001423; }
+.g-cell.now { background: #0a2e49; }
 .g-cell.sel { background: #00ccff; color: #001423; }
 
 /* ── Mi contenido (estado vacío) ── */
@@ -450,15 +454,23 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
       <div class="g-play" style="top: 209px;"></div>
       <div class="g-circ" style="left: 235px; top: 209px;"></div>
 
-      <div class="g-time"><span style="left: 15px; font-weight: 600;">HOY</span><span style="left: 74px;">20:30</span><span style="left: 186px;">21:00</span><span style="left: 298px;">21:30</span></div>
+      <div class="g-time"><span style="left: 15px; font-weight: 600;">HOY</span><span style="left: 112px;">21:00</span><span style="left: 225px;">21:30</span><span style="left: 337px;">22:00</span></div>
+      <div class="scroll" style="top: 345px;"><div class="sc-in plain" style="height: 730px;">
+        <div class="g-row" style="top: 4px;"><div class="g-num">104</div><div class="g-cell now" style="left: 51px; width: 192px;">Tala vs. Newman - Nacio...</div><div class="g-cell" style="left: 243px; width: 113px;">UEFA Cham...</div></div>
+        <div class="g-row" style="top: 59px;"><div class="g-num" style="color: #00ccff;">105</div><div class="g-cell sel" style="left: 51px; width: 249px;">Atl. Mineiro (Bra) vs. Boca Jrs. (Arg...</div><div class="g-cell" style="left: 300px; width: 60px;">ESPN F...</div></div>
+        <div class="g-row" style="top: 114px;"><div class="g-num">106</div><div class="g-cell now" style="left: 51px; width: 192px;">Sportia</div><div class="g-cell" style="left: 243px; width: 117px;">Presión alta</div></div>
+        <div class="g-row" style="top: 169px;"><div class="g-num">107</div><div class="g-cell now" style="left: 51px; width: 110px;">Mexicánic...</div><div class="g-cell" style="left: 161px; width: 82px;">Maest...</div><div class="g-cell" style="left: 243px; width: 94px;">Maestro...</div><div class="g-cell" style="left: 337px; width: 23px;">T</div></div>
+        <div class="g-row" style="top: 224px;"><div class="g-num">108</div><div class="g-cell now" style="left: 51px; width: 136px;">Moto GP - Spri...</div><div class="g-cell" style="left: 187px; width: 169px;">GP Las Vegas - Fórmu...</div></div>
+        <div class="g-row" style="top: 279px;"><div class="g-num">109</div><div class="g-cell now" style="left: 51px; width: 309px;">Atl. Mineiro (Bra) vs. Boca Jrs. (Arg) - CONMEBOL</div></div>
+        <div class="g-row" style="top: 334px;"><div class="g-num">110</div><div class="g-cell now" style="left: 51px; width: 309px;">GCL Supercup Ve...</div></div>
+        <div class="g-row" style="top: 389px;"><div class="g-num">111</div><div class="g-cell now" style="left: 51px; width: 309px;">Gimnasia y Esgrima (M) vs. Ind. Rivadavia - Liga Pr...</div></div>
+        <div class="g-row" style="top: 444px;"><div class="g-num">112</div><div class="g-cell now" style="left: 51px; width: 99px;">Def. y Ju...</div><div class="g-cell" style="left: 150px; width: 93px;">Compac...</div><div class="g-cell" style="left: 243px; width: 113px;">El show de l...</div></div>
+        <div class="g-row" style="top: 499px;"><div class="g-num">200</div><div class="g-cell now" style="left: 51px; width: 80px;">Vuelt...</div><div class="g-cell" style="left: 131px; width: 56px;">M...</div><div class="g-cell" style="left: 187px; width: 56px;">M...</div><div class="g-cell" style="left: 243px; width: 57px;">Hi...</div><div class="g-cell" style="left: 300px; width: 56px;">Ci...</div></div>
+        <div class="g-row" style="top: 554px;"><div class="g-num">201</div><div class="g-cell now" style="left: 51px; width: 102px;">Bluey - ...</div><div class="g-cell" style="left: 153px; width: 90px;">Puppy ...</div><div class="g-cell" style="left: 243px; width: 109px;">Puppy Dog...</div></div>
+        <div class="g-row" style="top: 609px;"><div class="g-num">202</div><div class="g-cell" style="left: 51px; width: 35px;"></div><div class="g-cell" style="left: 86px; width: 41px;">L.</div><div class="g-cell" style="left: 127px; width: 98px;">El mundo...</div><div class="g-cell" style="left: 225px; width: 45px;">E..</div><div class="g-cell" style="left: 270px; width: 52px;">E...</div><div class="g-cell" style="left: 322px; width: 38px;">E..</div></div>
+        <div class="g-row" style="top: 664px;"><div class="g-num">203</div><div class="g-cell now" style="left: 51px; width: 237px;">La era de hielo 3</div><div class="g-cell" style="left: 288px; width: 72px;">Acam...</div></div>
+      </div></div>
       <div class="g-line"></div>
-
-      <div class="g-row" style="top: 349px;"><div class="g-num">104</div><div class="g-cell" style="left: 51px; width: 263px;">Tala vs. Newman - Nacional de Clube...</div><div class="g-cell" style="left: 314px; right: 0;">UEFA</div></div>
-      <div class="g-row" style="top: 404px;"><div class="g-num" style="color: #00ccff;">105</div><div class="g-cell sel" style="left: 51px; right: 0;">Atl. Mineiro (Bra) vs. Boca Jrs. (Arg) - CONMEB...</div></div>
-      <div class="g-row" style="top: 459px;"><div class="g-num">106</div><div class="g-cell" style="left: 51px; width: 263px;">Sportia</div><div class="g-cell" style="left: 314px; right: 0;">Presi</div></div>
-      <div class="g-row" style="top: 514px;"><div class="g-num">107</div><div class="g-cell" style="left: 51px; width: 181px;">Mexicános - T6:E10</div><div class="g-cell" style="left: 232px; width: 82px;">Maest...</div><div class="g-cell" style="left: 314px; right: 0;">Maes</div></div>
-      <div class="g-row" style="top: 569px;"><div class="g-num">108</div><div class="g-cell" style="left: 51px; width: 207px;">Moto GP - Sprint Race</div><div class="g-cell" style="left: 258px; right: 0;">GP Las Vegas -</div></div>
-      <div class="g-row" style="top: 624px;"><div class="g-num">109</div><div class="g-cell" style="left: 51px; right: 0;">Atl. Mineiro (Bra) vs. Boca Jrs. (Arg) - CONMEBOL</div></div>
     </div>
   </section>
 
@@ -520,18 +532,30 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
       <div class="card" style="left: 185px; top: 622px;"><span class="ch">CH 1061</span></div>
     </div>
 
-    <!-- Vista: Listado de canales -->
+    <!-- Vista: Listado de canales (CH 1 a 20 verificados con swipes) -->
     <div class="tv-view tv-listado">
-      <div class="card" style="left: 15px; top: 117px;"><span class="ch">CH 104</span><span class="nm">Francia vs. Argen...</span><span class="pg" style="width: 96%"></span></div>
-      <div class="card" style="left: 185px; top: 117px;"><span class="ch">CH 105</span><span class="nm">Atl. Mineiro (Bra) ...</span><span class="pg" style="width: 12%"></span></div>
-      <div class="card" style="left: 15px; top: 222px;"><span class="ch">CH 106</span><span class="nm">Sportia</span><span class="pg" style="width: 92%"></span></div>
-      <div class="card" style="left: 185px; top: 222px;"><span class="ch">CH 107</span><span class="nm">Misfit Garage - T6:...</span><span class="pg" style="width: 55%"></span></div>
-      <div class="card" style="left: 15px; top: 327px;"><span class="ch">CH 108</span><span class="nm">Semifinal 1 - Com...</span><span class="pg" style="width: 25%"></span></div>
-      <div class="card is-sel" style="left: 185px; top: 327px;"><span class="ch">CH 109</span><span class="nm">Atl. Mineiro (Bra) ...</span><span class="pg" style="width: 12%"></span></div>
-      <div class="card" style="left: 15px; top: 432px;"><span class="ch">CH 110</span><span class="nm">GCL Supercup Ve...</span><span class="pg" style="width: 100%"></span></div>
-      <div class="card" style="left: 185px; top: 432px;"><span class="ch">CH 111</span><span class="nm">Rosario Central vs...</span><span class="pg" style="width: 35%"></span></div>
-      <div class="card" style="left: 15px; top: 536px;"><span class="ch">CH 112</span><span class="nm">Match Day: Post ...</span><span class="pg" style="width: 100%"></span></div>
-      <div class="card" style="left: 185px; top: 536px;"><span class="ch">CH 200</span><span class="nm">Pili y el guardián e...</span><span class="pg" style="width: 100%"></span></div>
+      <div class="scroll" style="top: 104px;"><div class="sc-in plain" style="height: 1070px;">
+        <div class="card" style="left: 15px; top: 13px;"><span class="ch">CH 1</span><span class="nm">+Info Sábado</span><span class="pg" style="width: 30%"></span></div>
+        <div class="card" style="left: 185px; top: 13px;"><span class="ch">CH 2</span><span class="nm">Documentales de i...</span><span class="pg" style="width: 35%"></span></div>
+        <div class="card" style="left: 15px; top: 118px;"><span class="ch">CH 3</span><span class="nm">Sábado en TN</span><span class="pg" style="width: 95%"></span></div>
+        <div class="card" style="left: 185px; top: 118px;"><span class="ch">CH 4</span><span class="nm">Indignados</span><span class="pg" style="width: 60%"></span></div>
+        <div class="card" style="left: 15px; top: 223px;"><span class="ch">CH 5</span><span class="nm">De fiesta</span><span class="pg" style="width: 40%"></span></div>
+        <div class="card" style="left: 185px; top: 223px;"><span class="ch">CH 6</span><span class="nm">Fuera de agenda</span><span class="pg" style="width: 70%"></span></div>
+        <div class="card" style="left: 15px; top: 328px;"><span class="ch">CH 7</span><span class="nm">Con estilo</span><span class="pg" style="width: 75%"></span></div>
+        <div class="card" style="left: 185px; top: 328px;"><span class="ch">CH 8</span><span class="nm">Se siente Argentina</span><span class="pg" style="width: 70%"></span></div>
+        <div class="card" style="left: 15px; top: 433px;"><span class="ch">CH 9</span><span class="nm">TierraMia TV</span><span class="pg" style="width: 75%"></span></div>
+        <div class="card" style="left: 185px; top: 433px;"><span class="ch">CH 10</span><span class="nm">Difusión</span><span class="pg" style="width: 75%"></span></div>
+        <div class="card" style="left: 15px; top: 538px;"><span class="ch">CH 11</span><span class="nm">MusicTop</span><span class="pg" style="width: 75%"></span></div>
+        <div class="card" style="left: 185px; top: 538px;"><span class="ch">CH 12</span><span class="nm">Pasapalabra</span><span class="pg" style="width: 55%"></span></div>
+        <div class="card" style="left: 15px; top: 643px;"><span class="ch">CH 13</span><span class="nm">Fin de semana</span><span class="pg" style="width: 30%"></span></div>
+        <div class="card" style="left: 185px; top: 643px;"><span class="ch">CH 14</span><span class="nm">Cásate conmigo</span><span class="pg" style="width: 60%"></span></div>
+        <div class="card" style="left: 15px; top: 748px;"><span class="ch">CH 15</span><span class="nm">Secretos verdade...</span><span class="pg" style="width: 40%"></span></div>
+        <div class="card" style="left: 185px; top: 748px;"><span class="ch">CH 16</span><span class="nm">Rescate sangriento</span><span class="pg" style="width: 45%"></span></div>
+        <div class="card" style="left: 15px; top: 853px;"><span class="ch">CH 17</span><span class="nm">Elemento Vital</span><span class="pg" style="width: 40%"></span></div>
+        <div class="card" style="left: 185px; top: 853px;"><span class="ch">CH 18</span><span class="nm">Escobar, el patrón ...</span><span class="pg" style="width: 40%"></span></div>
+        <div class="card" style="left: 15px; top: 958px;"><span class="ch">CH 19</span><span class="nm">Intensos, con To...</span><span class="pg" style="width: 30%"></span></div>
+        <div class="card" style="left: 185px; top: 958px;"><span class="ch">CH 20</span><span class="nm">El destape</span><span class="pg" style="width: 30%"></span></div>
+      </div></div>
     </div>
   </section>
 

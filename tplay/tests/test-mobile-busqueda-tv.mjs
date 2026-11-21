@@ -51,9 +51,12 @@ await page.screenshot({ path: join(SHOT_DIR, 'mobile-tv-grupo.png') });
 // ── TV en vivo: listado de canales ──
 await click('#sec-tv-en-vivo .seg[data-seg="listado"]');
 check('Listado: pestaña "Listado de canales" activa', (await text('#sec-tv-en-vivo .seg.is-active')) === 'Listado de canales');
-check('Listado: 10 tarjetas visibles', (await visibleCount('#sec-tv-en-vivo .tv-listado .card')) === 10);
-check('Listado: tarjeta seleccionada CH 109', (await visibleCount('#sec-tv-en-vivo .tv-listado .card.is-sel')) === 1
-  && (await text('#sec-tv-en-vivo .tv-listado .card.is-sel .ch')) === 'CH 109');
+check('Listado: 20 tarjetas (CH 1 a 20)', (await visibleCount('#sec-tv-en-vivo .tv-listado .card')) === 20);
+check('Listado: empieza en CH 1', (await text('#sec-tv-en-vivo .tv-listado .card .ch')) === 'CH 1');
+await page.mouse.move(200, 400);
+await page.mouse.wheel(0, 500);
+await page.waitForTimeout(300);
+check('Listado se desplaza con la rueda', (await page.evaluate(() => document.querySelector('#sec-tv-en-vivo .tv-listado .scroll').scrollTop)) > 0);
 check('Listado: sin títulos de grupo', (await visibleCount('#sec-tv-en-vivo .grp-title')) === 0);
 await page.screenshot({ path: join(SHOT_DIR, 'mobile-tv-listado.png') });
 await click('#sec-tv-en-vivo .seg[data-seg="grupo"]');
