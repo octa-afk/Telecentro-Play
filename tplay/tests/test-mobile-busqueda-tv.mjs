@@ -44,8 +44,8 @@ await click('.tab[data-tab="tv"]');
 check('TV en vivo abre su pantalla', (await activeScreen()) === 'sec-tv-en-vivo');
 check('TV en vivo: pestaña activa', (await activeTab()) === 'TV en vivo');
 check('TV en vivo: "Grupo de canales" activo por defecto', (await text('#sec-tv-en-vivo .seg.is-active')) === 'Grupo de canales');
-check('Grupo: 4 títulos de grupo', (await visibleCount('#sec-tv-en-vivo .grp-title')) === 4);
-check('Grupo: 8 tarjetas visibles', (await visibleCount('#sec-tv-en-vivo .tv-grupo .card')) === 8);
+check('Grupo: 11 grupos en orden', JSON.stringify(await page.evaluate(() => [...document.querySelectorAll('#sec-tv-en-vivo .grp-title')].map(e => e.textContent.trim()))) === JSON.stringify(['Aire', 'Noticias', 'Deportes', 'Infantil', 'Películas', 'Series', 'Música', 'Pack fútbol', 'Documentales', 'Entretenimiento', 'Internacional']));
+check('Grupo: 22 tarjetas y CH 105 seleccionado', (await visibleCount('#sec-tv-en-vivo .tv-grupo .card')) === 22 && (await text('#sec-tv-en-vivo .tv-grupo .card.is-sel .ch')) === 'CH 105');
 await page.screenshot({ path: join(SHOT_DIR, 'mobile-tv-grupo.png') });
 
 // ── TV en vivo: listado de canales ──
@@ -60,7 +60,7 @@ check('Listado se desplaza con la rueda', (await page.evaluate(() => document.qu
 check('Listado: sin títulos de grupo', (await visibleCount('#sec-tv-en-vivo .grp-title')) === 0);
 await page.screenshot({ path: join(SHOT_DIR, 'mobile-tv-listado.png') });
 await click('#sec-tv-en-vivo .seg[data-seg="grupo"]');
-check('vuelve a Grupo de canales', (await visibleCount('#sec-tv-en-vivo .tv-grupo .card')) === 8);
+check('vuelve a Grupo de canales', (await visibleCount('#sec-tv-en-vivo .tv-grupo .card')) === 22);
 
 // ── Menú Más (flotante, no navega) ──
 await click('#tabMas');

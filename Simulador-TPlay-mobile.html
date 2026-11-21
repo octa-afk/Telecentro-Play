@@ -513,23 +513,43 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
     <button class="seg" data-seg="listado" style="left: 148px; width: 132px;">Listado de canales</button>
     <button class="filter-btn" aria-label="Filtrar"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
 
-    <!-- Vista: Grupo de canales -->
+    <!-- Vista: Grupo de canales (11 grupos verificados con swipes) -->
     <div class="tv-view tv-grupo">
-      <div class="grp-title" style="top: 159px;">Noticias</div>
-      <div class="card" style="left: 15px; top: 180px;"><span class="ch">CH 13</span><span class="nm">26 Historia</span><span class="pg" style="width: 45%"></span></div>
-      <div class="card" style="left: 185px; top: 180px;"><span class="ch">CH 1002</span><span class="nm">26 Historia</span><span class="pg" style="width: 55%"></span></div>
-
-      <div class="grp-title" style="top: 307px;">Deportes</div>
-      <div class="card is-sel" style="left: 15px; top: 327px;"><span class="ch">CH 109</span><span class="nm">Atl. Mineiro (Bra) ...</span><span class="pg" style="width: 12%"></span></div>
-      <div class="card" style="left: 185px; top: 327px;"><span class="ch">CH 1101</span><span class="nm">GCL Supercup Ver...</span><span class="pg" style="width: 100%"></span></div>
-
-      <div class="grp-title" style="top: 454px;">Infantil</div>
-      <div class="card" style="left: 15px; top: 474px;"><span class="ch">CH 203</span><span class="nm">Teen Beach Movie</span><span class="pg" style="width: 50%"></span></div>
-      <div class="card" style="left: 185px; top: 474px;"><span class="ch">CH 1027</span><span class="nm">Teen Beach Movie</span><span class="pg" style="width: 60%"></span></div>
-
-      <div class="grp-title" style="top: 601px;">Películas</div>
-      <div class="card" style="left: 15px; top: 622px;"><span class="ch">CH 1060</span></div>
-      <div class="card" style="left: 185px; top: 622px;"><span class="ch">CH 1061</span></div>
+      <div class="scroll" style="top: 104px;"><div class="sc-in plain" style="height: 1620px;">
+        <div class="grp-title" style="top: 19px;">Aire</div>
+        <div class="card" style="left: 15px; top: 38px;"><span class="ch">CH 12</span><span class="nm">Pasapalabra</span><span class="pg" style="width: 40%"></span></div>
+        <div class="card" style="left: 185px; top: 38px;"><span class="ch">CH 1001</span><span class="nm">Pasapalabra</span><span class="pg" style="width: 45%"></span></div>
+        <div class="grp-title" style="top: 166px;">Noticias</div>
+        <div class="card" style="left: 15px; top: 185px;"><span class="ch">CH 13</span><span class="nm">Fin de semana</span><span class="pg" style="width: 45%"></span></div>
+        <div class="card" style="left: 185px; top: 185px;"><span class="ch">CH 1002</span><span class="nm">Fin de semana</span><span class="pg" style="width: 40%"></span></div>
+        <div class="grp-title" style="top: 313px;">Deportes</div>
+        <div class="card is-sel" style="left: 15px; top: 332px;"><span class="ch">CH 105</span><span class="nm">Atl. Mineiro (Bra) ...</span><span class="pg" style="width: 35%"></span></div>
+        <div class="card" style="left: 185px; top: 332px;"><span class="ch">CH 1011</span><span class="nm">Atl. Mineiro (Bra) v...</span><span class="pg" style="width: 70%"></span></div>
+        <div class="grp-title" style="top: 460px;">Infantil</div>
+        <div class="card" style="left: 15px; top: 479px;"><span class="ch">CH 203</span><span class="nm">La era de hielo 3</span><span class="pg" style="width: 40%"></span></div>
+        <div class="card" style="left: 185px; top: 479px;"><span class="ch">CH 1027</span><span class="nm">La era de hielo 3</span><span class="pg" style="width: 45%"></span></div>
+        <div class="grp-title" style="top: 607px;">Películas</div>
+        <div class="card" style="left: 15px; top: 626px;"><span class="ch">CH 1060</span><span class="nm">Evil - T3:E6</span><span class="pg" style="width: 80%"></span></div>
+        <div class="card" style="left: 185px; top: 626px;"><span class="ch">CH 1061</span><span class="nm">Pecados capitales</span><span class="pg" style="width: 45%"></span></div>
+        <div class="grp-title" style="top: 754px;">Series</div>
+        <div class="card" style="left: 15px; top: 773px;"><span class="ch">CH 1062</span><span class="nm">Flash</span><span class="pg" style="width: 90%"></span></div>
+        <div class="card" style="left: 185px; top: 773px;"><span class="ch">CH 1063</span><span class="nm">Enterrados en el jar...</span><span class="pg" style="width: 65%"></span></div>
+        <div class="grp-title" style="top: 901px;">Música</div>
+        <div class="card" style="left: 15px; top: 920px;"><span class="ch">CH 5</span><span class="nm">De fiesta</span><span class="pg" style="width: 30%"></span></div>
+        <div class="card" style="left: 185px; top: 920px;"><span class="ch">CH 1007</span><span class="nm">De fiesta</span><span class="pg" style="width: 30%"></span></div>
+        <div class="grp-title" style="top: 1048px;">Pack fútbol</div>
+        <div class="card" style="left: 15px; top: 1067px;"><span class="ch">CH 112</span><span class="nm">Def. y Justicia vs. B...</span><span class="pg" style="width: 90%"></span></div>
+        <div class="card" style="left: 185px; top: 1067px;"><span class="ch">CH 111</span><span class="nm">Gimnasia y Esgrima...</span><span class="pg" style="width: 10%"></span></div>
+        <div class="grp-title" style="top: 1195px;">Documentales</div>
+        <div class="card" style="left: 15px; top: 1214px;"><span class="ch">CH 501</span><span class="nm">Joyas sobre ruedas...</span><span class="pg" style="width: 45%"></span></div>
+        <div class="card" style="left: 185px; top: 1214px;"><span class="ch">CH 1071</span><span class="nm">Joyas sobre ruedas...</span><span class="pg" style="width: 45%"></span></div>
+        <div class="grp-title" style="top: 1342px;">Entretenimiento</div>
+        <div class="card" style="left: 15px; top: 1361px;"><span class="ch">CH 2</span><span class="nm">Documentales de i...</span><span class="pg" style="width: 35%"></span></div>
+        <div class="card" style="left: 185px; top: 1361px;"><span class="ch">CH 1004</span><span class="nm">Documentales de i...</span><span class="pg" style="width: 55%"></span></div>
+        <div class="grp-title" style="top: 1489px;">Internacional</div>
+        <div class="card" style="left: 15px; top: 1508px;"></div>
+        <div class="card" style="left: 185px; top: 1508px;"></div>
+      </div></div>
     </div>
 
     <!-- Vista: Listado de canales (CH 1 a 20 verificados con swipes) -->
