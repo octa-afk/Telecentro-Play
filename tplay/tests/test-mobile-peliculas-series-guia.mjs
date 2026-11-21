@@ -31,7 +31,11 @@ check('Películas abre su pantalla', (await activeScreen()) === 'sec-peliculas')
 check('Películas: título', (await text('#sec-peliculas .title')) === 'Películas');
 check('Películas: pestaña Más marcada', (await activeTab()) === 'Más');
 check('Películas: 5 chips de canales', JSON.stringify(await all('#sec-peliculas .chip')) === JSON.stringify(['VER TODAS', 'SPACE', 'TNT', 'film&arts', 'AMC']));
-check('Películas: secciones', JSON.stringify(await all('#sec-peliculas .sec-ttl')) === JSON.stringify(['Las películas que te recomendamos', 'Heroes y Fantasia']));
+check('Películas: secciones en orden', JSON.stringify(await all('#sec-peliculas .sec-ttl')) === JSON.stringify(['Las películas que te recomendamos', 'Heroes y Fantasia', 'Novedades', 'Acción Explosiva', 'Grandes odiseas del cine', 'Historias para no dormir', 'Acción']));
+await page.mouse.move(200, 400);
+await page.mouse.wheel(0, 700);
+await page.waitForTimeout(300);
+check('Películas se desplaza con la rueda', (await page.evaluate(() => document.querySelector('#sec-peliculas .scroll').scrollTop)) > 0);
 check('Películas: botón VER y 3 puntos', (await text('#sec-peliculas .btn-ver')) === 'VER' && (await count('#sec-peliculas .dots i')) === 3);
 await page.screenshot({ path: join(SHOT_DIR, 'mobile-peliculas.png') });
 await press('Escape');
@@ -41,7 +45,14 @@ check('Escape vuelve a Inicio', (await activeScreen()) === 'sec-inicio' && (awai
 await click('#sec-inicio .shortcut:has-text("Series")');
 check('Series abre su pantalla', (await activeScreen()) === 'sec-series');
 check('Series: chips VER TODAS seleccionado', (await text('#sec-series .chip.sel')) === 'VER TODAS' && JSON.stringify(await all('#sec-series .chip')) === JSON.stringify(['VER TODAS', 'CN', 'SPACE', 'TNT', 'G']));
-check('Series: secciones y 6 pósteres', JSON.stringify(await all('#sec-series .sec-ttl')) === JSON.stringify(['Las series que te recomendamos', 'Novedades']) && (await count('#sec-series .pst')) === 6);
+check('Series: secciones en orden y 15 pósteres', JSON.stringify(await all('#sec-series .sec-ttl')) === JSON.stringify(['Las series que te recomendamos', 'Novedades', 'Ecos de otros universos', 'Alta tensión: policías y acción sin freno', 'Acción']) && (await count('#sec-series .pst')) === 15);
+await page.mouse.move(200, 400);
+await page.mouse.wheel(0, 700);
+await page.waitForTimeout(300);
+check('Series se desplaza con la rueda', (await page.evaluate(() => document.querySelector('#sec-series .scroll').scrollTop)) > 0);
+await click('#tabMas');
+check('menú Más resalta la opción de la pantalla actual (Series)', (await text('#masPopup .popup-item.cur')) === 'Series');
+await press('Escape');
 await page.screenshot({ path: join(SHOT_DIR, 'mobile-series.png') });
 await press('Escape');
 

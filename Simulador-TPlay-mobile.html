@@ -212,6 +212,7 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
   position: absolute; left: 0; right: 0; height: 30px; transform: translateY(-50%);
   display: flex; align-items: center; padding-left: 28px; font-size: 14px; color: #e6eef6;
 }
+.popup-item.cur svg { stroke: #00ccff; }
 .popup-item svg { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; fill: none; stroke: #cbe2f4; stroke-width: 1.8; }
 
 /* ── Inicio actual, Películas, Series y Guía ── */
@@ -363,7 +364,7 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
       <h1 class="title">Películas</h1>
       <button class="gear" data-open="sec-configuracion" aria-label="Ajustes"><svg width="22" height="22" viewBox="0 0 24 24" fill="#cbe2f4" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.2h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.7h4l.4-2.7a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg></button>
     </header>
-    <div class="stage">
+    <div class="scroll"><div class="sc-in" style="height: 1980px;">
       <div class="banner" style="top: 65px;"></div>
       <span class="btn-ver">VER</span>
       <div class="dots" style="top: 247px;"><i class="on"></i><i></i><i></i></div>
@@ -380,7 +381,17 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
       <div class="pst" style="left: 15px; top: 631px;"></div>
       <div class="pst" style="left: 151px; top: 631px;"></div>
       <div class="pst" style="left: 287px; top: 631px;"></div>
-    </div>
+      <div class="sec-ttl" style="top: 851px;">Novedades</div>
+      <div class="pst" style="left: 15px; top: 871px;"></div><div class="pst" style="left: 151px; top: 871px;"></div><div class="pst" style="left: 287px; top: 871px;"></div>
+      <div class="sec-ttl" style="top: 1091px;">Acción Explosiva</div>
+      <div class="pst" style="left: 15px; top: 1111px;"></div><div class="pst" style="left: 151px; top: 1111px;"></div><div class="pst" style="left: 287px; top: 1111px;"></div>
+      <div class="sec-ttl" style="top: 1331px;">Grandes odiseas del cine</div>
+      <div class="pst" style="left: 15px; top: 1351px;"></div><div class="pst" style="left: 151px; top: 1351px;"></div><div class="pst" style="left: 287px; top: 1351px;"></div>
+      <div class="sec-ttl" style="top: 1571px;">Historias para no dormir</div>
+      <div class="pst" style="left: 15px; top: 1591px;"></div><div class="pst" style="left: 151px; top: 1591px;"></div><div class="pst" style="left: 287px; top: 1591px;"></div>
+      <div class="sec-ttl" style="top: 1811px;">Acción</div>
+      <div class="pst" style="left: 15px; top: 1831px;"></div><div class="pst" style="left: 151px; top: 1831px;"></div><div class="pst" style="left: 287px; top: 1831px;"></div>
+    </div></div>
   </section>
 
   <!-- ── Sección: Series ── -->
@@ -390,7 +401,7 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
       <h1 class="title">Series</h1>
       <button class="gear" data-open="sec-configuracion" aria-label="Ajustes"><svg width="22" height="22" viewBox="0 0 24 24" fill="#cbe2f4" aria-hidden="true"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.2h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.7h4l.4-2.7a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg></button>
     </header>
-    <div class="stage">
+    <div class="scroll"><div class="sc-in" style="height: 1500px;">
       <div class="banner" style="top: 65px;"></div>
       <div class="dots" style="top: 247px;"><i class="on"></i><i></i><i></i></div>
       <span class="btn-ver">VER</span>
@@ -407,7 +418,13 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
       <div class="pst" style="left: 15px; top: 631px;"></div>
       <div class="pst" style="left: 151px; top: 631px;"></div>
       <div class="pst" style="left: 287px; top: 631px;"></div>
-    </div>
+      <div class="sec-ttl" style="top: 851px;">Ecos de otros universos</div>
+      <div class="pst" style="left: 15px; top: 871px;"></div><div class="pst" style="left: 151px; top: 871px;"></div><div class="pst" style="left: 287px; top: 871px;"></div>
+      <div class="sec-ttl" style="top: 1091px;">Alta tensión: policías y acción sin freno</div>
+      <div class="pst" style="left: 15px; top: 1111px;"></div><div class="pst" style="left: 151px; top: 1111px;"></div><div class="pst" style="left: 287px; top: 1111px;"></div>
+      <div class="sec-ttl" style="top: 1331px;">Acción</div>
+      <div class="pst" style="left: 15px; top: 1351px;"></div><div class="pst" style="left: 151px; top: 1351px;"></div><div class="pst" style="left: 287px; top: 1351px;"></div>
+    </div></div>
   </section>
 
   <!-- ── Sección: Guía de canales ── -->
@@ -732,6 +749,10 @@ function setScreen(id) {
   var secs = document.querySelectorAll('.screen');
   for (var i = 0; i < secs.length; i++) {
     secs[i].classList.toggle('is-active', secs[i].id === id);
+  }
+  var items = document.querySelectorAll('.popup-item');
+  for (var j = 0; j < items.length; j++) {
+    items[j].classList.toggle('cur', items[j].getAttribute('data-target') === id);
   }
   setActiveTab(id);
 }

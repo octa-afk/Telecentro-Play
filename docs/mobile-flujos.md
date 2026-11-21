@@ -93,3 +93,10 @@ Pendiente: las demás pantallas no se desplazan; botones favorito/grabar e ícon
 - Reproductor de TV en vivo (bloqueado para captura, ver arriba).
 - Detalle de contenido (tocar un póster en Inicio)
 - Inicio: el carrusel de banners (Black Friday), accesos rápidos Películas / Series / Guía y filas "Lo más visto ahora" / "Ver últimas 24hs" no están en `Simulador-TPlay-mobile.html`, que replica una versión anterior de Inicio con pósteres.
+
+## Desplazamiento relevado con swipes
+
+- **Películas**: Las películas que te recomendamos → Heroes y Fantasia → Novedades → Acción Explosiva → Grandes odiseas del cine → Historias para no dormir → Acción (puede haber más debajo).
+- **Series**: Las series que te recomendamos → Novedades → Ecos de otros universos → Alta tensión: policías y acción sin freno → Acción (puede haber más debajo).
+- El menú Más resalta en cyan el ícono de la opción de la pantalla actual.
+- Pendiente de desplazamiento: Guía de canales, TV en vivo (grupo y listado) y Búsqueda.
