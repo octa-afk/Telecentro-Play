@@ -10,33 +10,36 @@
 html, body { height: 100%; }
 body {
   background: #0b0d12;
-  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
   font-family: Roboto, "Noto Sans", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 button { font: inherit; background: none; border: 0; color: inherit; cursor: pointer; }
 
-/* ── Marco del teléfono (captura 1080×2340 a 3× → 360×780 CSS px) ── */
+/* ── Dispositivo: app + barra de navegación del sistema (Android, 3 botones) ── */
+.device {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  padding: 10px; border-radius: 40px; background: #1b1e25;
+  box-shadow: 0 0 0 1px #2c303a, 0 18px 50px rgba(0, 0, 0, 0.55);
+}
+.display { display: flex; flex-direction: column; background: #000; border-radius: 30px; overflow: hidden; }
+.sysnav { height: 48px; flex: 0 0 auto; display: flex; align-items: center; justify-content: space-around; padding: 0 56px; background: #000; }
+.sysnav button { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+.sysnav svg { width: 20px; height: 20px; fill: #fff; }
+.sysnav .home svg { fill: none; stroke: #fff; stroke-width: 2; }
+.sysnav .home .dot { fill: #fff; }
+
+/* ── Marco del teléfono (captura 1080×2340 a 3× → 360×753 CSS px; sin la barra de estado) ── */
 .phone {
   position: relative;
-  width: 360px; height: 780px;
+  width: 360px; height: 753px;
   background: #001423;
   color: #cbe2f4;
   overflow: hidden;
-  border-radius: 22px;
-}
-
-/* ── Barra de estado (solo hora; no es parte de la app) ── */
-.statusbar {
-  position: absolute; top: 0; left: 0; right: 0; height: 27px; z-index: 5;
-  display: flex; align-items: center;
-  padding: 0 14px;
-  font-size: 12px; font-weight: 500;
-  color: #e6eef6;
 }
 
 /* ── Pantallas (estado por clases: .screen.is-active) ── */
-.screen { position: absolute; top: 27px; bottom: 66px; left: 0; right: 0; display: none; }
+.screen { position: absolute; top: 0; bottom: 66px; left: 0; right: 0; display: none; }
 .screen.is-active { display: block; }
 
 /* ── Encabezado ── */
@@ -202,9 +205,9 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 .is-listado .tv-listado { display: block; }
 
 /* ── Menú flotante de Más ── */
-.overlay { position: absolute; top: 27px; bottom: 66px; left: 0; right: 0; background: rgba(0, 8, 14, 0.62); z-index: 3; display: none; }
+.overlay { position: absolute; top: 0; bottom: 66px; left: 0; right: 0; background: rgba(0, 8, 14, 0.62); z-index: 3; display: none; }
 .popup {
-  position: absolute; left: 228px; top: 573px; width: 124px; height: 123px; z-index: 4;
+  position: absolute; left: 228px; top: 546px; width: 124px; height: 123px; z-index: 4;
   border: 1px solid #3a4a57; border-radius: 6px; background: #001423; display: none;
 }
 .popup.is-open, .overlay.is-open { display: block; }
@@ -295,9 +298,12 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 
 
 /* ── Reproductor de TV en vivo (el teléfono pasa a horizontal; fondo de video simulado) ── */
-.phone.is-player { width: 780px; height: 360px; }
+.phone.is-player { width: 753px; height: 360px; }
+/* Horizontal: el mismo dispositivo girado (801×360); la barra del sistema pasa al lado derecho */
+.device.is-player .display { flex-direction: row; }
+.device.is-player .sysnav { width: 48px; height: auto; flex-direction: column-reverse; padding: 56px 0; }
 .screen.player { top: 0; bottom: 0; z-index: 20; background: #000; overflow: hidden; }
-.phone.is-player .statusbar, .phone.is-player .tabbar { display: none; }
+.phone.is-player .tabbar { display: none; }
 .pl-land {
   position: absolute; inset: 0;
   background: radial-gradient(ellipse at 50% 40%, #35526a 0%, #14212c 60%, #080d12 100%);
@@ -340,9 +346,9 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 </head>
 <body>
 
+<div class="device">
+<div class="display">
 <div class="phone" id="phone">
-
-  <div class="statusbar"><span id="clock">18:58</span></div>
 
   <!-- ── Sección: Inicio ── -->
   <section id="sec-inicio" class="screen is-active" data-tab="inicio">
@@ -859,6 +865,13 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 </nav>
 
 </div>
+<nav class="sysnav" aria-label="Navegación del sistema">
+  <button class="back" aria-label="Atrás"><svg viewBox="0 0 20 20"><path d="M14 3 L5 10 L14 17 Z"/></svg></button>
+  <button class="home" aria-label="Inicio del sistema" disabled><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.5"/><circle class="dot" cx="10" cy="10" r="5.6"/></svg></button>
+  <button class="recents" aria-label="Recientes" disabled><svg viewBox="0 0 20 20"><rect x="4" y="4" width="12" height="12" rx="2"/></svg></button>
+</nav>
+</div>
+</div>
 
 <script>
 /* ── Datos de demostración (genéricos; no son datos reales de ningún usuario) ── */
@@ -891,9 +904,14 @@ function bindDemo() {
 }
 bindDemo();
 
-/* ── Reloj (hora fija de la captura; no es dato de la app) ── */
-var clockEl = document.getElementById('clock');
-function setClock(hhmm) { if (clockEl) clockEl.textContent = hhmm; }
+
+/* ── Ajuste del dispositivo al tamaño de la ventana ── */
+function fitDevice() {
+  var d = document.querySelector('.device');
+  var k = Math.min((window.innerWidth - 24) / d.offsetWidth, (window.innerHeight - 24) / d.offsetHeight);
+  d.style.transform = 'translate(-50%, -50%) scale(' + k + ')';
+}
+window.addEventListener('resize', fitDevice);
 
 /* ── Navegación ── */
 var currentId = 'sec-inicio';
@@ -910,6 +928,8 @@ function setScreen(id) {
     items[j].classList.toggle('cur', items[j].getAttribute('data-target') === id);
   }
   document.getElementById('phone').classList.toggle('is-player', id === 'sec-reproductor');
+  document.querySelector('.device').classList.toggle('is-player', id === 'sec-reproductor');
+  fitDevice();
   setActiveTab(id);
 }
 

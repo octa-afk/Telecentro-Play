@@ -28,14 +28,14 @@ await page.mouse.move(200, 400);
 await page.mouse.wheel(0, 700);
 await page.waitForTimeout(300);
 check('Inicio se desplaza con la rueda', (await page.evaluate(() => document.getElementById('homeScroll').scrollTop)) > 0);
-check('el encabezado queda fijo al desplazar', (await page.evaluate(() => { const h = document.querySelector('#sec-inicio .header').getBoundingClientRect(), p = document.querySelector('.phone').getBoundingClientRect(); return Math.round(h.top - p.top) === 27; })));
+check('el encabezado queda fijo al desplazar', (await page.evaluate(() => { const h = document.querySelector('#sec-inicio .header').getBoundingClientRect(), p = document.querySelector('.phone').getBoundingClientRect(); return Math.round((h.top - p.top) / (p.height / 753)) === 0; })));
 await page.evaluate(() => { document.getElementById('homeScroll').scrollTop = 0; });
 check('accesos Películas · Series · Guía', JSON.stringify(await all('#sec-inicio .shortcut')) === JSON.stringify(['Películas', 'Series', 'Guía']));
 check('banner con 5 puntos', (await page.evaluate(() => document.querySelectorAll('#sec-inicio .dots i').length)) === 5);
 check('6 tarjetas de canal', (await page.evaluate(() => document.querySelectorAll('#sec-inicio .card').length)) === 6);
 check('botón de Ajustes en el encabezado', (await page.evaluate(() => !!document.querySelector('.header .gear'))));
 check('barra inferior dentro del marco del teléfono', (await page.evaluate(() => document.querySelector('.phone').contains(document.querySelector('.tabbar')))));
-check('teléfono de 360×780',(await page.evaluate(() => { const r = document.querySelector('.phone').getBoundingClientRect(); return r.width === 360 && r.height === 780; })));
+check('teléfono de 360×753',(await page.evaluate(() => { const r = document.querySelector('.phone'); return r.offsetWidth === 360 && r.offsetHeight === 753; })));
 
 await page.screenshot({ path: join(SHOT_DIR, 'mobile-inicio.png'), clip: await page.evaluate(() => { const r = document.querySelector('.phone').getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; }) });
 
