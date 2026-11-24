@@ -905,10 +905,31 @@ function bindDemo() {
 bindDemo();
 
 
+/* ── Colores de las carátulas (marcadores de posición; no son imágenes reales) ── */
+var PST_HUES = [8, 28, 48, 150, 185, 215, 255, 285, 320, 345];
+function paint(els, step) {
+  for (var i = 0; i < els.length; i++) {
+    var h = PST_HUES[(i * step + Math.floor(i / 3) * 3) % PST_HUES.length];
+    els[i].style.background = 'linear-gradient(160deg, hsl(' + h + ', 55%, 42%) 0%, hsl(' + ((h + 30) % 360) + ', 60%, 16%) 100%)';
+  }
+}
+function colorPosters() {
+  paint(document.querySelectorAll('.pst'), 7);
+  var cards = [], all = document.querySelectorAll('.card');
+  for (var i = 0; i < all.length; i++) { if (all[i].querySelector('.ch')) cards.push(all[i]); }
+  paint(cards, 3);
+  paint(document.querySelectorAll('.banner'), 7);
+}
+colorPosters();
+
 /* ── Ajuste del dispositivo al tamaño de la ventana ── */
 function fitDevice() {
   var d = document.querySelector('.device');
-  var k = Math.min((window.innerWidth - 24) / d.offsetWidth, (window.innerHeight - 24) / d.offsetHeight);
+  /* La escala la fija la orientación vertical; la horizontal usa la misma si cabe en la ventana */
+  var lado = Math.max(d.offsetWidth, d.offsetHeight), corto = Math.min(d.offsetWidth, d.offsetHeight);
+  var w = window.innerWidth - 24, h = window.innerHeight - 24;
+  var k = Math.min(w / corto, h / lado);
+  if (d.offsetWidth > d.offsetHeight) { k = Math.min(k, w / lado, h / corto); }
   d.style.transform = 'translate(-50%, -50%) scale(' + k + ')';
 }
 window.addEventListener('resize', fitDevice);
@@ -1008,9 +1029,14 @@ function setPlayerState(st) {
 document.addEventListener('click', function (ev) {
   var t = ev.target;
 
-  var card = t.closest('#sec-tv-en-vivo .card');
+  var card = t.closest('.card');
   if (card && card.querySelector('.ch')) {
     openPlayer(card.querySelector('.ch').textContent, card.querySelector('.nm').textContent);
+    return;
+  }
+  var gcell = t.closest('.g-cell');
+  if (gcell && gcell.parentNode.querySelector('.g-num')) {
+    openPlayer('CH ' + gcell.parentNode.querySelector('.g-num').textContent, gcell.textContent);
     return;
   }
   if (t.closest('#plPause')) {
