@@ -332,6 +332,7 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 .pl-land.is-paused .ic-pause { display: none; }
 .pl-land.is-paused .ic-play { display: block; }
 .pl-chs { position: absolute; right: 20px; top: 128px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 13px; font-weight: 500; }
+.pl-chs button { width: 36px; height: 30px; display: flex; align-items: center; justify-content: center; }
 .pl-chs svg { width: 20px; height: 20px; fill: none; stroke: #00ccff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .pl-info { position: absolute; left: 24px; right: 24px; bottom: 34px; display: flex; align-items: center; gap: 12px; }
 .pl-logo { width: 84px; height: 56px; border-radius: 4px; background: rgba(255,255,255,0.15); flex: 0 0 auto; }
@@ -833,7 +834,7 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
           <button class="pl-btn dim" type="button" id="plFwd10" aria-label="Adelantar 10 segundos"><svg viewBox="0 0 24 24"><path d="M20 12 a8 8 0 1 1 -2.6-5.9"/><path d="M20 4 V9 H15"/></svg><span class="n">10</span></button>
           <button class="pl-btn dim" type="button" aria-label="Ir al vivo"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5" fill="#fff"/></svg></button>
         </div>
-        <div class="pl-chs"><svg viewBox="0 0 24 24"><path d="M5 15 L12 8 L19 15"/></svg><span>CH</span><svg viewBox="0 0 24 24"><path d="M5 9 L12 16 L19 9"/></svg></div>
+        <div class="pl-chs"><button type="button" id="plChUp" aria-label="Canal siguiente"><svg viewBox="0 0 24 24"><path d="M5 15 L12 8 L19 15"/></svg></button><span>CH</span><button type="button" id="plChDown" aria-label="Canal anterior"><svg viewBox="0 0 24 24"><path d="M5 9 L12 16 L19 9"/></svg></button></div>
         <div class="pl-info"><div class="pl-logo"></div><div class="pl-meta"><div class="ch" id="plCh">CH 13</div><div class="nm" id="plNm">Fin de semana</div></div></div>
         <div class="pl-bar"><span class="fill"></span><span class="dot"></span></div>
       </div>
@@ -1018,6 +1019,29 @@ function openPlayer(chText, nmText) {
   setPlayerState('live');
   openScreen('sec-reproductor');
 }
+/* Lista de canales conocidos (de las tarjetas del simulador), ordenada por número */
+function channelList() {
+  var seen = {}, list = [], cards = document.querySelectorAll('.card');
+  for (var i = 0; i < cards.length; i++) {
+    var ch = cards[i].querySelector('.ch'), nm = cards[i].querySelector('.nm');
+    if (!ch || !nm) continue;
+    var n = parseInt(ch.textContent.replace(/\D/g, ''), 10);
+    if (!seen[n]) { seen[n] = 1; list.push({ n: n, nm: nm.textContent }); }
+  }
+  list.sort(function (a, b) { return a.n - b.n; });
+  return list;
+}
+/* Cambia de canal dentro del reproductor: dir +1 sube, -1 baja; da la vuelta en los extremos */
+function stepChannel(dir) {
+  var list = channelList();
+  var cur = parseInt(document.getElementById('plCh').textContent.replace(/\D/g, ''), 10);
+  var idx = -1;
+  if (dir > 0) { for (var i = 0; i < list.length; i++) { if (list[i].n > cur) { idx = i; break; } } if (idx < 0) idx = 0; }
+  else { for (var j = list.length - 1; j >= 0; j--) { if (list[j].n < cur) { idx = j; break; } } if (idx < 0) idx = list.length - 1; }
+  document.getElementById('plCh').textContent = 'CH ' + list[idx].n;
+  document.getElementById('plNm').textContent = list[idx].nm;
+  setPlayerState('live');
+}
 /* Estados: live (en vivo), paused (pausado), delayed (diferido, tras retroceder) */
 function setPlayerState(st) {
   var pl = document.getElementById('plLand');
@@ -1044,6 +1068,8 @@ document.addEventListener('click', function (ev) {
     setPlayerState(pl.classList.contains('is-paused') ? 'delayed' : 'paused');
     return;
   }
+  if (t.closest('#plChUp')) { stepChannel(1); return; }
+  if (t.closest('#plChDown')) { stepChannel(-1); return; }
   if (t.closest('#plBack10')) { setPlayerState('delayed'); return; }
   if (t.closest('#plLive')) { setPlayerState('live'); return; }
   if (t.closest('#plLand') && !t.closest('button')) {

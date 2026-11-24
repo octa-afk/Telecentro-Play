@@ -52,6 +52,24 @@ check('desde el listado también abre', (await activeScreen()) === 'sec-reproduc
 await press('Escape');
 check('Esc vuelve', (await activeScreen()) === 'sec-tv-en-vivo');
 
+await click('#sec-tv-en-vivo .tv-listado .card >> nth=1');
+await click('#plChUp');
+check('CH ▲ pasa al canal siguiente', (await text('#plCh')) === 'CH 3' && (await text('#plNm')) === 'Sábado en TN');
+await click('#plChDown'); await click('#plChDown'); await click('#plChDown');
+check('CH ▼ da la vuelta al último canal', (await text('#plCh')) === 'CH 1071', await text('#plCh'));
+await click('#plChUp');
+check('CH ▲ da la vuelta al primero', (await text('#plCh')) === 'CH 1', await text('#plCh'));
+await press('Escape');
+await click('.tab[data-tab="inicio"]');
+await click('#sec-inicio .card >> nth=0');
+check('desde Inicio también abre', (await activeScreen()) === 'sec-reproductor' && (await text('#plCh')) === 'CH 105');
+await press('Escape');
+check('Esc vuelve a Inicio', (await activeScreen()) === 'sec-inicio');
+await click('#tabMas');
+await click('.popup-item[data-target="sec-guia"]');
+await click('#sec-guia .g-row >> nth=1 >> .g-cell >> nth=0');
+check('desde la Guía abre con su canal', (await activeScreen()) === 'sec-reproductor' && /^CH \d+$/.test(await text('#plCh')));
+
 await browser.close();
 console.log(failures ? failures + ' fallas' : 'OK');
 process.exit(failures ? 1 : 0);
