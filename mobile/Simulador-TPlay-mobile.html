@@ -9,7 +9,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
 body {
-  background: #0b0d12;
+  background: #07151c; /* mismo fondo que el simulador del deco */
   overflow: hidden;
   font-family: Roboto, "Noto Sans", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -19,8 +19,11 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 /* ── Dispositivo: app + barra de navegación del sistema (Android, 3 botones) ── */
 .device {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-  padding: 10px; border-radius: 40px; background: #1b1e25;
-  box-shadow: 0 0 0 1px #2c303a, 0 18px 50px rgba(0, 0, 0, 0.55);
+  /* Marco igual al del deco: azul profundo + canto celeste iluminado */
+  padding: 10px; border-radius: 40px; background: #041c29;
+  box-shadow:
+    0 0 0 2px rgba(22, 185, 247, 0.38),
+    0 26px 60px rgba(0, 0, 0, 0.55);
 }
 .display { display: flex; flex-direction: column; background: #000; border-radius: 30px; overflow: hidden; }
 .sysnav { height: 48px; flex: 0 0 auto; display: flex; align-items: center; justify-content: space-around; padding: 0 56px; background: #000; }
@@ -341,7 +344,8 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 .pl-bar { position: absolute; left: 24px; right: 24px; bottom: 20px; height: 3px; background: rgba(255,255,255,0.35); border-radius: 2px; }
 .pl-bar .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: #00ccff; border-radius: 2px; }
 .pl-bar .dot { position: absolute; top: -4px; width: 11px; height: 11px; margin-left: -5px; border-radius: 50%; background: #00ccff; left: 100%; }
-.pl-land.is-delayed .pl-bar .fill { width: 82%; } .pl-land.is-delayed .pl-bar .dot { left: 82%; }
+.pl-bar { touch-action: none; cursor: pointer; }
+.pl-bar::before { content: ""; position: absolute; left: -12px; right: -12px; top: -14px; bottom: -14px; }
 .pl-land.is-delayed .pl-btn.dim { opacity: 1; }
 </style>
 </head>
@@ -1042,13 +1046,48 @@ function stepChannel(dir) {
   document.getElementById('plNm').textContent = list[idx].nm;
   setPlayerState('live');
 }
+/* Barra de reproducción: plPos va de 0 (inicio de la ventana) a 1 (en vivo).
+   PL_VENTANA es un valor provisional (no sale de la app real): segundos que cubre la barra. */
+var PL_VENTANA = 600, PL_SALTO = 10, plPos = 1;
+function plRenderBar() {
+  var pct = (plPos * 100) + '%';
+  document.querySelector('#plLand .pl-bar .fill').style.width = pct;
+  document.querySelector('#plLand .pl-bar .dot').style.left = pct;
+}
+/* Mueve la barra a pos (0..1); conserva la pausa. Al llegar al final vuelve al vivo. */
+function plSeek(pos) {
+  plPos = Math.max(0, Math.min(1, pos));
+  var pl = document.getElementById('plLand');
+  if (plPos >= 1) setPlayerState('live');
+  else setPlayerState(pl.classList.contains('is-paused') ? 'paused' : 'delayed');
+  plRenderBar();
+}
+function plSeekFromX(clientX) {
+  var r = document.querySelector('#plLand .pl-bar').getBoundingClientRect();
+  plSeek((clientX - r.left) / r.width);
+}
 /* Estados: live (en vivo), paused (pausado), delayed (diferido, tras retroceder) */
 function setPlayerState(st) {
   var pl = document.getElementById('plLand');
+  if (st === 'live') { plPos = 1; plRenderBar(); }
   pl.classList.toggle('is-paused', st === 'paused');
   pl.classList.toggle('is-delayed', st === 'delayed' || st === 'paused');
   pl.classList.remove('hide-ctl');
 }
+
+/* Arrastre de la barra de reproducción (mouse y touch) */
+document.addEventListener('pointerdown', function (ev) {
+  var bar = ev.target.closest && ev.target.closest('#plLand .pl-bar');
+  if (!bar) return;
+  ev.preventDefault();
+  try { bar.setPointerCapture(ev.pointerId); } catch (e) {}
+  plSeekFromX(ev.clientX);
+  function mover(e) { plSeekFromX(e.clientX); }
+  function soltar() { bar.removeEventListener('pointermove', mover); bar.removeEventListener('pointerup', soltar); bar.removeEventListener('pointercancel', soltar); }
+  bar.addEventListener('pointermove', mover);
+  bar.addEventListener('pointerup', soltar);
+  bar.addEventListener('pointercancel', soltar);
+});
 
 document.addEventListener('click', function (ev) {
   var t = ev.target;
@@ -1065,12 +1104,14 @@ document.addEventListener('click', function (ev) {
   }
   if (t.closest('#plPause')) {
     var pl = document.getElementById('plLand');
-    setPlayerState(pl.classList.contains('is-paused') ? 'delayed' : 'paused');
+    setPlayerState(pl.classList.contains('is-paused') ? (plPos >= 1 ? 'live' : 'delayed') : 'paused');
     return;
   }
   if (t.closest('#plChUp')) { stepChannel(1); return; }
   if (t.closest('#plChDown')) { stepChannel(-1); return; }
-  if (t.closest('#plBack10')) { setPlayerState('delayed'); return; }
+  if (t.closest('#plBack10')) { plSeek(plPos - PL_SALTO / PL_VENTANA); return; }
+  if (t.closest('#plFwd10')) { plSeek(plPos + PL_SALTO / PL_VENTANA); return; }
+  if (t.closest('.pl-bar')) { return; } /* el toque lo resuelve el arrastre de la barra */
   if (t.closest('#plLive')) { setPlayerState('live'); return; }
   if (t.closest('#plLand') && !t.closest('button')) {
     document.getElementById('plLand').classList.toggle('hide-ctl');
