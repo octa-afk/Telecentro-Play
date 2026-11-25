@@ -21,6 +21,13 @@ const text = sel => page.evaluate(s => document.querySelector(s)?.textContent.tr
 const has = (sel, cls) => page.evaluate(([s, c]) => document.querySelector(s).classList.contains(c), [sel, cls]);
 const activeScreen = () => page.evaluate(() => document.querySelector('.screen.is-active')?.id);
 const click = async sel => { await page.locator(sel).first().click(); await page.waitForTimeout(80); };
+const swipe = async dy => {
+  const b = await page.locator('#plLand').boundingBox();
+  const sx = b.x + b.width * 0.2, sy = b.y + b.height / 2;
+  await page.mouse.move(sx, sy); await page.mouse.down();
+  await page.mouse.move(sx, sy + dy, { steps: 6 }); await page.mouse.up();
+  await page.waitForTimeout(80);
+};
 const press = async key => { await page.keyboard.press(key); await page.waitForTimeout(80); };
 
 await click('.tab[data-tab="tv"]');
@@ -28,7 +35,7 @@ await click('#sec-tv-en-vivo .tv-grupo .card >> nth=2');
 check('tocar un canal abre el reproductor', (await activeScreen()) === 'sec-reproductor');
 check('muestra canal y programa de la tarjeta', (await text('#plCh')) === 'CH 13' && (await text('#plNm')) === 'Fin de semana');
 check('barra inferior oculta', await page.evaluate(() => getComputedStyle(document.getElementById('tabbar')).display === 'none'));
-check('pastillas superiores', JSON.stringify(await page.evaluate(() => [...document.querySelectorAll('.pl-pill')].map(e => e.textContent.trim()))) === JSON.stringify(['Audio / Subtítulos', 'Ver desde el inicio', 'Volver al vivo']));
+check('pastillas superiores', JSON.stringify(await page.evaluate(() => [...document.querySelectorAll('.pl-pill')].map(e => e.textContent.trim()))) === JSON.stringify(['Volver al vivo', 'Ver desde el inicio']));
 await page.screenshot({ path: join(SHOT_DIR, 'mobile-reproductor.png') });
 await click('#plPause');
 check('pausar muestra el ícono play', await has('#plLand', 'is-paused'));
@@ -79,12 +86,19 @@ await press('Escape');
 check('Esc vuelve', (await activeScreen()) === 'sec-tv-en-vivo');
 
 await click('#sec-tv-en-vivo .tv-listado .card >> nth=1');
-await click('#plChUp');
-check('CH ▲ pasa al canal siguiente', (await text('#plCh')) === 'CH 3' && (await text('#plNm')) === 'Sábado en TN');
-await click('#plChDown'); await click('#plChDown'); await click('#plChDown');
-check('CH ▼ da la vuelta al último canal', (await text('#plCh')) === 'CH 1071', await text('#plCh'));
-await click('#plChUp');
-check('CH ▲ da la vuelta al primero', (await text('#plCh')) === 'CH 1', await text('#plCh'));
+await swipe(-120);
+check('Deslizar hacia arriba pasa al canal siguiente', (await text('#plCh')) === 'CH 3' && (await text('#plNm')) === 'Sábado en TN');
+await swipe(120); await swipe(120); await swipe(120);
+check('Deslizar hacia abajo da la vuelta al último canal', (await text('#plCh')) === 'CH 1071', await text('#plCh'));
+await swipe(-120);
+check('Deslizar hacia arriba da la vuelta al primero', (await text('#plCh')) === 'CH 1', await text('#plCh'));
+check('deslizar no oculta los controles', !(await has('#plLand', 'hide-ctl')));
+check('ya no hay botones de canal', await page.evaluate(() => !document.querySelector('.pl-chs')));
+const antes = await text('#plCh');
+const bb2 = await page.locator('#plLand .pl-bar').boundingBox();
+await page.mouse.move(bb2.x + 100, bb2.y + 1); await page.mouse.down();
+await page.mouse.move(bb2.x + 100, bb2.y - 120, { steps: 6 }); await page.mouse.up();
+check('deslizar desde la barra no cambia de canal', (await text('#plCh')) === antes);
 await press('Escape');
 await click('.tab[data-tab="inicio"]');
 await click('#sec-inicio .card >> nth=0');

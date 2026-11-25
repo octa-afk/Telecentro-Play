@@ -334,9 +334,6 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
 .pl-land .ic-play { display: none; }
 .pl-land.is-paused .ic-pause { display: none; }
 .pl-land.is-paused .ic-play { display: block; }
-.pl-chs { position: absolute; right: 20px; top: 128px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 13px; font-weight: 500; }
-.pl-chs button { width: 36px; height: 30px; display: flex; align-items: center; justify-content: center; }
-.pl-chs svg { width: 20px; height: 20px; fill: none; stroke: #00ccff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .pl-info { position: absolute; left: 24px; right: 24px; bottom: 34px; display: flex; align-items: center; gap: 12px; }
 .pl-logo { width: 84px; height: 56px; border-radius: 4px; background: rgba(255,255,255,0.15); flex: 0 0 auto; }
 .pl-meta .ch { font-size: 12px; color: #cbe2f4; }
@@ -827,9 +824,8 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
       <div class="pl-ctl">
         <button class="back pl-back" aria-label="Volver"><svg viewBox="0 0 24 24"><path d="M15 4 L7 12 L15 20"/></svg></button>
         <div class="pl-top">
-          <button class="pl-pill" type="button">Audio / Subtítulos</button>
-          <button class="pl-pill" type="button">Ver desde el inicio</button>
           <button class="pl-pill live" type="button" id="plLive">Volver al vivo</button>
+          <button class="pl-pill" type="button">Ver desde el inicio</button>
           <button class="pl-cast" type="button" aria-label="Transmitir"><svg viewBox="0 0 24 24"><path d="M3 18 a3 3 0 0 1 3 3 M3 14 a7 7 0 0 1 7 7 M3 10 a11 11 0 0 1 11 11"/><path d="M3 6 V5 H21 V19 H15"/></svg></button>
         </div>
         <div class="pl-mid">
@@ -838,7 +834,6 @@ button { font: inherit; background: none; border: 0; color: inherit; cursor: poi
           <button class="pl-btn dim" type="button" id="plFwd10" aria-label="Adelantar 10 segundos"><svg viewBox="0 0 24 24"><path d="M20 12 a8 8 0 1 1 -2.6-5.9"/><path d="M20 4 V9 H15"/></svg><span class="n">10</span></button>
           <button class="pl-btn dim" type="button" aria-label="Ir al vivo"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5" fill="#fff"/></svg></button>
         </div>
-        <div class="pl-chs"><button type="button" id="plChUp" aria-label="Canal siguiente"><svg viewBox="0 0 24 24"><path d="M5 15 L12 8 L19 15"/></svg></button><span>CH</span><button type="button" id="plChDown" aria-label="Canal anterior"><svg viewBox="0 0 24 24"><path d="M5 9 L12 16 L19 9"/></svg></button></div>
         <div class="pl-info"><div class="pl-logo"></div><div class="pl-meta"><div class="ch" id="plCh">CH 13</div><div class="nm" id="plNm">Fin de semana</div></div></div>
         <div class="pl-bar"><span class="fill"></span><span class="dot"></span></div>
       </div>
@@ -1089,8 +1084,24 @@ document.addEventListener('pointerdown', function (ev) {
   bar.addEventListener('pointercancel', soltar);
 });
 
+/* Cambio de canal deslizando en vertical sobre cualquier parte del reproductor.
+   Arriba = canal siguiente, abajo = anterior (sentido provisional: confirmar con la app). */
+var plSwipe = null, plSwiped = false;
+document.addEventListener('pointerdown', function (ev) {
+  plSwiped = false;
+  var pl = ev.target.closest && ev.target.closest('#plLand');
+  plSwipe = (pl && !ev.target.closest('.pl-bar') && !ev.target.closest('button')) ? { x: ev.clientX, y: ev.clientY } : null;
+});
+document.addEventListener('pointerup', function (ev) {
+  if (!plSwipe) return;
+  var dx = ev.clientX - plSwipe.x, dy = ev.clientY - plSwipe.y;
+  plSwipe = null;
+  if (Math.abs(dy) >= 40 && Math.abs(dy) > Math.abs(dx) * 1.5) { plSwiped = true; stepChannel(dy < 0 ? 1 : -1); }
+});
+
 document.addEventListener('click', function (ev) {
   var t = ev.target;
+  if (plSwiped) { plSwiped = false; return; } /* el deslizamiento no cuenta como toque */
 
   var card = t.closest('.card');
   if (card && card.querySelector('.ch')) {
@@ -1107,8 +1118,6 @@ document.addEventListener('click', function (ev) {
     setPlayerState(pl.classList.contains('is-paused') ? (plPos >= 1 ? 'live' : 'delayed') : 'paused');
     return;
   }
-  if (t.closest('#plChUp')) { stepChannel(1); return; }
-  if (t.closest('#plChDown')) { stepChannel(-1); return; }
   if (t.closest('#plBack10')) { plSeek(plPos - PL_SALTO / PL_VENTANA); return; }
   if (t.closest('#plFwd10')) { plSeek(plPos + PL_SALTO / PL_VENTANA); return; }
   if (t.closest('.pl-bar')) { return; } /* el toque lo resuelve el arrastre de la barra */
