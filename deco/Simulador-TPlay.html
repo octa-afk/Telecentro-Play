@@ -2081,7 +2081,11 @@ function fitSimulatorToWindow() {
   var vw = document.documentElement.clientWidth || window.innerWidth || 0;
   var vh = document.documentElement.clientHeight || window.innerHeight || 0;
   if (!vw || !vh) return;
-  var scale = Math.min(vw / 1280, vh / 720);
+  /* Margen de respiro alrededor del decodificador (máx. 24px, menos en ventanas chicas). */
+  var margen = Math.min(24, vw * 0.03, vh * 0.03);
+  var ancho = Math.max(1, vw - margen * 2);
+  var alto = Math.max(1, vh - margen * 2);
+  var scale = Math.min(ancho / 1280, alto / 720);
   document.documentElement.style.setProperty('--sim-scale', String(scale));
 }
 fitSimulatorToWindow();
