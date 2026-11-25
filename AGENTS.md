@@ -46,4 +46,5 @@ El repo ya contiene el simulador del **decodificador** (`deco/Simulador-TPlay.ht
 ## No hacer
 
 - No inventar pantallas, textos ni flujos que no estén en la app real o en una captura.
+- No implementar halos ni resplandores (glow, sombras difusas de color) salvo que estén en la interfaz original del deco o de la app.
 - No commitear credenciales, capturas con datos personales ni APKs.
