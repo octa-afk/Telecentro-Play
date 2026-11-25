@@ -4,7 +4,7 @@ Reglas y contexto para trabajar en el simulador de **Telecentro Play mobile** de
 
 ## Contexto
 
-El repo ya contiene el simulador del **decodificador** (`Simulador-TPlay.html`, 1280×720, archivo único). Lo de este documento es el simulador de la **app mobile**, que se construye aparte y recién después se decide cómo se integra.
+El repo ya contiene el simulador del **decodificador** (`deco/Simulador-TPlay.html`, 1280×720, archivo único). Lo de este documento es el simulador de la **app mobile**, que se construye aparte y recién después se decide cómo se integra.
 
 - Fines: capacitación de asesores de soporte. Solo UI, sin operar servicios reales.
 - Referencias: `docs/guias-paso-a-paso.md`, `docs/plan-integracion-tour.md`.
@@ -33,7 +33,7 @@ El repo ya contiene el simulador del **decodificador** (`Simulador-TPlay.html`, 
 - Comentarios de sección con el formato `/* ── … ── */`.
 - Cada pantalla con su sección `#sec-*` y su estado por clases.
 - UI en español con tildes.
-- Tests en `tplay/tests/` con Playwright (`check` / `press` / `cls` / `has`).
+- Tests en `<plataforma>/tests/` (`deco/tests/`, `mobile/tests/`) con Playwright (`check` / `press` / `cls` / `has`).
 
 ## Reglas
 

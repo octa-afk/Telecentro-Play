@@ -25,3 +25,14 @@ A través de este simulador, los asistentes pueden familiarizarse con las distin
 
 Este proyecto tiene fines exclusivamente educativos y de capacitación. Se trata de una simulación visual de las interfaces de Telecentro Play y no constituye una aplicación oficial ni permite operar sobre los servicios reales de Telecentro.
 El desarrollo de las interfaces se realizó tomando como referencia material de acceso público disponible en Internet
+
+## Estructura del repo
+
+```
+deco/      Simulador del decodificador (Simulador-TPlay.html, 1280×720) y sus tests/
+mobile/    Simulador de la app mobile (Simulador-TPlay-mobile.html) y sus tests/
+docs/      Guías, flujos, plan de integración y material de apoyo por plataforma
+```
+
+Cada plataforma es autocontenida. La app de Android TV se agregará como `android-tv/`.
+Los tests usan Playwright (`npm install` en la raíz) y se corren con `node <plataforma>/tests/<test>.mjs`.

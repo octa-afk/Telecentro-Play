@@ -26,8 +26,8 @@ Pendiente de confirmar: si Configuración y pestaña **Más** muestran las misma
 
 ### Implementación en el simulador
 
-- Simulador: `Simulador-TPlay-mobile.html` (pantallas `#sec-configuracion`, `#sec-mis-datos`, `#sec-gestion-dispositivos`, `#sec-mis-canales`, `#sec-notificaciones`, `#sec-detalles-tecnicos`, `#sec-ayuda-legales`).
-- Test: `tplay/tests/test-mobile-configuracion.mjs` (todo PASS).
+- Simulador: `mobile/Simulador-TPlay-mobile.html` (pantallas `#sec-configuracion`, `#sec-mis-datos`, `#sec-gestion-dispositivos`, `#sec-mis-canales`, `#sec-notificaciones`, `#sec-detalles-tecnicos`, `#sec-ayuda-legales`).
+- Test: `mobile/tests/test-mobile-configuracion.mjs` (todo PASS).
 - Datos mostrados: ejemplos. Nombre, número de cliente y dispositivos reales no se replican.
 - Acciones destructivas e interacciones de la app real (Cerrar todas las sesiones, ❌, Cerrar sesión, toggles, links) quedan **inertes** en el simulador.
 - Navegación: engranaje abre Configuración; ítems abren su pantalla; ‹ y Escape vuelven un nivel; la pestaña Inicio vuelve a la raíz.
@@ -49,8 +49,8 @@ Entrada: pestaña **Buscar**. Pantalla "Búsqueda" con engranaje arriba a la der
 
 ### Implementación en el simulador (Más, Búsqueda, TV en vivo)
 
-- Simulador: `Simulador-TPlay-mobile.html` (`#sec-busqueda`, `#sec-tv-en-vivo`, menú `#masPopup`).
-- Tests: `tplay/tests/test-mobile-busqueda-tv.mjs` (todo PASS).
+- Simulador: `mobile/Simulador-TPlay-mobile.html` (`#sec-busqueda`, `#sec-tv-en-vivo`, menú `#masPopup`).
+- Tests: `mobile/tests/test-mobile-busqueda-tv.mjs` (todo PASS).
 - Más: abre y cierra el menú flotante (Escape o tocar fuera); sus opciones son inertes; la pestaña Más queda activa mientras está abierto.
 - Búsqueda: campo y recientes de ejemplo. ✕ y búsqueda inertes (no se borra historial ni se buscan resultados).
 - TV en vivo: vistas "Grupo de canales" (por defecto) y "Listado de canales"; el botón de filtro es inerte.
@@ -68,7 +68,7 @@ Entrada: pestaña **Mi contenido**. Pantalla "Mi contenido" con engranaje arriba
 - Texto: "Lo que veas se irá sumando en esta sección para **Continuar viendo**. También vas a poder encontrar acá tus **Grabaciones** y tus **Favoritos**."
 - Botón "Explorá el contenido de T-Play": lleva a **Inicio** (en la captura, cargando con placeholders grises).
 
-Implementado en el simulador: `#sec-mi-contenido` (estado vacío), test `tplay/tests/test-mobile-mi-contenido.mjs` (todo PASS). El botón "Explorá" vuelve a Inicio.
+Implementado en el simulador: `#sec-mi-contenido` (estado vacío), test `mobile/tests/test-mobile-mi-contenido.mjs` (todo PASS). El botón "Explorá" vuelve a Inicio.
 
 Pendiente: ver cómo se ve Mi contenido con contenido (Continuar viendo, Grabaciones, Favoritos). En la cuenta actual está vacío, así que no hay nada que capturar por ahora.
 
@@ -92,7 +92,7 @@ Pendiente: las demás pantallas no se desplazan; botones favorito/grabar e ícon
 
 - Reproductor de TV en vivo (bloqueado para captura, ver arriba).
 - Detalle de contenido (tocar un póster en Inicio)
-- Inicio: el carrusel de banners (Black Friday), accesos rápidos Películas / Series / Guía y filas "Lo más visto ahora" / "Ver últimas 24hs" no están en `Simulador-TPlay-mobile.html`, que replica una versión anterior de Inicio con pósteres.
+- Inicio: el carrusel de banners (Black Friday), accesos rápidos Películas / Series / Guía y filas "Lo más visto ahora" / "Ver últimas 24hs" no están en `mobile/Simulador-TPlay-mobile.html`, que replica una versión anterior de Inicio con pósteres.
 
 ## Desplazamiento relevado con swipes
 
@@ -112,4 +112,4 @@ Implementado en el simulador (`#sec-canales`, test `test-mobile-canales.mjs`) so
 
 ## Datos de demostración
 
-Todos los datos de cuenta y dispositivo que muestra el simulador salen del objeto `DEMO` (en el `<script>` de `Simulador-TPlay-mobile.html`) y se vuelcan en los elementos con `data-var`: usuario, número de cliente, horas de grabación, dispositivo actual y otros dispositivos, fechas, búsquedas recientes, versión, modelo y sistema. Son valores genéricos; para cambiarlos se edita solo `DEMO`.
+Todos los datos de cuenta y dispositivo que muestra el simulador salen del objeto `DEMO` (en el `<script>` de `mobile/Simulador-TPlay-mobile.html`) y se vuelcan en los elementos con `data-var`: usuario, número de cliente, horas de grabación, dispositivo actual y otros dispositivos, fechas, búsquedas recientes, versión, modelo y sistema. Son valores genéricos; para cambiarlos se edita solo `DEMO`.

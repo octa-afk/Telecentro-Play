@@ -1,14 +1,14 @@
 # Plan: integrar en el simulador los flujos del tour del menú
 
-Fuente: `tplay/ejemplos/recorrido_general.mp4` (58 s, tour por el menú principal y Ajustes).
-Destino: `Simulador-TPlay.html` (archivo único; estado por clases sobre `.decoder`; secciones `#sec-*`; navegación por `handleKeydown` → `navigateCurrentLayer` / `selectCurrentItem` / `remoteBack`).
+Fuente: `docs/deco/ejemplos/recorrido_general.mp4` (58 s, tour por el menú principal y Ajustes).
+Destino: `deco/Simulador-TPlay.html` (archivo único; estado por clases sobre `.decoder`; secciones `#sec-*`; navegación por `handleKeydown` → `navigateCurrentLayer` / `selectCurrentItem` / `remoteBack`).
 Branch: `feat/sim-boot-bars-live-tv` (o una nueva a partir de ella).
 
 ## Convenciones a respetar
 - UI en español con tildes; `var` y funciones globales; comentarios `/* ── … ── */`.
 - Cada sección con su barra y foco propio, como `reset-option` / `selectResetOption`.
 - Back por niveles en `remoteBack`; Home vuelve al HOME.
-- Test por flujo en `tplay/tests/` (Playwright + firefox, helpers `check`/`press`/`cls`/`has`), siguiendo `test-factory-reset.mjs`.
+- Test por flujo en `deco/tests/` (Playwright + firefox, helpers `check`/`press`/`cls`/`has`), siguiendo `test-factory-reset.mjs`.
 
 ## Orden propuesto (una entrega por ítem, con test)
 
@@ -40,9 +40,9 @@ Extraer frames a 1 s del tramo correspondiente del video para fijar textos, orde
 Buscar, Kids, Video, Visita guiada por voz, Grabaciones de Ajustes y Sistema (no aparecen en este video). Detalle de un programa de la Guía y "Mis grabaciones" (el video no los abre): se inferirían, así que se dejan para después.
 
 ## Verificación
-1. Correr el test existente `tplay/tests/test-factory-reset.mjs` en cada entrega: el reset de fábrica no debe cambiar.
+1. Correr el test existente `deco/tests/test-factory-reset.mjs` en cada entrega: el reset de fábrica no debe cambiar.
 2. Un test nuevo por ítem (navegar con flechas, OK, Back, valor visible).
 3. Comparar capturas del simulador (`SHOT_DIR`) contra los frames del video.
 
 ## Riesgo
-Solo UI del simulador; sin datos persistentes ni contratos externos. El único punto compartido es la navegación (`navigateCurrentLayer`, `remoteBack`): cada entrega debe pasar el test de reset y los `tplay/test-*.mjs` existentes.
+Solo UI del simulador; sin datos persistentes ni contratos externos. El único punto compartido es la navegación (`navigateCurrentLayer`, `remoteBack`): cada entrega debe pasar el test de reset y los `deco/tests/test-*.mjs` existentes.
